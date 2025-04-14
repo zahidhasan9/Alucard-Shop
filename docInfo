@@ -1,0 +1,64 @@
+/frontend
+├── /public
+│   └── favicon.ico, og-image.png, etc.
+│
+├── /src
+│   ├── /assets
+│   │   └── /images      # All static images
+│   │   └── /icons       # SVG/PNG icons
+│
+│   ├── /components
+│   │   ├── /common      # Button, Loader, Container, Heading, etc.
+│   │   ├── /layout      # Header, Footer, Sidebar, MobileMenu, etc.
+│   │   ├── /product     # ProductCard, ProductGrid, ProductSlider, PriceTag
+│   │   ├── /banner      # HeroBanner, CategoryBanner, HomeSlider
+│   │   ├── /vendor      # VendorCard, VendorList
+│   │   ├── /filters     # CategoryFilter, BrandFilter, PriceSlider
+│   │   └── /forms       # SearchBar, LoginForm, RegisterForm
+│
+│   ├── /pages
+│   │   ├── Home.jsx
+│   │   ├── Shop.jsx
+│   │   ├── ProductDetails.jsx
+│   │   ├── VendorPage.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Wishlist.jsx
+│   │   └── Checkout.jsx
+│
+│   ├── /layouts
+│   │   └── MainLayout.jsx         # Wrapper layout with header/footer
+│
+│   ├── /context
+│   │   ├── CartContext.jsx
+│   │   ├── AuthContext.jsx
+│   │   └── WishlistContext.jsx
+│
+│   ├── /hooks
+│   │   ├── useCart.js
+│   │   ├── useAuth.js
+│   │   └── useFilter.js
+│
+│   ├── /services
+│   │   ├── api.js                 # Axios setup
+│   │   └── productService.js     # API calls for products
+│
+│   ├── /types
+│   │   ├── product.d.ts
+│   │   └── user.d.ts
+│
+│   ├── /utils
+│   │   ├── helpers.js
+│   │   └── constants.js
+│
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css                 # Tailwind entry
+│
+├── tailwind.config.js
+├── postcss.config.js
+├── vite.config.js
+├── package.json
+└── README.md
+
+
+//Icon gula Tabler Icons , Lucide icon diye bodlano lagbe
