@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import Navbar from "./Components/Navbar"
+import Carousel  from './Components/Carousel'
+import Banner from './Components/Banner'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <>
       <div>
        <Navbar/>
+       <Carousel/>
+       <Banner/>
       </div>
       
     </>
