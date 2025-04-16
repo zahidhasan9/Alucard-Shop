@@ -8,7 +8,19 @@ export default {
     extend: {
       fontFamily: {
         Work_sans: ["Work Sans", 'sans-serif'],
+        Oswald: ['Oswald', 'serif'],
+        Fira: ['Fira Sans', 'serif'],
+        Blinker: ['Blinker', 'serif'],
+        NDlogo: ['ND LOGOS', 'sans-serif'],
        
+      },
+      // conntainer config
+      container: {
+        center: true,
+        padding: '1rem',
+        screens: {
+          DEFAULT: '1170px', // custom default width
+        },
       },
       animation: {
         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
