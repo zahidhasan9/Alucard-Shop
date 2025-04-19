@@ -3,6 +3,7 @@ import Navbar from "./Components/Navbar"
 import Carousel  from './Components/Carousel'
 import Banner from './Components/Banner'
 import FlashSell from './Components/FlashSell'
+import Product from './Components/utility/Product'
 import './App.css'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
        <Carousel/>
        <Banner/>
        <FlashSell/>
+       <Product/>
       </div>
       
     </>
