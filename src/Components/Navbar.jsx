@@ -11,13 +11,13 @@ function Navbar() {
     <div className=" font-Work_sans bg-yellow-500">
       <div className="border-black border-b-[0.5px] border-opacity-[30%] shadow-sm ">
         <div className="flex justify-between items-center gap-x-5">
-          <div className="font-Work_sans font-bold ml-20 py-5 text-[35px] text-[white]">
+          <div className="font-Work_sans font-bold md:ml-20 pl-6 py-5 text-xl md:text-[35px] text-[white]">
             <span className="text-black">ZOTAC</span>FURY
           </div>
 
           <div className="hidden md:flex items-center h-[42px] w-1/2 shadow-sm overflow-hidden bg-white rounded-xl  ">
             {/* Dropdown */}
-            <div className="relative hidden md:block overflow-hidden text-[14px] font-medium text-[#666666] border-r-[1px] border-gray-600">
+            <div className="relative hidden lg:block overflow-hidden text-[14px] font-medium text-[#666666] border-r-[1px] border-gray-600">
               <div className="flex items-center px-4 h-[42px] gap-1 ">
                 <h1>All</h1>
                 <IoIosArrowDown className="text-[16px] opacity-70 scale-x-[0.85]" />
@@ -54,12 +54,12 @@ function Navbar() {
             </button>
           </div>
 
-          <div className="mr-28">
+          <div className="md:mr-28 pr-6 overflow-hidden">
             <div className="flex text-black justify-center text-[25px] items-center cursor-pointer">
               <SlHandbag className="mr-4" />
               <FiUser className="mr-1" />
               <div className="flex gap-x-2">
-                <div className="font-bold text-[11px]">
+                <div className=" leading-3 font-bold text-[11px]">
                   <p>Log in</p>
                   <p>Register</p>
                 </div>

@@ -21,9 +21,9 @@ import React, { useState, useEffect } from "react";
   };
 
   return (
-    <div><span className=" font-Fira tracking-wider font-medium bg-orange-600 text-white text-sm md:text-xl px-3 py-1 rounded">
-    ENDS IN: {formatTime(timeLeft)}
-  </span></div>
+    <div className=" font-Fira shadow-inherit tracking-wider w-[150px] md:w-[198px] font-medium bg-orange-600 text-white text-sm md:text-xl px-3 py-1 rounded">
+     ENDS IN: {formatTime(timeLeft)}
+  </div>
   )
 }
 export default TimerCount
