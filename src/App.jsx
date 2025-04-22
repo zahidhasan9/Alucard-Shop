@@ -3,7 +3,8 @@ import Navbar from './Components/Navbar';
 import Carousel from './Components/Carousel';
 import Banner from './Components/Banner';
 import FlashSell from './Components/FlashSell';
-import Product from './Components/utility/Product';
+import ProductCardSet from './Components/Product/ProductCardSet';
+import ProductCardSet2 from './Components/Product/ProfuctView/ProjuctView';
 import Newsletter from './Components/Newsletter';
 import ProductView from './Page/ProductView';
 import './App.css';
@@ -30,12 +31,13 @@ function App() {
               <Carousel />
               <Banner />
               <FlashSell />
-              <Product />
+              <ProductCardSet />
               <Newsletter />
             </>
           }
         />
         <Route path="/products-detail" element={<ProductView />} />
+        <Route path="/products" element={<ProductCardSet2 />} />
         {/* <Route path="/contact" element={<Contact />} /> */}
         {/* Add more routes here */}
       </Routes>
