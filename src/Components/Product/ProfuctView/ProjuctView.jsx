@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FiGrid, FiList } from 'react-icons/fi';
 import Breadcrumb from '../../Breadcrumb';
 import HeaderOfView from './HeaderOfView';
 import ProductFilter from './ProductFilter';

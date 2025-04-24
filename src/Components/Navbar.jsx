@@ -1,10 +1,5 @@
 import React from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
-import { IoMdSearch } from 'react-icons/io';
-import { SlHandbag } from 'react-icons/sl';
-import { FiUser } from 'react-icons/fi';
-
-import { IconMenu2 } from '@tabler/icons-react';
+import { ChevronDown, Search, ShoppingBag, User, AlignJustify } from 'lucide-react';
 
 function Navbar() {
   return (
@@ -20,7 +15,7 @@ function Navbar() {
             <div className="relative hidden lg:block overflow-hidden text-[14px] font-medium text-[#666666] border-r-[1px] border-gray-600">
               <div className="flex items-center px-4 h-[42px] gap-1 ">
                 <h1>All</h1>
-                <IoIosArrowDown className="text-[16px] opacity-70 scale-x-[0.85]" />
+                <ChevronDown className="size-5 opacity-70 scale-x-[0.85]" />
               </div>
               <select className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer">
                 <option selected>All</option>
@@ -48,16 +43,16 @@ function Navbar() {
             {/* Search Button */}
             <button type="submit" className="bg-black text-white px-4 py-3 font-bold leading-6">
               <h1 className="hidden md:block">Search</h1>
-              <div>
-                <IoMdSearch className=" md:hidden  text-[25px] " />
-              </div>
+              {/* <div>
+                <Search className=" md:hidden  text-[25px] " />
+              </div> */}
             </button>
           </div>
 
-          <div className="md:mr-28 pr-6 overflow-hidden">
+          <div className="md:mr-28 md:pr-0 pr-6 overflow-hidden ">
             <div className="flex text-black justify-center text-[25px] items-center cursor-pointer">
-              <SlHandbag className="mr-4" />
-              <FiUser className="mr-1" />
+              <ShoppingBag className="size-6  mr-4" />
+              <User className="size-6 mr-1" />
               <div className="flex gap-x-2">
                 <div className=" leading-3 font-bold text-[11px]">
                   <p>Log in</p>
@@ -69,13 +64,12 @@ function Navbar() {
         </div>
       </div>
       <div clasName="2nd header">
-        <div className='flex py-4 items-center justify-center gap-x-2' >
-          <div className='flex items-center  gap-x-2 z-50 '>
-            <IconMenu2 stroke={3} size={25} className="text-black" />
-            <h1 className='hidden lg:block'>Shop By Depertment</h1>
+        <div className="flex py-4 items-center justify-center gap-x-2">
+          <div className="flex items-center  gap-x-2 z-50 ">
+            <AlignJustify strokeWidth={3} size={25} className="text-black" />
+            <h1 className="hidden lg:block">Shop By Depertment</h1>
           </div>
           <div className="flex items-center md:hidden h-[42px] w-[80%] md:w-1/2 shadow-sm overflow-hidden bg-white rounded-xl">
-            
             {/* Search Input */}
             <div className="flex-1">
               <div className="search">
@@ -96,11 +90,11 @@ function Navbar() {
             <button type="submit" className="bg-black text-white px-4 py-3 font-bold leading-6">
               <h1 className="hidden md:block">Search</h1>
               <div>
-                <IoMdSearch className=" md:hidden  text-[25px] " />
+                <Search className=" md:hidden  size-5 " />
               </div>
             </button>
           </div>
-         </div>
+        </div>
       </div>
     </div>
   );

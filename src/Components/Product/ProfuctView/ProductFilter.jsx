@@ -9,20 +9,19 @@ const ProductFilter = () => {
           <Funnel className="size-[15px] " />
           <h1>Filter</h1>
         </div>
-
         <div className="flex justify-center items-center  gap-3  py-2  text-sm md:text-base ">
           <label className="font-medium text-gray-700">Sort By:</label>
-          <select
-            id="sort"
-            name="sort"
-            className="border border-gray-300 rounded-md px-3 py-1.5 bg-white focus:outline-none"
-          >
+          <select name="sort" className="border border-gray-300 rounded-md px-3 py-1.5 bg-white focus:outline-none">
             <option value="price">Price</option>
             <option value="popularity">Popularity</option>
           </select>
         </div>
       </div>
-      <div></div>
+      {/* Filter Section */}
+      <div className="flex">
+        <div className="bg-black w-1/5"></div>
+        <div className="bg-red-500 h-screen w-4/5"></div>
+      </div>
     </div>
   );
 };
