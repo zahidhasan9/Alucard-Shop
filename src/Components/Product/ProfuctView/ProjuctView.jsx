@@ -8,7 +8,7 @@ const ProductView = () => {
 
   return (
     <>
-      <div className="bg-slate-100">
+      <div className="bg-gray-100">
         <Breadcrumb />
         <HeaderOfView />
         <ProductFilter />

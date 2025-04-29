@@ -107,11 +107,11 @@ const Product = () => {
             </div>
           </div>
           <div className="flex justify-center items-center lg:w-[55%] w-full overflow-hidden h-full">
-            <div className="grid grid-cols-4 md:grid-cols-3  gap-[1px]">
+            <div className="grid grid-cols-4 md:grid-cols-3 gap-[1px]">
               {prod.map((data, idx) => (
                 <div
                   key={idx}
-                  className=" flex flex-col items-center justify-center col-span-2 md:col-span-1 md:py-3 shadow-md bg-white "
+                  className="overflow-hidden flex flex-col items-center justify-center col-span-2 md:col-span-1 md:py-3 shadow-md bg-white "
                 >
                   <div className=" lg:size-[193px] md:size-32 size-46">
                     <img className="object-cover w-full h-full" src={data.image} alt={data.name} />

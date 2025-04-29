@@ -81,7 +81,7 @@ const ProductFilter = () => {
       <div className="flex pb-10">
         <div className="w-64 hidden lg:block ">
           {/* Filter section */}
-          <div className="m-2 bg-white rounded-md shadow-md  hover:shadow-xl">
+          <div className="my-2 mr-1 bg-white rounded-md shadow-md  hover:shadow-xl">
             <div className="flex px-6 py-1.5 shadow-sm border-b-[1px] border-gray-400 border-opacity-40">
               <h1>Product Category</h1>
             </div>
@@ -133,7 +133,7 @@ const ProductFilter = () => {
             </div>
           </div>
           {/* filter 2  */}
-          <div className="bg-white m-2 shadow-xl rounded-md">
+          <div className="bg-white my-2 mr-1 shadow-xl rounded-md">
             <div className="flex px-6 py-1.5 shadow-sm border-b-[1px] border-gray-400 border-opacity-40">
               <h1>Product Category</h1>
             </div>
@@ -150,12 +150,12 @@ const ProductFilter = () => {
           </div>
         </div>
         {/* product part */}
-        <div className="w-full py-2  px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="w-full py-2  pl-1 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-hidden gap-[1px] ">
             {product.map((data, idx) => (
-              <div key={idx} className="bg-white rounded-md shadow-md p-4 hover:shadow-xl transition duration-300">
+              <div key={idx} className="bg-white rounded-md p-4 shadow-md hover:shadow-xl transition duration-300">
                 <div className="w-full flex justify-center">
-                  <img className="w-40 h-40 object-contain" src={data.image} alt={data.id} />
+                  <img className="w-40 h-40 object-cover" src={data.image} alt={data.id} />
                 </div>
                 <div className="mt-4 text-center">
                   <h1 className="text-base cursor-pointer text-blue-700 font-medium font-Blinker ">{data.name}</h1>

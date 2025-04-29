@@ -7,8 +7,14 @@ import ProductCardSet from './Components/Product/ProductCardSet';
 import ProductCardSet2 from './Components/Product/ProfuctView/ProjuctView';
 import Newsletter from './Components/Newsletter';
 import ProductView from './Page/ProductView';
-import './App.css';
+import UserDashboard from './Page/UserDashboard';
+import LoginPage from './Page/Login';
+import RegisterPage from './Page/Register';
 import Footer from './Components/Footer';
+
+// Css Import
+import './App.css';
+import ForgotPasswordPage from './Page/ForgotPassword';
 
 function App() {
   return (
@@ -38,6 +44,10 @@ function App() {
         />
         <Route path="/products-detail" element={<ProductView />} />
         <Route path="/products" element={<ProductCardSet2 />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-Password" element={<ForgotPasswordPage />} />
         {/* <Route path="/contact" element={<Contact />} /> */}
         {/* Add more routes here */}
       </Routes>
