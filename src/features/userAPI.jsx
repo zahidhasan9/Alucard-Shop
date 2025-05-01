@@ -1,5 +1,5 @@
 // src/features/user/userAPI.js
-import axios from '../../utils/axiosInstance';
+import axios from '../Apiutils/axiosInstance';
 
 export const registerUser = (userData) => axios.post('/auth/register', userData);
 export const loginUser = (userData) => axios.post('/auth/login', userData);
