@@ -12,9 +12,14 @@ import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
 import Footer from './Components/Footer';
 
+// toster
+import { Toaster } from 'react-hot-toast';
+
 // Css Import
 import './App.css';
 import ForgotPasswordPage from './Page/ForgotPassword';
+
+import ToastTestButton from './Page/Toastcheck';
 
 function App() {
   return (
@@ -39,6 +44,7 @@ function App() {
               <FlashSell />
               <ProductCardSet />
               <Newsletter />
+              <ToastTestButton />
             </>
           }
         />
@@ -51,6 +57,7 @@ function App() {
         {/* <Route path="/contact" element={<Contact />} /> */}
         {/* Add more routes here */}
       </Routes>
+      <Toaster position="top-right" reverseOrder={false} />
       <Footer />
     </>
   );

@@ -1,7 +1,6 @@
-// src/features/user/userAPI.js
 import axios from '../Apiutils/axiosInstance';
 
-export const registerUser = (userData) => axios.post('/auth/register', userData);
+export const registerUser = (userData) => axios.post('/auth/register', userData); // URL ঠিক করা হয়েছে
 export const loginUser = (userData) => axios.post('/auth/login', userData);
 export const getAllUsers = () => axios.get('/user');
 export const getUserById = (id) => axios.get(`/user/${id}`);

@@ -1,36 +1,75 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { register } from '../features/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+// icon
 import { Mail, Lock, User } from 'lucide-react';
 
 const RegisterPage = () => {
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { success, token } = useSelector((state) => state.user);
+
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: ''
+  });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
-      alert('Passwords do not match!');
+      // alert('Passwords do not match!');
+      toast.success('Passwords do not match!');
       return;
     }
-    alert(`Name: ${form.name}\nEmail: ${form.email}\nPassword: ${form.password}`);
+    dispatch(register(form));
+    // alert(`Name: ${form.firstName}\nEmail: ${form.email}\nPassword: ${form.password}`);
   };
+
+  useEffect(() => {
+    if (success && token) {
+      toast.success(`Welcome ${form.firstName}!`);
+      setTimeout(() => navigate('/'), 2000);
+    }
+  }, [success, navigate, token]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-300 via-white to-yellow-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md backdrop-blur-lg bg-white/70 border border-yellow-200 rounded-3xl shadow-2xl p-8">
         <h2 className="text-3xl font-extrabold text-yellow-700 text-center mb-6">Create Your Account 📝</h2>
 
-        <form onSubmit={handleRegister} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-800 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">First Name</label>
             <div className="flex items-center border border-gray-300 bg-white rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-yellow-500">
               <User className="w-4 h-4 text-gray-500 mr-2" />
               <input
                 type="text"
-                name="name"
+                name="firstName"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full outline-none text-sm bg-transparent"
+                placeholder="John Doe"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Last Name</label>
+            <div className="flex items-center border border-gray-300 bg-white rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-yellow-500">
+              <User className="w-4 h-4 text-gray-500 mr-2" />
+              <input
+                type="text"
+                name="lastName"
                 value={form.name}
                 onChange={handleChange}
                 className="w-full outline-none text-sm bg-transparent"
