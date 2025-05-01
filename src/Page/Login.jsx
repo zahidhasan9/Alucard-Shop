@@ -1,15 +1,56 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../features/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+// import icon
 import { Mail, Lock } from 'lucide-react';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [remember, setRemember] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, token, user } = useSelector((state) => state.user);
 
+  const [remember, setRemember] = useState(false);
+  const [form, setForm] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  console.log('tocken', token);
   const handleLogin = (e) => {
     e.preventDefault();
-    alert(`Email: ${email}\nPassword: ${password}\nRemember: ${remember}`);
+    if (remember) {
+      localStorage.setItem('rememberEmail', form.email);
+      localStorage.setItem('rememberPassword', form.password);
+    } else {
+      localStorage.removeItem('rememberEmail');
+      localStorage.removeItem('rememberPassword');
+    }
+
+    dispatch(login(form));
+    // toast.success
   };
+
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberEmail');
+    const rememberedPassword = localStorage.getItem('rememberPassword');
+
+    if (rememberedEmail && rememberedPassword) {
+      setForm({
+        email: rememberedEmail,
+        password: rememberedPassword
+      });
+      setRemember(true);
+    }
+
+    if (!loading && user) {
+      setTimeout(() => navigate('/'), 2000);
+    }
+  }, [token, navigate, loading]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-300 via-white to-yellow-100 flex items-center justify-center px-4">
@@ -24,8 +65,9 @@ const LoginPage = () => {
               <Mail className="w-4 h-4 text-gray-500 mr-2" />
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={form.email}
+                onChange={handleChange}
                 className="w-full outline-none text-sm bg-transparent"
                 placeholder="you@example.com"
                 required
@@ -40,8 +82,9 @@ const LoginPage = () => {
               <Lock className="w-4 h-4 text-gray-500 mr-2" />
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 className="w-full outline-none text-sm bg-transparent"
                 placeholder="••••••••"
                 required

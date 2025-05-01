@@ -22,10 +22,10 @@ const initialState = {
 
 export const register = createAsyncThunk('user/register', async (data, thunkAPI) => {
   try {
-    const res = await API.registerUser(data); // API কল
-    console.log('Registration data:', res.data); // রেসপন্সের ডেটা লগ
+    const res = await API.registerUser(data);
+    console.log('Registration data:', res.data);
 
-    return { user: res.data, token: res.data.token }; // user এবং token দুটোই রিটার্ন করলাম
+    return { user: res.data, token: res.data.token };
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || 'Something went wrong');
   }
@@ -40,7 +40,7 @@ export const login = createAsyncThunk('user/login', async (data, thunkAPI) => {
   }
 });
 
-export const fetchLoggedInUser = createAsyncThunk('user/fetchMe', async (_, thunkAPI) => {
+export const fetchLoggedInUser = createAsyncThunk('/me', async (_, thunkAPI) => {
   try {
     const res = await API.getLoggedInUser();
     return res.data;
@@ -76,6 +76,7 @@ const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+        state.token = action.payload.token;
         state.success = true;
         toast.success('Login successful'); // success toast on login
       })
@@ -113,6 +114,7 @@ const userSlice = createSlice({
       .addCase(fetchLoggedInUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+        state.token = action.payload;
       })
       .addCase(fetchLoggedInUser.rejected, (state, action) => {
         state.loading = false;

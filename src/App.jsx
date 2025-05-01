@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import Carousel from './Components/Carousel';
@@ -12,9 +13,13 @@ import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
 import Footer from './Components/Footer';
 
-// toster
+// toster And data part
 import { Toaster } from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchLoggedInUser } from './features/userSlice';
 
+// Protected Route
+import PublicRoute from './HOC/PublicRoute';
 // Css Import
 import './App.css';
 import ForgotPasswordPage from './Page/ForgotPassword';
@@ -22,6 +27,14 @@ import ForgotPasswordPage from './Page/ForgotPassword';
 import ToastTestButton from './Page/Toastcheck';
 
 function App() {
+  const { success, token, user } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchLoggedInUser());
+  }, []);
+
+  console.log('user', token);
   return (
     <>
       {/* <div>
@@ -64,3 +77,22 @@ function App() {
 }
 
 export default App;
+
+{
+  /* <Route
+  path="/login"
+  element={
+    <ProtectedPublicRoute>
+      <LoginPage />
+    </ProtectedPublicRoute>
+  }
+/>
+<Route
+  path="/register"
+  element={
+    <ProtectedPublicRoute>
+      <RegisterPage />
+    </ProtectedPublicRoute>
+  }
+/> */
+}

@@ -9,7 +9,7 @@ import { Mail, Lock, User } from 'lucide-react';
 const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { success, token } = useSelector((state) => state.user);
+  const { success, user, loading, token } = useSelector((state) => state.user);
 
   const [form, setForm] = useState({
     firstName: '',
@@ -37,6 +37,8 @@ const RegisterPage = () => {
     if (success && token) {
       toast.success(`Welcome ${form.firstName}!`);
       setTimeout(() => navigate('/'), 2000);
+    } else if (token) {
+      return navigate('/');
     }
   }, [success, navigate, token]);
 
