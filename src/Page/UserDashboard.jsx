@@ -27,7 +27,7 @@ const UserDashboard = () => {
     <ReviewList />,
     <AddressSection />,
     <AccountSettings />,
-    <LogoutButton onConfirm={() => console.log('Logged out')} />
+    <LogoutButton />
   ];
 
   return (

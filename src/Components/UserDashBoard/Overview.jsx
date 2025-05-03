@@ -1,9 +1,18 @@
+import { useSelector } from 'react-redux';
+
 const Overview = () => {
+  const { user, loading, error } = useSelector((state) => state.user);
+  console.log('overview', user);
+  // if (loading) return <p>Loading...</p>;
+  // if (error) return <p>Error: {error}</p>;
+  // if (!user) return <p>No user data available</p>;
+  // {`${user.firstName} ${user.lastName}`}
+
   return (
     <div className="space-y-6">
       {/* Welcome Text */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Welcome back, Jahid 👋</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Welcome back,{`${user.firstName} ${user.lastName}`}👋</h2>
         <p className="text-sm text-gray-600 mt-1">Here's what's happening with your account.</p>
       </div>
 

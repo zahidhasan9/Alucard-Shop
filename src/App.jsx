@@ -11,41 +11,42 @@ import ProductView from './Page/ProductView';
 import UserDashboard from './Page/UserDashboard';
 import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
+import ForgotPasswordPage from './Page/ForgotPassword';
 import Footer from './Components/Footer';
 
 // toster And data part
 import { Toaster } from 'react-hot-toast';
+import Loader from './Components/Loader';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLoggedInUser } from './features/userSlice';
 
 // Protected Route
-import PublicRoute from './HOC/PublicRoute';
+import PrivateRoute from './HOC/PrivateRoute';
 // Css Import
 import './App.css';
-import ForgotPasswordPage from './Page/ForgotPassword';
 
 import ToastTestButton from './Page/Toastcheck';
 
 function App() {
-  const { success, token, user } = useSelector((state) => state.user);
-
+  const { isAuthenticated, user, token, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchLoggedInUser());
-  }, []);
 
-  console.log('user', token);
+  // if (loading || (token && !user)) {
+  //   return <p>Loading app...</p>;
+  // }
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(fetchLoggedInUser());
+    }
+  }, [token, user, dispatch]);
+  if (loading || !user) {
+    return <Loader />;
+  }
+  console.log('app', isAuthenticated, user);
   return (
     <>
-      {/* <div>
-        <Navbar />
-        <Carousel />
-        <Banner />
-        <FlashSell />
-        <Product />
-        <Newsletter />
-        <Footer />
-      </div>{' '} */}
       <Navbar />
       <Routes>
         <Route
@@ -63,11 +64,12 @@ function App() {
         />
         <Route path="/products-detail" element={<ProductView />} />
         <Route path="/products" element={<ProductCardSet2 />} />
-        <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-Password" element={<ForgotPasswordPage />} />
-        {/* <Route path="/contact" element={<Contact />} /> */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<UserDashboard />} />
+        </Route>
         {/* Add more routes here */}
       </Routes>
       <Toaster position="top-right" reverseOrder={false} />
@@ -95,4 +97,20 @@ export default App;
     </ProtectedPublicRoute>
   }
 /> */
+}
+
+{
+  /* <BrowserRouter>
+      <Routes>
+         পাবলিক রাউট 
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+
+       প্রাইভেট রাউট 
+        <Route element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/checkout" element={<Checkout />} />
+        </Route>
+      </Routes>
+    </BrowserRouter> */
 }

@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
 // import icon
 import { Mail, Lock } from 'lucide-react';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, token, user } = useSelector((state) => state.user);
-
+  const { isAuthenticated } = useSelector((state) => state.user);
   const [remember, setRemember] = useState(false);
   const [form, setForm] = useState({
     email: '',
@@ -20,7 +18,7 @@ const LoginPage = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  console.log('tocken', token);
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (remember) {
@@ -47,10 +45,10 @@ const LoginPage = () => {
       setRemember(true);
     }
 
-    if (!loading && user) {
-      setTimeout(() => navigate('/'), 2000);
+    if (isAuthenticated) {
+      setTimeout(() => navigate('/'), 1000);
     }
-  }, [token, navigate, loading]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-300 via-white to-yellow-100 flex items-center justify-center px-4">

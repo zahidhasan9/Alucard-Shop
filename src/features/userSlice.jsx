@@ -7,7 +7,10 @@ const initialState = {
   users: [],
   loading: false,
   error: null,
-  success: false
+  success: false,
+  isAuthenticated: false,
+  token: localStorage.getItem('token') || null
+  // isAuthenticated: !!localStorage.getItem('token')
 };
 
 // // Async Thunks
@@ -23,8 +26,6 @@ const initialState = {
 export const register = createAsyncThunk('user/register', async (data, thunkAPI) => {
   try {
     const res = await API.registerUser(data);
-    console.log('Registration data:', res.data);
-
     return { user: res.data, token: res.data.token };
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || 'Something went wrong');
@@ -37,6 +38,15 @@ export const login = createAsyncThunk('user/login', async (data, thunkAPI) => {
     return res.data;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || 'Something went wrong');
+  }
+});
+
+export const logoutUser = createAsyncThunk('user/logout', async (_, thunkAPI) => {
+  try {
+    const res = await API.logoutUser();
+    return res.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Logout failed');
   }
 });
 
@@ -54,10 +64,13 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    logout(state) {
-      state.user = null;
-      toast.info('Logged out'); // toast info on logout
-    },
+    //   logout(state) {
+    //     state.user = null;
+    //     state.token = null;
+    //     state.isAuthenticated = false;
+    //     localStorage.removeItem('token');
+    //     toast.info('Logged out'); // toast info on logout
+    //   },
     clearState(state) {
       state.loading = false;
       state.success = false;
@@ -77,13 +90,17 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        console.log('cd', action.payload.token);
         state.success = true;
+        state.isAuthenticated = true;
+        localStorage.setItem('token', action.payload.token); // <-- Save token
         toast.success('Login successful'); // success toast on login
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+        state.isAuthenticated = false;
         toast.error(`Login failed: ${action.payload}`); // error toast on login failure
       })
 
@@ -98,12 +115,14 @@ const userSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.success = true;
+        state.isAuthenticated = true;
         toast.success('Registration successful'); // success toast on register
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+        state.isAuthenticated = false;
         toast.error(`Registration failed: ${action.payload}`); // error toast on registration failure
       })
 
@@ -113,12 +132,28 @@ const userSlice = createSlice({
       })
       .addCase(fetchLoggedInUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.isAuthenticated = true;
         state.user = action.payload.user;
-        state.token = action.payload;
       })
       .addCase(fetchLoggedInUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
+      })
+
+      // logout
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        localStorage.removeItem('token');
+        toast.success('Logged out successfully');
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(`Logout failed: ${action.payload}`);
       });
   }
 });
