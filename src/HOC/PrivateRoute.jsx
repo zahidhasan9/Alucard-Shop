@@ -7,7 +7,7 @@ const PrivateRoute = () => {
   if (loading) {
     return <div>Loading...</div>; // add spinner
   }
-  if (!token) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 

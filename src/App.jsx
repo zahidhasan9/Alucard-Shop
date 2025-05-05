@@ -37,11 +37,11 @@ function App() {
   // }
 
   useEffect(() => {
-    if (!user) {
+    if (!isAuthenticated) {
       dispatch(fetchLoggedInUser());
     }
   }, [token, user, dispatch]);
-  if (loading || !user) {
+  if (loading || (token && !user)) {
     return <Loader />;
   }
   console.log('app', isAuthenticated, user);
