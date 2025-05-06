@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const PrivateRoute = () => {
-  const { loading, isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user);
   // const token = window.localStorage.getItem('token');
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

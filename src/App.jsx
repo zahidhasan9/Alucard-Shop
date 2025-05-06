@@ -29,8 +29,7 @@ import './App.css';
 import ToastTestButton from './Page/Toastcheck';
 
 function App() {
-  const [rander, setRander] = useState(true);
-  const { isAuthenticated, user, loading } = useSelector((state) => state.user);
+  const { isAuthenticated,loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   // const token = window.localStorage.getItem('token');
@@ -44,8 +43,6 @@ function App() {
   if (loading) {
     return <Loader />;
   }
-
-  console.log('app', isAuthenticated, user);
 
   return (
     <>

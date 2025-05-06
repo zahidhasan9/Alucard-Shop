@@ -1,12 +1,7 @@
 import { useSelector } from 'react-redux';
 
 const Overview = () => {
-  const { user, loading, error } = useSelector((state) => state.user);
-  console.log('overview', user);
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error}</p>;
-  // if (!user) return <p>No user data available</p>;
-  // {`${user.firstName} ${user.lastName}`}
+  const { user } = useSelector((state) => state.user);
 
   return (
     <div className="space-y-6">
