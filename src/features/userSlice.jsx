@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'; // make sure to import it
 const initialState = {
   user: null,
   users: [],
-  loading: false,
+  loading: true,
   error: null,
   success: false,
   isAuthenticated: false,

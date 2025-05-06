@@ -29,22 +29,24 @@ import './App.css';
 import ToastTestButton from './Page/Toastcheck';
 
 function App() {
-  const { isAuthenticated, user, token, loading } = useSelector((state) => state.user);
+  const [rander, setRander] = useState(true);
+  const { isAuthenticated, user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  // if (loading || (token && !user)) {
-  //   return <p>Loading app...</p>;
-  // }
+  // const token = window.localStorage.getItem('token');
 
   useEffect(() => {
     if (!isAuthenticated) {
       dispatch(fetchLoggedInUser());
     }
-  }, [token, user, dispatch]);
-  if (loading || (token && !user)) {
+  }, [isAuthenticated, dispatch]);
+
+  if (loading) {
     return <Loader />;
   }
+
   console.log('app', isAuthenticated, user);
+
   return (
     <>
       <Navbar />
