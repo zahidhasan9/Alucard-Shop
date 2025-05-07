@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux';
 
 const Overview = () => {
-  const { user } = useSelector((state) => state.user);
-
+  const { user} = useSelector((state) => state.user);
   return (
     <div className="space-y-6">
       {/* Welcome Text */}

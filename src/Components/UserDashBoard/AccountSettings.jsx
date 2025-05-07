@@ -1,90 +1,63 @@
+import { useState,useEffect} from 'react';
+import { useSelector } from 'react-redux'; 
+// import molals
+import PasswordModal from "./AccountSettings/PasswordModal";
+import InfoModal from "./AccountSettings/InfoModal";
+
 const AccountSettings = () => {
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const { user,} = useSelector(state => state.user);
+
+  
   return (
-    <div className="space-y-8">
-      {/* Personal Info Card */}
-      <div className="border border-gray-200 rounded-2xl shadow-lg p-6 bg-white">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Account Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* First Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">First Name</label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="John"
-            />
-          </div>
-          {/* Last Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Last Name</label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="Doe"
-            />
-          </div>
-          {/* Email */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-600 mb-2">Email Address</label>
-            <input
-              type="email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="example@email.com"
-            />
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+      {/* Account Info Section */}
+      <div className="border border-gray-200 rounded-2xl shadow-md p-5 sm:p-6 bg-white">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
+          Account Information
+        </h2>
+        <div className="space-y-3">
+          <div className=" text-sm text-gray-700 border-b pb-3 relative group">
+            <div className="space-y-1">
+              <p><span className="font-medium">First Name:</span> {user.firstName}</p>
+              <p><span className="font-medium">Last Name:</span> {user.lastName}</p>
+              <p><span className="font-medium">Phone:</span> {user.phone} </p>
+              <p><span className="font-medium">Email:</span> {user.email}</p>
+            </div>
           </div>
         </div>
-
-        {/* Save Button */}
-        <div className="mt-4">
+        <div className="mt-5">
           <button
-            type="submit"
-            className="bg-blue-600 text-white text-base px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
+            onClick={() => setIsInfoModalOpen(true)}
+            className="bg-black text-white text-sm px-4 py-1.5 rounded-md hover:opacity-90 transition-all duration-300"
           >
-            Save Changes
+            Update Info
           </button>
         </div>
       </div>
 
-      {/* Change Password Card */}
-      <div className="border border-gray-200 rounded-2xl shadow-lg p-6 bg-white">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Change Password</h2>
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Current Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="••••••••"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">New Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="••••••••"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Confirm New Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-
-        {/* Save Button */}
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white text-base px-6 py-2 rounded-md hover:bg-blue-700 transition-all duration-300"
-          >
-            Change Password
-          </button>
-        </div>
+      {/* Change Password Section */}
+      <div className="border mt-8 border-gray-200 rounded-2xl shadow-lg p-6 bg-white">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Password</h2>
+        <p className="text-gray-700 mb-4">••••••••••</p>
+        <button
+          onClick={() => setIsPasswordModalOpen(true)}
+          className="bg-black text-white text-sm px-4 py-1.5 rounded-md hover:opacity-80 transition-all"
+        >
+          Change Password
+        </button>
       </div>
+
+      {/* Conditional Render */}
+      {isPasswordModalOpen && (
+        <PasswordModal onClose={() => setIsPasswordModalOpen} />
+      )}
+
+      {/* Info Modal */}
+      {isInfoModalOpen && (
+        <InfoModal onClose={() => setIsInfoModalOpen(false)} />
+      )}
     </div>
   );
 };

@@ -50,6 +50,27 @@ export const logoutUser = createAsyncThunk('user/logout', async (_, thunkAPI) =>
    }
 });
 
+export const updateProfile = createAsyncThunk('user/updateProfile', async (data, thunkAPI) => {
+   try {
+      const res = await API.updateProfile(data);
+      return res.data;
+   } catch (err) {
+      console.log('error',err)
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Profile update failed');
+   }
+});
+
+export const changePassword = createAsyncThunk('user/changePassword', async (data, thunkAPI) => {
+   try {
+      console.log('pass',data)
+      const res = await API.changePassword(data); 
+      return res.data;
+   } catch (err) {
+      console.log('error',err)
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Password update failed');
+   }
+});
+
 export const fetchLoggedInUser = createAsyncThunk('/me', async (_, thunkAPI) => {
    try {
       const res = await API.getLoggedInUser();
@@ -125,6 +146,45 @@ const userSlice = createSlice({
             state.isAuthenticated = false;
             toast.error(`Registration failed: ${action.payload}`); // error toast on registration failure
          })
+
+          // UPDATE USER PROFILE
+         .addCase(updateProfile.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+            state.success = false;
+         })
+         .addCase(updateProfile.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = true;
+            // state.user = action.payload.user; // assuming response: { user: {...} }
+            toast.success('Profile updated successfully');
+         })
+         .addCase(updateProfile.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = false;
+            toast.error(`Profile update failed: ${action.payload}`);
+         })
+
+
+         // UPDATE/CHANGE  USER PASSWORD
+         .addCase(changePassword.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+            state.success = false;
+         })
+         .addCase(changePassword.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = true;
+            toast.success('Password updated successfully');
+         })
+         .addCase(changePassword.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = false;
+            toast.error(`Password update failed: ${action.payload}`);
+         })
+
 
          // FETCH LOGGED-IN USER
          .addCase(fetchLoggedInUser.pending, state => {

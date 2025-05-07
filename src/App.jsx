@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './Components/Navbar';
+import Navbar from './Components/Navbar/Navbar';
 import Carousel from './Components/Carousel';
 import Banner from './Components/Banner';
 import FlashSell from './Components/FlashSell';
@@ -13,6 +13,9 @@ import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
 import ForgotPasswordPage from './Page/ForgotPassword';
 import Footer from './Components/Footer';
+
+import Navbar2 from './Components/Navbar/Navbar-two';
+import Navbar3 from './Components/Navbar/Navbar-three';
 
 // toster And data part
 import { Toaster } from 'react-hot-toast';
@@ -29,7 +32,7 @@ import './App.css';
 import ToastTestButton from './Page/Toastcheck';
 
 function App() {
-  const { isAuthenticated,loading } = useSelector((state) => state.user);
+  const { isAuthenticated, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   // const token = window.localStorage.getItem('token');
@@ -46,7 +49,9 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar />
+      <Navbar2 /> */}
+      <Navbar3 />
       <Routes>
         <Route
           path="/"

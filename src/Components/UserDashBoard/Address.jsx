@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createAddress, getAllAddresses, updateAddress, deleteAddress } from '../../features/addressSlice.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import Loader from '../../Components/Loader.jsx'
+import { createAddress,
+         getAllAddresses,
+         updateAddress,
+         deleteAddress} from '../../features/addressSlice.js';
+
 
 const AddressSection = () => {
    const [showModal, setShowModal] = useState(false);
-   const { addresses, loading } = useSelector(state => state.addressReducer);
-   const dispatch = useDispatch();
    const [isEditing, setIsEditing] = useState(false);
    const [editId, setEditId] = useState(null);
-   console.log(editId)
+  
+   const { addresses, loading } = useSelector(state => state.addressReducer);
+   const dispatch = useDispatch();
 
    const [address, setAddress] = useState({
       fullName: '',
@@ -28,12 +32,17 @@ const AddressSection = () => {
    const handleInputChange = e => {
       setAddress({ ...address, [e.target.name]: e.target.value });
    };
-console.log(address,editId)
    const handleSave = () => {
       if (isEditing) {
          dispatch(updateAddress({ id: editId, data: address }));
+         setTimeout(() => {
+            dispatch(getAllAddresses());
+          }, 1000); 
       } else {
          dispatch(createAddress(address));
+         setTimeout(() => {
+            dispatch(getAllAddresses());
+          }, 1000); 
       }
       setShowModal(false);
       setIsEditing(false);
@@ -105,7 +114,7 @@ console.log(address,editId)
                      </div>
                   ))
                ) : (
-                  <p>No addresses found.</p>
+                  <p>Add New Addresses.</p>
                )}
             </div>
 
@@ -136,8 +145,8 @@ console.log(address,editId)
                      street: '',
                   });
                }}
-               className="bg-blue-600 text-white text-sm px-5 py-2 rounded-md hover:bg-blue-700 transition">
-               Add New Address
+               className="bg-black font-semibold text-white text-sm px-5 py-2 rounded-md hover:bg-gray-800 transition">
+               Add Address
             </button>
          </div>
 
@@ -240,12 +249,12 @@ console.log(address,editId)
                   </div>
 
                   <div className="mt-6 flex justify-end space-x-3">
-                     <button onClick={() => setShowModal(false)} className="text-gray-600 text-sm hover:underline">
+                     <button onClick={() => setShowModal(false)} className="text-sm border border-black text-black px-4 py-1.5 rounded-md hover:bg-black hover:text-white transition-all">
                         Cancel
                      </button>
                      <button
                         onClick={handleSave}
-                        className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700">
+                        className="text-sm bg-black text-white px-5 py-1.5 rounded-md hover:opacity-90 transition-all disabled:opacity-50">
                         {isEditing ? 'Update' : 'Save'}
                      </button>
                   </div>
