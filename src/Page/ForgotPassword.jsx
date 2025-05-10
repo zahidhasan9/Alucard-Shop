@@ -1,13 +1,31 @@
 import { Mail } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { forgotPassword } from '../features/userSlice';
+import Loader from '../Components/Loader';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, success, forgotPasswordError } = useSelector((state) => state.user);
+
   const handleReset = (e) => {
     e.preventDefault();
-    alert(`Password reset link sent to: ${email}`);
+    dispatch(forgotPassword(email));
   };
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        navigate('/');
+      }, 2000);
+
+      return () => clearTimeout(timer); // cleanup
+    }
+  }, [success, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-white to-yellow-100 flex items-center justify-center px-4">
@@ -21,7 +39,14 @@ const ForgotPasswordPage = () => {
         <form onSubmit={handleReset} className="space-y-5">
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-800 mb-1">Email</label>
+            <div className="flex justify-between">
+              <label className="block text-sm font-medium text-gray-800 mb-1">Email</label>
+              {loading ? (
+                <Loader />
+              ) : (
+                forgotPasswordError && <p className="text-red-500 text-sm mb-1">{forgotPasswordError}</p>
+              )}
+            </div>
             <div className="flex items-center border border-gray-300 bg-white rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-yellow-500">
               <Mail className="w-4 h-4 text-gray-500 mr-2" />
               <input

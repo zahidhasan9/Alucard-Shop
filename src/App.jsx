@@ -12,6 +12,7 @@ import UserDashboard from './Page/UserDashboard';
 import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
 import ForgotPasswordPage from './Page/ForgotPassword';
+import ResetPassword from './Page/ResetPassword';
 import Footer from './Components/Footer';
 
 import Navbar2 from './Components/Navbar/Navbar-two';
@@ -70,7 +71,8 @@ function App() {
         <Route path="/products" element={<ProductCardSet2 />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-Password" element={<ForgotPasswordPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<UserDashboard />} />
         </Route>
