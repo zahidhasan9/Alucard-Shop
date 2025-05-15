@@ -88,13 +88,18 @@
 // export default Navbar;
 
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSearchQuery } from '../../features/SearchSlice';
 import { Link } from 'react-router-dom';
 // import icon
 import { ChevronDown, Search, ShoppingBag, User, Menu } from 'lucide-react';
 
 function Navbar() {
-  const { user, isAuthenticated, loading, error } = useSelector((state) => state.user);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const handleSearch = (e) => {
+    dispatch(setSearchQuery(e.target.value));
+  };
 
   return (
     <nav className="bg-yellow-500 text-black shadow-xl font-sans sticky top-0 z-50 ">
@@ -122,6 +127,7 @@ function Navbar() {
           {/* Input */}
           <input
             type="text"
+            onChange={handleSearch}
             placeholder="Search products..."
             className="flex-1 px-4 py-2.5 text-sm bg-transparent text-black focus:outline-none placeholder-gray-500"
             aria-label="Search products"
@@ -198,6 +204,7 @@ function Navbar() {
         <div className="lg:hidden flex items-center w-full max-w-sm bg-white/90 rounded-full overflow-hidden">
           <input
             type="text"
+            onChange={handleSearch}
             placeholder="Search products..."
             className="flex-1 px-4 py-2 text-sm bg-transparent text-black focus:outline-none placeholder-gray-500"
             aria-label="Search products"

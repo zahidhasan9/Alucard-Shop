@@ -19,3 +19,16 @@ export const getAllAddresses = () => axios.get('/address');
 export const getAddressByType = (type) => axios.get(`/address/type/${type}`);
 export const updateAddress = (id, data) => axios.put(`/address/${id}`, data);
 export const deleteAddress = (id) => axios.delete(`/address/${id}`);
+
+// Products Api
+export const getProducts = ({ limit = 10, skip = 0, search = '' }) =>
+  axios.get('/product', {
+    params: { limit, skip, search }
+  });
+export const createProduct = (data) => axios.post('/product', data);
+// export const getProducts = () => axios.get('/product');
+export const getProduct = (id) => axios.get(`/product/${id}`);
+export const updateProduct = (id, data) => axios.put(`/product/${id}`, data);
+export const deleteProduct = (id) => axios.delete(`/product/${id}`);
+export const createProductReview = (id, review) => axios.post(`/product/${id}/reviews`, review);
+export const getTopProducts = () => axios.get('/product/top');

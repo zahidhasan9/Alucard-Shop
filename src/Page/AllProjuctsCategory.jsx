@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Breadcrumb from '../../Breadcrumb';
-import HeaderOfView from './HeaderOfView';
-import ProductFilter from './ProductFilter';
+import Breadcrumb from '../Components/Breadcrumb';
+import HeaderOfView from '../Components/Product/ProfuctView/HeaderOfView';
+import ProductFilter from '../Components/Product/ProfuctView/ProductFilter';
 
 const ProductView = () => {
   const [view, setView] = useState('grid');
