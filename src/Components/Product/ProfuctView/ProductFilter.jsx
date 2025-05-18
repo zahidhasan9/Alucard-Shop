@@ -4,6 +4,7 @@ import { Funnel } from 'lucide-react';
 import Pagination from './Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../../../features/productSlice';
+import { getAllCategories } from '../../../features/categorySlice';
 import Loader from '../../Loader';
 
 const ProductFilter = () => {
@@ -12,12 +13,35 @@ const ProductFilter = () => {
 
   //Pagination and search
   const search = useSelector((state) => state.search.query);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(12);
   const totalPages = Math.ceil(total / limit);
 
+  // filters
+  const { categories } = useSelector((state) => state.category);
+  const [filters, setFilters] = useState({
+    category: '',
+    sort: 'price',
+    brand: '',
+    minPrice: 0,
+    maxPrice: 0,
+    minRating: 0
+  });
+  const [tempFilters, setTempFilters] = useState(filters);
+
   useEffect(() => {
-    dispatch(getProducts({ page, limit, search }));
-  }, [dispatch, page, limit, search]);
+    dispatch(getAllCategories());
+    dispatch(
+      getProducts({
+        category: filters.category,
+        sort: filters.sort,
+        maxPrice: filters.maxPrice,
+        minPrice: filters.minPrice,
+        page,
+        limit,
+        search
+      })
+    );
+  }, [dispatch, page, limit, search, filters]);
 
   const handlePageChange = (newPage) => {
     dispatch(getProducts({ page: newPage, limit, search }));
@@ -38,9 +62,12 @@ const ProductFilter = () => {
               <label className="font-medium text-gray-700">Sort By:</label>
               <select
                 name="sort"
-                className="border border-gray-300 rounded-md px-3 py-1.5 bg-slate-100 focus:outline-none"
+                className="border text-sm border-gray-300 rounded-md px-3 py-1.5 bg-slate-100 focus:outline-none"
+                value={filters.sort}
+                onChange={(e) => setFilters((prev) => ({ ...prev, sort: e.target.value }))}
               >
-                <option value="price">Price</option>
+                <option value="price">Price (Low to High)</option>
+                <option value="price_desc">Price (High to Low)</option>
                 <option value="popularity">Popularity</option>
               </select>
             </div>
@@ -53,54 +80,63 @@ const ProductFilter = () => {
                 <div className="flex px-6 py-1.5 shadow-sm border-b-[1px] border-gray-400 border-opacity-40">
                   <h1>Product Category</h1>
                 </div>
-                <div className="px-6 py-2">
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm ">In Stock</h1>
+
+                {categories.map((cat) => (
+                  <div key={cat._id} className="px-6 py-0.5">
+                    <div className="flex  space-x-1 items-center gap-1">
+                      <input
+                        type="checkbox"
+                        name="category"
+                        value={cat._id}
+                        onChange={(e) => {
+                          setFilters((prev) => ({
+                            ...prev,
+                            category: prev.category === cat._id ? null : cat._id
+                          }));
+                        }}
+                        checked={filters.category === cat._id}
+                      />
+                      <h1 className="text-sm  ">{cat.name}</h1>
+                    </div>
                   </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
+                ))}
+              </div>
+
+              {/* Price Range Filter 2 */}
+              <div className="bg-white my-2 mr-1 shadow-xl rounded-md">
+                <div className="flex px-6 py-1.5 shadow-sm border-b border-gray-300">
+                  <h1>Price Range</h1>
+                </div>
+                <div className="px-6 py-2 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm">Min Price:</label>
+                    <input
+                      type="number"
+                      className="border px-2 py-1 rounded w-24"
+                      value={tempFilters.minPrice}
+                      onChange={(e) => setTempFilters({ ...tempFilters, minPrice: Number(e.target.value) })}
+                    />
                   </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm">Max Price:</label>
+                    <input
+                      type="number"
+                      className="border px-2 py-1 rounded w-24"
+                      value={tempFilters.maxPrice}
+                      onChange={(e) => setTempFilters({ ...tempFilters, maxPrice: Number(e.target.value) })}
+                      min={tempFilters.minPrice}
+                    />
                   </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
-                  <div className="flex space-x-1 items-center gap-1">
-                    <input type="checkbox" />
-                    <h1 className="text-sm">In Stock</h1>
-                  </div>
+                  <button
+                    onClick={() => setFilters(tempFilters)}
+                    className="mt-2 w-full text-xs bg-blue-600 text-white py-1.5 rounded hover:bg-blue-700 transition"
+                  >
+                    Apply Filter
+                  </button>
                 </div>
               </div>
-              {/* filter 2  */}
+
+              {/* filter 3  */}
               <div className="bg-white my-2 mr-1 shadow-xl rounded-md">
                 <div className="flex px-6 py-1.5 shadow-sm border-b-[1px] border-gray-400 border-opacity-40">
                   <h1>Product Category</h1>
@@ -150,9 +186,9 @@ const ProductFilter = () => {
                   onChange={(e) => setLimit(Number(e.target.value))}
                   className="border rounded px-3 py-1 text-sm"
                 >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
+                  <option value={6}>6</option>
+                  <option value={12}>12</option>
+                  <option value={24}>24</option>
                   <option value={50}>50</option>
                 </select>
               </div>

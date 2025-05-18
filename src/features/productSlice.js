@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as API from './API'; // তোমার product-related API functions এখানে থাকবে
+import * as API from './API';
 import toast from 'react-hot-toast';
 
 const initialState = {
@@ -33,10 +33,10 @@ export const createProduct = createAsyncThunk('product/create', async (data, thu
 
 export const getProducts = createAsyncThunk(
   'product/fetchProducts',
-  async ({ page = 1, limit = 10, search = '' }, thunkAPI) => {
+  async ({ page = 1, limit = 10, search = '', category, sort, maxPrice, minPrice }, thunkAPI) => {
     try {
       const skip = (page - 1) * limit;
-      const response = await API.getProducts({ limit, skip, search });
+      const response = await API.getProducts({ limit, skip, search, category, sort, maxPrice, minPrice });
       return { ...response.data, page };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch products');

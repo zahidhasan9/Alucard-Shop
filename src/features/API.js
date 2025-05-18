@@ -21,9 +21,9 @@ export const updateAddress = (id, data) => axios.put(`/address/${id}`, data);
 export const deleteAddress = (id) => axios.delete(`/address/${id}`);
 
 // Products Api
-export const getProducts = ({ limit = 10, skip = 0, search = '' }) =>
+export const getProducts = ({ limit = 10, skip = 0, search = '', category, sort, maxPrice, minPrice }) =>
   axios.get('/product', {
-    params: { limit, skip, search }
+    params: { limit, skip, search, category, sort, maxPrice, minPrice }
   });
 export const createProduct = (data) => axios.post('/product', data);
 // export const getProducts = () => axios.get('/product');
@@ -32,3 +32,10 @@ export const updateProduct = (id, data) => axios.put(`/product/${id}`, data);
 export const deleteProduct = (id) => axios.delete(`/product/${id}`);
 export const createProductReview = (id, review) => axios.post(`/product/${id}/reviews`, review);
 export const getTopProducts = () => axios.get('/product/top');
+
+// Products Api
+export const getAllCategories = () => axios.get('/category');
+export const createCategory = (data) => axios.post('/api/categories', data);
+export const getCategory = (id) => axios.get(`/api/categories/${id}`);
+export const updateCategory = (id, data) => axios.put(`/api/categories/${id}`, data);
+export const deleteCategory = (id) => axios.delete(`/api/categories/${id}`);
