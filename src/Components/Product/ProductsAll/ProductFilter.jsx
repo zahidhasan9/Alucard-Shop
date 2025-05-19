@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 import { Funnel } from 'lucide-react';
 // import Pagination2 from './Pagination-two';
 import Pagination from './Pagination';
@@ -166,12 +167,14 @@ const ProductFilter = () => {
                       <div className="w-full flex justify-center">
                         <img className="w-40 h-40 object-cover" src={data.thumbnail} alt={data._id} />
                       </div>
-                      <div className="mt-4 text-center">
-                        <h1 className="text-base cursor-pointer text-blue-700 font-medium font-Blinker ">
-                          {data.name}
-                        </h1>
-                        <h1 className="text-sm font-bold text-green-600 mt-1">{data.price}</h1>
-                      </div>
+                      <Link to={`/product/${data._id}`}>
+                        <div className="mt-4 text-center">
+                          <h1 className="text-base cursor-pointer text-blue-700 font-medium font-Blinker ">
+                            {data.name}
+                          </h1>
+                          <h1 className="text-sm font-bold text-green-600 mt-1">{data.price}</h1>
+                        </div>
+                      </Link>
                     </div>
                   ))}
                 </div>

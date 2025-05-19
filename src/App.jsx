@@ -5,9 +5,9 @@ import Carousel from './Components/Carousel';
 import Banner from './Components/Banner';
 import FlashSell from './Components/FlashSell';
 import ProductCardSet from './Components/Product/ProductCardSet';
-import AllProjuctsCategory from './Page/AllProjuctsCategory';
+import ProductsAll from './Page/ProductsAll';
 import Newsletter from './Components/Newsletter';
-import ProductView from './Page/ProductView';
+import ProductDetails from './Page/ProductDetails';
 import UserDashboard from './Page/UserDashboard';
 import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
@@ -67,8 +67,8 @@ function App() {
             </>
           }
         />
-        <Route path="/products-detail" element={<ProductView />} />
-        <Route path="/products" element={<AllProjuctsCategory />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/products" element={<ProductsAll />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />

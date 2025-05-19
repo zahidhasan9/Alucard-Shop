@@ -2,14 +2,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as API from './API';
 import toast from 'react-hot-toast';
 
-const initialState = {
-  products: [],
-  topProducts: [],
-  product: null,
-  loading: false,
-  error: null,
-  success: false
-};
+// const initialState = {
+//   products: [],
+//   topProducts: [],
+//   product: null,
+//   loading: false,
+//   error: null,
+//   success: false
+// };
 
 // Create Product
 export const createProduct = createAsyncThunk('product/create', async (data, thunkAPI) => {
@@ -97,6 +97,8 @@ const productSlice = createSlice({
   name: 'product',
   initialState: {
     products: [],
+    product: {},
+    loading: true,
     total: 0,
     maxLimit: 0,
     maxSkip: 0,
@@ -152,6 +154,7 @@ const productSlice = createSlice({
       // Get One
       .addCase(getProduct.pending, (state) => {
         state.loading = true;
+        console.log('Loading single product...');
       })
       .addCase(getProduct.fulfilled, (state, action) => {
         state.loading = false;
@@ -161,7 +164,7 @@ const productSlice = createSlice({
       .addCase(getProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        toast.error(action.payload);
+        toast.error(action.error.message);
       })
 
       // Update
