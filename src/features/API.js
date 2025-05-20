@@ -1,4 +1,3 @@
-import { data } from 'react-router';
 import axios from '../Apiutils/axiosInstance';
 
 // User Api
@@ -39,3 +38,9 @@ export const createCategory = (data) => axios.post('/api/categories', data);
 export const getCategory = (id) => axios.get(`/api/categories/${id}`);
 export const updateCategory = (id, data) => axios.put(`/api/categories/${id}`, data);
 export const deleteCategory = (id) => axios.delete(`/api/categories/${id}`);
+
+// Review Api
+export const createReview = (reviewData) => axios.post('/review', reviewData);
+export const getProductReviews = (productId) => axios.get(`/review/${productId}`);
+export const deleteMyReview = (productId) => axios.delete(`/review/me/${productId}`);
+export const deleteReview = (reviewId) => axios.delete(`/review/${reviewId}`);

@@ -5,6 +5,7 @@ import addressReducer from './features/addressSlice.js';
 import productSlice from './features/productSlice.js';
 import categorySlice from './features/categorySlice.js';
 import SearchSlice from './features/SearchSlice.js';
+import reviewSlice from './features/reviewSlice.js';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     addressReducer: addressReducer,
     product: productSlice,
     search: SearchSlice,
-    category: categorySlice
+    category: categorySlice,
+    review: reviewSlice
   }
 });

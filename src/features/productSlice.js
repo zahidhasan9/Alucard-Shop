@@ -154,7 +154,6 @@ const productSlice = createSlice({
       // Get One
       .addCase(getProduct.pending, (state) => {
         state.loading = true;
-        console.log('Loading single product...');
       })
       .addCase(getProduct.fulfilled, (state, action) => {
         state.loading = false;

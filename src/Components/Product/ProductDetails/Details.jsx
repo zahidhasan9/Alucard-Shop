@@ -6,8 +6,8 @@ const reviewsData = [
   { id: 3, name: 'Mike Johnson', rating: 5, comment: 'Highly recommend!', date: 'March 28, 2025' }
 ];
 const size = ['S', 'M', 'L', 'XL', 'XXL'];
+
 const Details = ({ product }) => {
-  console.log(product);
   const [selectedImage, setSelectedImage] = useState(product?.images?.[0]);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
@@ -50,7 +50,7 @@ const Details = ({ product }) => {
         <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
         <div className="flex items-center gap-3">
           <span className="text-2xl font-semibold text-gray-800">TK {product.price.toFixed(2)}</span>
-          <span className="text-lg line-through text-gray-400">TK {'product.originalPrice.toFixed(2)'}</span>
+          <span className="text-lg line-through text-gray-400">TK {product.price.toFixed(2)}</span>
           <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">{'discount'}% OFF</span>
         </div>
         <div className="text-yellow-500 text-sm">

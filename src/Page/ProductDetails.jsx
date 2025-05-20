@@ -4,9 +4,10 @@ import Loader from '../Components/Loader';
 import Breadcrumb from '../Components/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProduct } from '../features/productSlice';
+import { getProductReviews } from '../features/reviewSlice';
 import Details from '../Components/Product/ProductDetails/Details';
-import RelatedProducts from '../Components/Product/ProductDetails/RelatedProducts';
 import Reviews from '../Components/Product/ProductDetails/Reviews';
+import RelatedProducts from '../Components/Product/ProductDetails/RelatedProducts';
 
 const productData = {
   id: 73240,
@@ -34,17 +35,16 @@ const productData = {
 
 const ProductView = () => {
   const { product, loading, error } = useSelector((state) => state.product);
-  console.log('p', product);
   const dispatch = useDispatch();
 
   // const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
   const { id } = useParams();
-  console.log('Got ID from URL:', id);
   useEffect(() => {
     if (id) {
       dispatch(getProduct(id));
     }
+    // dispatch(getProductReviews(id));
   }, [dispatch, id]);
 
   // if (loading || !product?._id) {
@@ -55,7 +55,6 @@ const ProductView = () => {
   if (loading) return <Loader />;
   if (error) return <p className="text-center text-red-600">{error}</p>;
   if (!product?._id) return <p className="text-center text-gray-500">Product not found</p>;
-  console.log(loading);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -69,7 +68,7 @@ const ProductView = () => {
           </div>
 
           {/* Reviews */}
-          <Reviews />
+          <Reviews productID={id} />
 
           {/* Related Products */}
           <RelatedProducts />
