@@ -35,7 +35,7 @@ const Reviews = ({ productID }) => {
       setUserComment('');
     } catch (error) {
       console.error('Review submission failed:', error);
-      alert('Failed to submit review. Try again.');
+      // alert('Failed to submit review. Try again.');
     }
   };
 

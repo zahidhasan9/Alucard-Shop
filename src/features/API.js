@@ -42,5 +42,6 @@ export const deleteCategory = (id) => axios.delete(`/api/categories/${id}`);
 // Review Api
 export const createReview = (reviewData) => axios.post('/review', reviewData);
 export const getProductReviews = (productId) => axios.get(`/review/${productId}`);
+export const getUserAllReviews = () => axios.get('review/user');
 export const deleteMyReview = (productId) => axios.delete(`/review/me/${productId}`);
 export const deleteReview = (reviewId) => axios.delete(`/review/${reviewId}`);

@@ -22,6 +22,15 @@ export const getProductReviews = createAsyncThunk('review/getAll', async (produc
   }
 });
 
+export const getUserAllReviews = createAsyncThunk('review/user', async () => {
+  try {
+    const res = await API.getUserAllReviews();
+    return res.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch reviews');
+  }
+});
+
 export const deleteMyReview = createAsyncThunk('review/deleteMine', async (productId, thunkAPI) => {
   try {
     const res = await API.deleteMyReview(productId);
@@ -45,6 +54,7 @@ const reviewSlice = createSlice({
   name: 'review',
   initialState: {
     reviews: [],
+    userallreviews: [],
     loading: true,
     success: false,
     error: null
@@ -83,6 +93,20 @@ const reviewSlice = createSlice({
         state.reviews = action.payload.reviews;
       })
       .addCase(getProductReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload);
+      })
+
+      // Get All Reviews
+      .addCase(getUserAllReviews.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserAllReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userallreviews = action.payload.reviews;
+      })
+      .addCase(getUserAllReviews.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         toast.error(action.payload);
