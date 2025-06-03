@@ -101,6 +101,10 @@ function Navbar() {
     dispatch(setSearchQuery(e.target.value));
   };
 
+  // Cart item count
+  const { cartItems } = useSelector((state) => state.cart);
+  const totalItem = cartItems?.items?.length || 0;
+
   return (
     <nav className="bg-yellow-500 text-black shadow-xl font-sans sticky top-0 z-50 ">
       {/* Top Header */}
@@ -145,10 +149,20 @@ function Navbar() {
         {/* Icons & User */}
         <div className="flex items-center gap-2 sm:gap-3">
           <button
-            className="p-2 rounded-full hover:bg-yellow-400 transition-all duration-200 transform hover:scale-110"
+            className="relative p-2 rounded-full hover:bg-yellow-400 transition-all duration-200 transform hover:scale-110"
             aria-label="Cart"
           >
-            <ShoppingBag className="size-6" />
+            <Link to="/cart">
+              {' '}
+              <ShoppingBag className="size-6" />
+            </Link>
+
+            {/* Cart Count Badge */}
+            {totalItem > 0 && (
+              <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {totalItem}
+              </span>
+            )}
           </button>
 
           {isAuthenticated ? (

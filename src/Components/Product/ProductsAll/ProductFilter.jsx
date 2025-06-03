@@ -167,7 +167,7 @@ const ProductFilter = () => {
                       <div className="w-full flex justify-center">
                         <img className="w-40 h-40 object-cover" src={data.thumbnail} alt={data._id} />
                       </div>
-                      <Link to={`/product/${data._id}`}>
+                      <Link to={`/product/${data.slug}`}>
                         <div className="mt-4 text-center">
                           <h1 className="text-base cursor-pointer text-blue-700 font-medium font-Blinker ">
                             {data.name}

@@ -39,13 +39,13 @@ const ProductView = () => {
 
   // const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
-  const { id } = useParams();
+  const { slug } = useParams();
   useEffect(() => {
-    if (id) {
-      dispatch(getProduct(id));
+    if (slug) {
+      dispatch(getProduct(slug));
     }
-    // dispatch(getProductReviews(id));
-  }, [dispatch, id]);
+    // dispatch(getProductReviews(slug));
+  }, [dispatch, slug]);
 
   // if (loading || !product?._id) {
   //   // Show loader until product is loaded
@@ -68,7 +68,7 @@ const ProductView = () => {
           </div>
 
           {/* Reviews */}
-          <Reviews productID={id} />
+          <Reviews productID={product._id} />
 
           {/* Related Products */}
           <RelatedProducts />

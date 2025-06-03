@@ -43,7 +43,7 @@ const ReviewList = () => {
             <p className="text-sm text-gray-700 mb-3">price: {review.product.price} tk</p>
             <p className="text-sm text-gray-700 mb-3">{review.comment}</p>
             <div className="flex space-x-3">
-              <Link to={`/product/${review.product._id}`} className="text-sm text-blue-600 hover:underline">
+              <Link to={`/product/${review.product.slug}`} className="text-sm text-blue-600 hover:underline">
                 View Product
               </Link>
               {/* <button className="text-sm text-blue-600 hover:underline">Edit</button>

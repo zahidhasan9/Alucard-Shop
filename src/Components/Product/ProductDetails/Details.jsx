@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../../Components/Loader';
+import { addToCart, fetchCart } from '../../../features/cartSlice';
 
 const reviewsData = [
   { id: 1, name: 'John Doe', rating: 5, comment: 'Amazing!', date: 'April 10, 2025' },
@@ -8,15 +12,34 @@ const reviewsData = [
 const size = ['S', 'M', 'L', 'XL', 'XXL'];
 
 const Details = ({ product }) => {
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [selectedImage, setSelectedImage] = useState(product?.images?.[0]);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [activeTab, setActiveTab] = useState('description');
   const avgRating = (reviewsData.reduce((a, r) => a + r.rating, 0) / reviewsData.length).toFixed(1);
 
+  // const handleAddToCart = () => {
+  //   if (!selectedSize) return alert('Please select a size');
+  //   alert(`Added ${quantity} ${selectedSize} size ${product.title} to cart!`);
+  // };
+
   const handleAddToCart = () => {
-    if (!selectedSize) return alert('Please select a size');
-    alert(`Added ${quantity} ${selectedSize} size ${product.title} to cart!`);
+    const cartItem = {
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product?.images?.[0]
+    };
+
+    dispatch(addToCart(cartItem));
+    setTimeout(() => {
+      dispatch(fetchCart());
+    }, 100);
   };
 
   return (
@@ -51,7 +74,7 @@ const Details = ({ product }) => {
         <div className="flex items-center gap-3">
           <span className="text-2xl font-semibold text-gray-800">TK {product.price.toFixed(2)}</span>
           <span className="text-lg line-through text-gray-400">TK {product.price.toFixed(2)}</span>
-          <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">{'discount'}% OFF</span>
+          <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">{product.discount}% OFF</span>
         </div>
         <div className="text-yellow-500 text-sm">
           ★ {avgRating} ({reviewsData.length} reviews)
@@ -88,12 +111,30 @@ const Details = ({ product }) => {
           />
         </div>
 
-        <button
+        {/* Add to Cart */}
+
+        {/* <button
           className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold shadow hover:opacity-90"
           onClick={handleAddToCart}
         >
           Add to Cart
-        </button>
+        </button> */}
+
+        {!user ? (
+          <button
+            onClick={() => navigate('/login')}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold shadow hover:opacity-90"
+          >
+            Login to Add
+          </button>
+        ) : (
+          <button
+            onClick={() => handleAddToCart(product)}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold shadow hover:opacity-90"
+          >
+            Add to Cart
+          </button>
+        )}
 
         {/* Tabs */}
         <div>

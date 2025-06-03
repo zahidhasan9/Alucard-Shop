@@ -26,13 +26,13 @@ export const getProducts = ({ limit = 10, skip = 0, search = '', category, sort,
   });
 export const createProduct = (data) => axios.post('/product', data);
 // export const getProducts = () => axios.get('/product');
-export const getProduct = (id) => axios.get(`/product/${id}`);
+export const getProduct = (slug) => axios.get(`/product/${slug}`);
 export const updateProduct = (id, data) => axios.put(`/product/${id}`, data);
 export const deleteProduct = (id) => axios.delete(`/product/${id}`);
 export const createProductReview = (id, review) => axios.post(`/product/${id}/reviews`, review);
 export const getTopProducts = () => axios.get('/product/top');
 
-// Products Api
+// category Api
 export const getAllCategories = () => axios.get('/category');
 export const createCategory = (data) => axios.post('/api/categories', data);
 export const getCategory = (id) => axios.get(`/api/categories/${id}`);
@@ -45,3 +45,11 @@ export const getProductReviews = (productId) => axios.get(`/review/${productId}`
 export const getUserAllReviews = () => axios.get('review/user');
 export const deleteMyReview = (productId) => axios.delete(`/review/me/${productId}`);
 export const deleteReview = (reviewId) => axios.delete(`/review/${reviewId}`);
+
+// Cart Api
+// Get Cart
+export const fetchCart = () => axios.get('/cart');
+export const addToCart = (product) => axios.post('/cart/add', product);
+// export const updateCartItem = (productId, quantity) => axios.put(`/cart/update/${productId}`, {productId, quantity });
+export const updateCartItem = (productId, quantity) => axios.put(`/cart/update`, { productId, quantity });
+export const removeFromCart = (productId) => axios.delete(`/cart/remove/${productId}`);

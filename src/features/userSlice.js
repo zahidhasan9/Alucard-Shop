@@ -153,10 +153,10 @@ const userSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        // state.user = action.payload.user;
+        // state.token = action.payload.token;
         state.success = true;
-        state.isAuthenticated = true;
+        // state.isAuthenticated = true;
         toast.success('Registration successful'); // success toast on register
       })
       .addCase(register.rejected, (state, action) => {

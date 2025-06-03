@@ -44,9 +44,9 @@ export const getProducts = createAsyncThunk(
   }
 );
 // Get Single Product
-export const getProduct = createAsyncThunk('product/getOne', async (id, thunkAPI) => {
+export const getProduct = createAsyncThunk('product/getOne', async (slug, thunkAPI) => {
   try {
-    const res = await API.getProduct(id);
+    const res = await API.getProduct(slug);
     return res.data;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch product');

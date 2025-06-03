@@ -9,6 +9,7 @@ import ProductsAll from './Page/ProductsAll';
 import Newsletter from './Components/Newsletter';
 import ProductDetails from './Page/ProductDetails';
 import UserDashboard from './Page/UserDashboard';
+import CartPage from './Page/CartPage';
 import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
 import ForgotPasswordPage from './Page/ForgotPassword';
@@ -63,14 +64,14 @@ function App() {
               <FlashSell />
               <ProductCardSet />
               <Newsletter />
-              <ToastTestButton />
             </>
           }
         />
-        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/products" element={<ProductsAll />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
         <Route element={<PrivateRoute />}>

@@ -1,5 +1,7 @@
-import React from 'react';
-import { Github, Facebook, Twitter } from 'lucide-react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Github, Facebook, Twitter, ShoppingCart } from 'lucide-react';
+import CartSidebar from './CertSidebar';
 
 const Footer = () => {
   const quickLinks = [
@@ -22,8 +24,28 @@ const Footer = () => {
     { href: '#', icon: <Twitter className="w-5 h-5" /> }
   ];
 
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const { cartItems } = useSelector((state) => state.cart);
+  const totalItem = cartItems?.items?.length || 0;
+
   return (
-    <footer className="bg-yellow-500 text-white py-12">
+    <footer className="bg-yellow-500 text-white py-12 relative">
+      <div className="p-6 ">
+        <button
+          className="fixed top-96 right-1 bg-yellow-400 p-2 rounded-full shadow z-50 "
+          onClick={() => setIsCartOpen(true)}
+        >
+          <div className="relative inline-block">
+            <ShoppingCart className="h-6 w-6 text-black" />
+            <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
+              {totalItem}
+            </span>
+          </div>
+        </button>
+
+        <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      </div>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
