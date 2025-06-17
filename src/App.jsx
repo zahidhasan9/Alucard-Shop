@@ -14,6 +14,7 @@ import LoginPage from './Page/Login';
 import RegisterPage from './Page/Register';
 import ForgotPasswordPage from './Page/ForgotPassword';
 import ResetPassword from './Page/ResetPassword';
+import OrderPage from './Page/OrderPage';
 import Footer from './Components/Footer';
 
 import Navbar2 from './Components/Navbar/Navbar-two';
@@ -76,6 +77,9 @@ function App() {
         <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<UserDashboard />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/order" element={<OrderPage />} />
         </Route>
         {/* Add more routes here */}
       </Routes>

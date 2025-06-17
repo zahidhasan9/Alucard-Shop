@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as API from './API';
 import toast from 'react-hot-toast';
 
-// ✅ Fetch Cart
+//  Fetch Cart
 export const fetchCart = createAsyncThunk('cart/fetch', async (_, thunkAPI) => {
   try {
     const res = await API.fetchCart();
@@ -12,7 +12,7 @@ export const fetchCart = createAsyncThunk('cart/fetch', async (_, thunkAPI) => {
   }
 });
 
-// ✅ Add to Cart
+//  Add to Cart
 export const addToCart = createAsyncThunk('cart/add', async (product, thunkAPI) => {
   try {
     const res = await API.addToCart(product);
@@ -22,7 +22,7 @@ export const addToCart = createAsyncThunk('cart/add', async (product, thunkAPI) 
   }
 });
 
-// ✅ Update Cart Item Quantity
+//  Update Cart Item Quantity
 export const updateCartItem = createAsyncThunk('cart/update', async ({ productId, quantity }, thunkAPI) => {
   try {
     const res = await API.updateCartItem(productId, quantity);
@@ -32,7 +32,7 @@ export const updateCartItem = createAsyncThunk('cart/update', async ({ productId
   }
 });
 
-// ✅ Remove From Cart
+//  Remove From Cart
 export const removeFromCart = createAsyncThunk('cart/remove', async (productId, thunkAPI) => {
   try {
     await API.removeFromCart(productId);
@@ -62,7 +62,7 @@ const cartSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ✅ Fetch Cart
+      //  Fetch Cart
       .addCase(fetchCart.pending, (state) => {
         state.loading = true;
       })
@@ -77,7 +77,7 @@ const cartSlice = createSlice({
         // toast.error(action.payload);
       })
 
-      // ✅ Add to Cart
+      //  Add to Cart
       .addCase(addToCart.pending, (state) => {
         state.loading = true;
       })
@@ -93,7 +93,7 @@ const cartSlice = createSlice({
         toast.error(action.payload);
       })
 
-      // ✅ Update Cart Item
+      // Update Cart Item
       .addCase(updateCartItem.pending, (state) => {
         state.loading = true;
       })
@@ -112,7 +112,7 @@ const cartSlice = createSlice({
         toast.error(action.payload);
       })
 
-      // ✅ Remove From Cart
+      //  Remove From Cart
       .addCase(removeFromCart.pending, (state) => {
         state.loading = true;
       })
