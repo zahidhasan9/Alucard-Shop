@@ -15,6 +15,7 @@ import RegisterPage from './Page/Register';
 import ForgotPasswordPage from './Page/ForgotPassword';
 import ResetPassword from './Page/ResetPassword';
 import OrderPage from './Page/OrderPage';
+import OrderSuccessPage from './Page/OderSuccessPage';
 import Footer from './Components/Footer';
 
 import Navbar2 from './Components/Navbar/Navbar-two';
@@ -80,6 +81,9 @@ function App() {
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/order" element={<OrderPage />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/ordersucess" element={<OrderSuccessPage />} />
         </Route>
         {/* Add more routes here */}
       </Routes>

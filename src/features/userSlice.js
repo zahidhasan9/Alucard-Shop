@@ -131,7 +131,6 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        console.log('cd', action.payload.token);
         state.success = true;
         state.isAuthenticated = true;
         localStorage.setItem('token', action.payload.token); // <-- Save token

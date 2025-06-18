@@ -1,3 +1,9 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { PartyPopper } from 'lucide-react';
+import { fetchMyOrders } from '../../features/OrderSlice';
+
 const OrderList = () => {
   const orders = [
     {
@@ -9,6 +15,15 @@ const OrderList = () => {
     }
     // আরও order চাইলে এখানে add করতে পারো
   ];
+  const { myOrders } = useSelector((state) => state.Order);
+  console.log('order', myOrders);
+  const { user } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchMyOrders());
+  }, [navigate]);
 
   return (
     <div className="border border-gray-200 rounded-xl shadow-sm p-6 bg-white">
@@ -38,15 +53,24 @@ const OrderList = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {orders.map((order, index) => (
+            {myOrders?.map((order, index) => (
               <tr key={index} className="hover:bg-gray-50 transition">
-                <td className="px-6 py-4 font-medium text-gray-900">{order.orderNumber}</td>
-                <td className="px-6 py-4">{order.createdAt}</td>
-                <td className="px-6 py-4">{order.total}</td>
-                <td className="px-6 py-4">{order.paymentMethod}</td>
+                <td className="px-6 py-4 md:text-sm text-xs  font-medium text-gray-900">{order?.orderId || ''}</td>
+                <td className="px-6 py-4"> {new Date(order?.createdAt).toLocaleDateString() || ''}</td>
+                <td className="px-6 py-4">{order?.totalPrice || ''} tk</td>
+                {/* <td className="px-6 py-4">{order?.paymentMethod?.method=='cod' || ''}</td> */}
+                <td className="px-6 py-4">
+                  {order?.paymentMethod?.method === 'cod'
+                    ? 'COD'
+                    : order?.paymentMethod?.method === 'online'
+                    ? 'Online Payment'
+                    : order?.paymentMethod?.method === 'pos'
+                    ? 'POS on Delivery'
+                    : ''}
+                </td>
                 <td className="px-6 py-4">
                   <span className="inline-block px-3 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">
-                    {order.status}
+                    {order?.paymentMethod?.status}
                   </span>
                 </td>
                 <td className="px-6 py-4">

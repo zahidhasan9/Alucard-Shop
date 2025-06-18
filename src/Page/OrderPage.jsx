@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCart } from '../features/cartSlice.js';
 import { getAllAddresses } from '../features/addressSlice.js';
+import { createOrder } from '../features/OrderSlice.js';
 import { User } from 'lucide-react';
 
 const OrderPage = () => {
@@ -21,15 +22,9 @@ const OrderPage = () => {
     email: ''
   });
 
-  console.log('address');
-
   useEffect(() => {
     dispatch(fetchCart());
     dispatch(getAllAddresses());
-
-    // if (addresses?.length > 0) {
-    //   setAddress(addresses[0]);
-    // }
   }, [dispatch]);
   useEffect(() => {
     const defaultAddress = addresses.find((addr) => addr.isDefault === true);
@@ -53,11 +48,31 @@ const OrderPage = () => {
       [name]: value
     }));
   };
+
+  //shippingMethod
+  const [shippingMethod, setShippingMethod] = useState('home'); // default 'home'
+  const getShippingFee = () => {
+    switch (shippingMethod) {
+      case 'home':
+        return 60;
+      case 'pickup':
+        return 0;
+      case 'express':
+        return 300;
+      default:
+        return 160;
+    }
+  };
+
+  const shippingFee = getShippingFee();
   const subtotal = cartItems?.items?.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0) || 0;
-  const shippingFee = 160;
+  // const shippingFee = 160;
   const total = subtotal + shippingFee;
 
   // -------------order---------
+
+  const [paymentMethod, setPaymentMethod] = useState('cod'); // default
+
   const onSubmit = async () => {
     if (!isTermsAccepted) {
       alert('Please accept the terms and conditions.');
@@ -79,7 +94,7 @@ const OrderPage = () => {
         country: address.division // You can map division as country or rename key
       },
       paymentMethod: {
-        method: 'cod', // তুমি চাইলে UI থেকে choice নিতে পারো
+        method: paymentMethod,
         status: 'pending',
         paidAt: null
       },
@@ -88,26 +103,10 @@ const OrderPage = () => {
       shippingPrice: shippingFee,
       totalPrice: total
     };
-
-    try {
-      setIsLoading(true);
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}` // যদি JWT authentication থাকে
-        }
-      };
-
-      const { data } = await axios.post('/api/orders', orderData, config);
-      console.log('Order created:', data);
-      navigate('/order-confirmation');
-    } catch (error) {
-      console.error('Order submission failed:', error.response?.data || error.message);
-      alert('Order failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    dispatch(createOrder(orderData));
+    // navigate('/order-confirmation');
   };
+
   // ---------------------------
 
   // term and condition
@@ -161,6 +160,7 @@ const OrderPage = () => {
                   className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   type="email"
                   placeholder="Email"
+                  onChange={handleAddressChange}
                   value={address.email}
                   name="email"
                 />
@@ -168,6 +168,7 @@ const OrderPage = () => {
                   className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="City"
                   name="city"
+                  onChange={handleAddressChange}
                   value={address.city}
                 />
                 <select
@@ -201,15 +202,36 @@ const OrderPage = () => {
               <h2 className="text-xl font-semibold text-yellow-700"> Payment Method</h2>
               <div className="space-y-2 text-gray-800">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="payment" defaultChecked className="accent-yellow-500" />
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="accent-yellow-500"
+                  />
                   Cash on Delivery
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="payment" className="accent-yellow-500" />
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="online"
+                    checked={paymentMethod === 'online'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="accent-yellow-500"
+                  />
                   Online Payment
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="payment" className="accent-yellow-500" />
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="pos"
+                    checked={paymentMethod === 'pos'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="accent-yellow-500"
+                  />
                   POS on Delivery
                 </label>
               </div>
@@ -222,15 +244,36 @@ const OrderPage = () => {
             <div className="bg-white p-6 rounded-2xl shadow border-l-4 border-yellow-700 space-y-4">
               <h2 className="text-xl font-semibold text-yellow-800"> Delivery Method</h2>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="delivery" defaultChecked className="accent-yellow-600" />
+                <input
+                  type="radio"
+                  name="delivery"
+                  value="home"
+                  checked={shippingMethod === 'home'}
+                  onChange={(e) => setShippingMethod(e.target.value)}
+                  className="accent-yellow-600"
+                />
                 Home Delivery - 60৳
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="delivery" className="accent-yellow-600" />
+                <input
+                  type="radio"
+                  name="delivery"
+                  value="pickup"
+                  checked={shippingMethod === 'pickup'}
+                  onChange={(e) => setShippingMethod(e.target.value)}
+                  className="accent-yellow-600"
+                />
                 Store Pickup - 0৳
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="delivery" className="accent-yellow-600" />
+                <input
+                  type="radio"
+                  name="delivery"
+                  value="express"
+                  checked={shippingMethod === 'express'}
+                  onChange={(e) => setShippingMethod(e.target.value)}
+                  className="accent-yellow-600"
+                />
                 Express Delivery - 300৳
               </label>
             </div>
@@ -280,11 +323,10 @@ const OrderPage = () => {
                   <th className="px-4 py-2">Total</th>
                 </tr>
               </thead>
-
-              {cartItems?.items?.length > 0 ? (
-                cartItems?.items?.map((item) => (
-                  <tbody className="text-yellow-900 text-xs md:text-sm">
-                    <tr className="border-b border-yellow-300">
+              <tbody className="text-yellow-900 text-xs md:text-sm">
+                {cartItems?.items?.length > 0 ? (
+                  cartItems?.items?.map((item, idx) => (
+                    <tr key={idx} className="border-b border-yellow-300">
                       <td className="px-4 py-3 flex items-center gap-2">
                         {item.image && (
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" />
@@ -297,15 +339,15 @@ const OrderPage = () => {
                       </td>
                       <td className="px-4 py-2">{item.price * item.quantity}৳</td>
                     </tr>
-                  </tbody>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-6 text-center text-gray-500">
-                    Your cart is empty.
-                  </td>
-                </tr>
-              )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="py-6 text-center text-gray-500">
+                      Your cart is empty.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
             </table>
 
             {/* total */}
@@ -353,7 +395,7 @@ const OrderPage = () => {
             </span>
           </label>
           <button
-            onClick={''}
+            onClick={onSubmit}
             disabled={!isTermsAccepted}
             className={`w-40 bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-900 transition
               ${!isTermsAccepted ? 'opacity-50 cursor-not-allowed' : ''}`}

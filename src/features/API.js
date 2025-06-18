@@ -47,9 +47,18 @@ export const deleteMyReview = (productId) => axios.delete(`/review/me/${productI
 export const deleteReview = (reviewId) => axios.delete(`/review/${reviewId}`);
 
 // Cart Api
-// Get Cart
 export const fetchCart = () => axios.get('/cart');
 export const addToCart = (product) => axios.post('/cart/add', product);
-// export const updateCartItem = (productId, quantity) => axios.put(`/cart/update/${productId}`, {productId, quantity });
 export const updateCartItem = (productId, quantity) => axios.put(`/cart/update`, { productId, quantity });
 export const removeFromCart = (productId) => axios.delete(`/cart/remove/${productId}`);
+// export const updateCartItem = (productId, quantity) => axios.put(`/cart/update/${productId}`, {productId, quantity });
+
+// Order Api
+export const createOrder = (orderData) => axios.post('/order/', orderData);
+export const getMyOrders = () => axios.get('/order/my-orders'); // Get user's own orders
+export const getLastOrder = () => axios.get('/order/last-orders'); // Get user's Last orders
+export const getOrderById = (orderId) => axios.get(`/orders/${orderId}`); // Get single order by ID
+export const payOrder = (orderId, paymentResult) => axios.put(`/orders/${orderId}/pay`, paymentResult); // Update order to paid
+export const deliverOrder = (orderId) => axios.put(`/orders/${orderId}/deliver`); // Update order to delivered (admin only)
+// Get all orders (admin only)
+export const getAllOrders = () => axios.get('/orders');
