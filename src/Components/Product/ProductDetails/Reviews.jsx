@@ -51,8 +51,8 @@ const Reviews = ({ productID }) => {
       <section className="mt-10 bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {reviews.map((review) => (
-            <div key={review.id} className="p-4 border rounded-lg bg-gray-50 shadow-sm">
+          {reviews.map((review, idx) => (
+            <div key={idx} className="p-4 border rounded-lg bg-gray-50 shadow-sm">
               <div className="text-sm font-semibold">{review.user?.firstName}</div>
               <div className="text-yellow-400 text-sm">
                 {'★'.repeat(review.rating)}

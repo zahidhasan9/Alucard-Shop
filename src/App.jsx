@@ -16,6 +16,8 @@ import ForgotPasswordPage from './Page/ForgotPassword';
 import ResetPassword from './Page/ResetPassword';
 import OrderPage from './Page/OrderPage';
 import OrderSuccessPage from './Page/OderSuccessPage';
+import OrderDetails from './Page/OrderDetails';
+import InvoicePage from './Page/Invoice';
 import Footer from './Components/Footer';
 
 import Navbar2 from './Components/Navbar/Navbar-two';
@@ -85,6 +87,13 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/ordersucess" element={<OrderSuccessPage />} />
         </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/view-order/:id" element={<OrderDetails />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/invoice/:id" element={<InvoicePage />} />
+        </Route>
+
         {/* Add more routes here */}
       </Routes>
       <Toaster position="top-right" reverseOrder={false} />

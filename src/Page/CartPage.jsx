@@ -7,6 +7,11 @@ import { Plus, Minus, Trash2 } from 'lucide-react';
 const CartTable = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate('/order');
+  };
 
   useEffect(() => {
     dispatch(fetchCart());
@@ -135,12 +140,13 @@ const CartTable = () => {
                   <span className="text-xl font-bold text-green-600">৳ {total}</span>
                 </div>
                 <button
+                  onClick={handleNavigate}
                   disabled={!cartItems?.items?.length}
                   className={`w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 rounded font-medium ${
                     !cartItems?.items?.length && 'opacity-50 cursor-not-allowed'
                   }`}
                 >
-                  Checkout
+                  <Link> Checkout</Link>
                 </button>
               </div>
             </div>

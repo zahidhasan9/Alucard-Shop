@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCart } from '../features/cartSlice.js';
 import { getAllAddresses } from '../features/addressSlice.js';
@@ -8,10 +8,11 @@ import { User } from 'lucide-react';
 
 const OrderPage = () => {
   const { cartItems } = useSelector((state) => state.cart);
+  console.log(cartItems);
   const { addresses } = useSelector((state) => state.addressReducer);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
+  console.log(cartItems);
   const [address, setAddress] = useState({
     fullName: '',
     phone: '',
@@ -85,13 +86,14 @@ const OrderPage = () => {
         name: item.name,
         qty: item.quantity,
         price: item.price,
-        image: item.image
+        image: item.image,
+        slug: item.slug
       })),
       shippingAddress: {
         address: address.street,
         city: address.city,
         postalCode: address.postalCode,
-        country: address.division // You can map division as country or rename key
+        division: address.division // You can map division as country or rename key
       },
       paymentMethod: {
         method: paymentMethod,
@@ -104,7 +106,9 @@ const OrderPage = () => {
       totalPrice: total
     };
     dispatch(createOrder(orderData));
-    // navigate('/order-confirmation');
+    setTimeout(() => {
+      navigate('/ordersucess');
+    }, 500);
   };
 
   // ---------------------------
@@ -112,19 +116,6 @@ const OrderPage = () => {
   // term and condition
   const navigate = useNavigate();
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-
-  // const onSubmit = (data) => {
-  //   if (!isTermsAccepted) {
-  //     alert('Please accept the terms and conditions.');
-  //     return;
-  //   }
-  //   setIsLoading(true);
-  //   // Simulate order submission
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //     navigate('/order-confirmation');
-  //   }, 1000);
-  // };
 
   return (
     <div className="bg-gradient-to-br from-yellow-50 via-white to-yellow-100 font-Work_sans min-h-screen px-4 py-12">
@@ -147,7 +138,8 @@ const OrderPage = () => {
                 <input
                   className="w-full md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   placeholder="Address"
-                  value={address.division + ' ' + address.city + ' ' + address.street || ''}
+                  name="street"
+                  value={address.street || ''}
                   onChange={handleAddressChange}
                 />
                 <input

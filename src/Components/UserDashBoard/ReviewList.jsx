@@ -16,10 +16,10 @@ const ReviewList = () => {
     <div className="border border-gray-200 rounded-xl shadow-sm p-6 bg-white">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">My Reviews</h2>
       <div className="space-y-4">
-        {reviews.map((review, index) => (
+        {reviews?.map((review, index) => (
           <div key={index} className="border border-gray-200 rounded-md p-4 hover:shadow-md transition">
             <div className="flex justify-between items-center mb-1">
-              <h3 className="text-base font-medium text-gray-800">{review.product.name}</h3>
+              <h3 className="text-base font-medium text-gray-800">{review?.product?.name}</h3>
               <span className="text-xs text-gray-500">
                 {new Date(review.createdAt).toLocaleDateString('en-GB', {
                   year: 'numeric',
@@ -40,10 +40,10 @@ const ReviewList = () => {
                 </svg>
               ))}
             </div>
-            <p className="text-sm text-gray-700 mb-3">price: {review.product.price} tk</p>
+            <p className="text-sm text-gray-700 mb-3">price: {review?.product?.price} tk</p>
             <p className="text-sm text-gray-700 mb-3">{review.comment}</p>
             <div className="flex space-x-3">
-              <Link to={`/product/${review.product.slug}`} className="text-sm text-blue-600 hover:underline">
+              <Link to={`/product/${review?.product?.slug}`} className="text-sm text-blue-600 hover:underline">
                 View Product
               </Link>
               {/* <button className="text-sm text-blue-600 hover:underline">Edit</button>

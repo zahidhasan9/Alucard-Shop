@@ -1,23 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { PartyPopper } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { fetchMyOrders } from '../../features/OrderSlice';
 
 const OrderList = () => {
-  const orders = [
-    {
-      orderNumber: '#SF-10000059',
-      createdAt: '29 Apr 2025 07:23:03',
-      total: '$620.40 for 1 item(s)',
-      paymentMethod: 'Cash on delivery (COD)',
-      status: 'Pending'
-    }
-    // আরও order চাইলে এখানে add করতে পারো
-  ];
   const { myOrders } = useSelector((state) => state.Order);
-  console.log('order', myOrders);
-  const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -39,7 +26,7 @@ const OrderList = () => {
                 Created At
               </th>
               <th scope="col" className="px-6 py-4">
-                Total
+                {'    '}Total{'     '}
               </th>
               <th scope="col" className="px-6 py-4">
                 Payment Method
@@ -57,7 +44,14 @@ const OrderList = () => {
               <tr key={index} className="hover:bg-gray-50 transition">
                 <td className="px-6 py-4 md:text-sm text-xs  font-medium text-gray-900">{order?.orderId || ''}</td>
                 <td className="px-6 py-4"> {new Date(order?.createdAt).toLocaleDateString() || ''}</td>
-                <td className="px-6 py-4">{order?.totalPrice || ''} tk</td>
+                <td className="px-6 py-4">
+                  {order?.totalPrice?.toLocaleString('en-BD', {
+                    style: 'currency',
+                    currency: 'BDT',
+                    minimumFractionDigits: 0
+                  })}
+                  ৳
+                </td>
                 {/* <td className="px-6 py-4">{order?.paymentMethod?.method=='cod' || ''}</td> */}
                 <td className="px-6 py-4">
                   {order?.paymentMethod?.method === 'cod'
@@ -74,7 +68,12 @@ const OrderList = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="text-blue-600 hover:underline text-sm font-medium">View</button>
+                  <Link
+                    to={`/view-order/${order.orderId}`}
+                    className="text-blue-600 hover:underline text-sm font-medium"
+                  >
+                    View
+                  </Link>
                 </td>
               </tr>
             ))}

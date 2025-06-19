@@ -15,7 +15,6 @@ const Details = ({ product }) => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [selectedImage, setSelectedImage] = useState(product?.images?.[0]);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
@@ -33,7 +32,8 @@ const Details = ({ product }) => {
       name: product.name,
       price: product.price,
       quantity,
-      image: product?.images?.[0]
+      image: product?.images?.[0],
+      slug: product?.slug
     };
 
     dispatch(addToCart(cartItem));
