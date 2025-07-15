@@ -73,7 +73,7 @@ const Details = ({ product }) => {
         <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
         <div className="flex items-center gap-3">
           <span className="text-2xl font-semibold text-gray-800">TK {product.price.toFixed(2)}</span>
-          <span className="text-lg line-through text-gray-400">TK {product.price.toFixed(2)}</span>
+          <span className="text-lg line-through text-gray-400">TK {product.oldPrice.toFixed(2)}</span>
           <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">{product.discount}% OFF</span>
         </div>
         <div className="text-yellow-500 text-sm">
@@ -152,13 +152,13 @@ const Details = ({ product }) => {
             ))}
           </div>
           <div className="mt-4 text-gray-700 text-sm leading-relaxed">
-            {activeTab === 'description' ? (
+            {activeTab === 'details' ? (
               <p>{product.description}</p>
             ) : (
               <ul className="list-disc pl-5 space-y-1">
-                {Object.entries(product.details).map(([key, val]) => (
-                  <li key={key}>
-                    <strong>{key[0].toUpperCase() + key.slice(1)}:</strong> {val}
+                {product.details.map((item, idx) => (
+                  <li key={idx}>
+                    <strong>{item.key.toUpperCase()}:</strong> {item.value}
                   </li>
                 ))}
               </ul>
