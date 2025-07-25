@@ -27,6 +27,7 @@ export const getProducts = ({ limit = 10, skip = 0, search = '', category, sort,
 export const createProduct = (data) => axios.post('/product', data);
 // export const getProducts = () => axios.get('/product');
 export const fetchFeaturedProducts = () => axios.get('/product/featured');
+export const fetchFlashsellProducts = () => axios.get('/product//flashsell');
 export const getProduct = (slug) => axios.get(`/product/${slug}`);
 export const updateProduct = (id, data) => axios.put(`/product/${id}`, data);
 export const deleteProduct = (id) => axios.delete(`/product/${id}`);

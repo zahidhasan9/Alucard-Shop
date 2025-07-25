@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 const initialState = {
   order: null,
   orders: [],
+  delivered: '',
   myOrders: [],
   lastOrder: null,
   loading: false,
@@ -117,7 +118,8 @@ const orderSlice = createSlice({
       })
       .addCase(fetchMyOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.myOrders = action.payload;
+        state.myOrders = action.payload.orders;
+        state.delivered = action.payload;
       })
       .addCase(fetchMyOrders.rejected, (state, action) => {
         state.loading = false;

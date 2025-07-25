@@ -49,10 +49,26 @@ const UserDashboard = () => {
               {/* Order Status */}
               <div>
                 <h2 className="text-lg font-semibold mb-3 text-gray-800">Order Status</h2>
-                <p className="text-yellow-600 font-semibold text-sm">
-                  {' '}
-                  {order?.isDelivered ? 'Delivered' : 'Processing'}
-                </p>
+                {order?.Delivery === 'pending' && (
+                  <p className="text-sm font-semibold px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 inline-block">
+                    Pending
+                  </p>
+                )}
+                {order?.Delivery === 'confirmed' && (
+                  <p className="text-sm font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-800 inline-block">
+                    Confirmed
+                  </p>
+                )}
+                {order?.Delivery === 'shipped' && (
+                  <p className="text-sm font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 inline-block">
+                    Shipped
+                  </p>
+                )}
+                {order?.Delivery === 'delivered' && (
+                  <p className="text-sm font-semibold px-3 py-1 rounded-full bg-green-100 text-green-800 inline-block">
+                    Delivered
+                  </p>
+                )}
               </div>
             </div>
 

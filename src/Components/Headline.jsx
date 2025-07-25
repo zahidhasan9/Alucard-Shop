@@ -5,11 +5,11 @@ const Headline = () => {
     title: '🚧 This website is still updating — Stay tuned for latest features and announcements!'
   };
 
-  // Marquee effect using custom CSS added to head (only once)
+  // Marquee effect with soft animation
   useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `
-      @keyframes marquee {
+      @keyframes softMarquee {
         0% { transform: translateX(100%); }
         100% { transform: translateX(-100%); }
       }
@@ -17,16 +17,16 @@ const Headline = () => {
       .marquee {
         display: inline-block;
         white-space: nowrap;
-        animation: marquee 15s linear infinite;
+        animation: softMarquee 20s linear infinite;
       }
     `;
     document.head.appendChild(style);
   }, []);
 
   return (
-    <div className="w-full bg-yellow-100 border-t-2 border-b-2 border-yellow-400 overflow-hidden">
-      <div className="marquee py-2 px-4">
-        <span className="text-md md:text-lg font-semibold text-yellow-700">{data.title}</span>
+    <div className="w-full bg-gradient-to-r from-yellow-50 to-yellow-100 border-y border-yellow-300 overflow-hidden shadow-sm">
+      <div className="marquee py-3 px-6">
+        <span className="text-base md:text-lg font-medium text-yellow-800 tracking-wide">{data.title}</span>
       </div>
     </div>
   );

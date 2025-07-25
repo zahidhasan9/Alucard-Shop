@@ -35,6 +35,7 @@ export const getProducts = createAsyncThunk(
   'product/fetchProducts',
   async ({ page = 1, limit = 10, search = '', category, sort, maxPrice, minPrice }, thunkAPI) => {
     try {
+      console.log('search', typeof search);
       const skip = (page - 1) * limit;
       const response = await API.getProducts({ limit, skip, search, category, sort, maxPrice, minPrice });
       return { ...response.data, page };
@@ -48,6 +49,16 @@ export const getProducts = createAsyncThunk(
 export const getFeaturedProducts = createAsyncThunk('product/Featured', async (_, thunkAPI) => {
   try {
     const res = await API.fetchFeaturedProducts();
+    return res.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch product');
+  }
+});
+
+// Get Flash sell Products
+export const getFlashsellProducts = createAsyncThunk('product/Flashsell', async (_, thunkAPI) => {
+  try {
+    const res = await API.fetchFlashsellProducts();
     return res.data;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch product');
@@ -109,6 +120,7 @@ const productSlice = createSlice({
   initialState: {
     products: [],
     featuredPro: [],
+    flashPro: [],
     product: {},
     loading: true,
     total: 0,
@@ -163,7 +175,7 @@ const productSlice = createSlice({
         state.products = [];
       })
 
-      // Get All
+      // Get Featured Products
       .addCase(getFeaturedProducts.pending, (state) => {
         state.loading = true;
       })
@@ -173,6 +185,23 @@ const productSlice = createSlice({
         state.featuredPro = action.payload;
       })
       .addCase(getFeaturedProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        // toast.error(action.payload);
+        toast.error('Product not availbale');
+        state.products = [];
+      })
+
+      // Get Flash sell Products
+      .addCase(getFlashsellProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getFlashsellProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.flashPro = action.payload;
+      })
+      .addCase(getFlashsellProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         // toast.error(action.payload);
