@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar/Navbar';
+import Headline from './Components/Headline';
 import Carousel from './Components/Carousel';
 import Banner from './Components/Banner';
 import FlashSell from './Components/FlashSell';
@@ -65,6 +66,7 @@ function App() {
             <>
               <Carousel />
               <Banner />
+              <Headline />
               <FlashSell />
               <ProductCardSet />
               <Newsletter />

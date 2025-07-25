@@ -43,6 +43,17 @@ export const getProducts = createAsyncThunk(
     }
   }
 );
+
+// Get Featured Products
+export const getFeaturedProducts = createAsyncThunk('product/Featured', async (_, thunkAPI) => {
+  try {
+    const res = await API.fetchFeaturedProducts();
+    return res.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch product');
+  }
+});
+
 // Get Single Product
 export const getProduct = createAsyncThunk('product/getOne', async (slug, thunkAPI) => {
   try {
@@ -97,6 +108,7 @@ const productSlice = createSlice({
   name: 'product',
   initialState: {
     products: [],
+    featuredPro: [],
     product: {},
     loading: true,
     total: 0,
@@ -144,6 +156,23 @@ const productSlice = createSlice({
         state.page = action.payload.page;
       })
       .addCase(getProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        // toast.error(action.payload);
+        toast.error('Product not availbale');
+        state.products = [];
+      })
+
+      // Get All
+      .addCase(getFeaturedProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getFeaturedProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.featuredPro = action.payload;
+      })
+      .addCase(getFeaturedProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         // toast.error(action.payload);
