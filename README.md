@@ -1,51 +1,88 @@
- Features
-👤 User Authentication & Session Management
-Secure Registration & Login
-New users can register and log in using email and password.
+# 🛒 Alucard-Shop
 
-Forgot Password Support
-Users can reset forgotten passwords via email-based recovery system.
+Alucard-Shop is a full-featured MERN-based eCommerce platform that includes user authentication, product management, cart persistence, dynamic reviews, and a full order/invoice system. It supports real-time user sessions with seamless cart storage, making shopping experience smooth and secure.
 
-Persistent Login with Session
-API-based session handling keeps users logged in without repeated logins (even after reloads or long inactivity).
+---
 
-🛒 Cart System with Database Sync
-Persistent Cart
-Cart data is stored in the database. If a user logs out or returns after days, the previous cart items remain intact.
+## 🚀 Live Demo
 
-Server-Side Cart Management
-All cart operations (add, update, remove) are synced with the backend.
+**Frontend:** [https://app-fury-2k25.netlify.app](https://app-fury-2k25.netlify.app)  
+**Backend:** _Link Will be added_
 
-🏠 User Dashboard
-Address Book
+---
 
-Add, edit, delete, and set default delivery addresses
+## ⚙️ Tech Stack
 
-Automatically selected during checkout if marked as default
+- **Frontend:** React.js, Vite, Tailwind CSS, Axios
+- **Backend:** Node.js, Express.js, MongoDB, Mongoose
+- **Authentication:** Session-based auth (cookie)
+- **PDF Invoice:** `pdfkit` or custom invoice generator
+- **Deployment:** Netlify (Frontend), [You can add Railway/Render/Heroku for backend]
 
-Order Overview
+---
 
-See total number of orders placed
+## ✨ Features
 
-Track which orders are delivered
+### 👤 User Authentication & Session Management
 
-Count of reviews submitted
+- Register, login, logout, and forgot password support
+- Session-based persistent login (no repeated logins needed)
+- Password reset via secure token and email
 
-My Reviews
+### 🛒 Cart System with Database Sync
 
-View all submitted reviews
+- Cart items are saved in the database for logged-in users
+- Persistent cart: restored even after logout or device switch
+- Real-time cart update (add, remove, update quantity)
 
-Click any reviewed product to view its details
+### 🏠 User Dashboard
 
-Order History
+- **Address Book**
+  - Add, edit, delete, and set a default shipping address
+  - Default address auto-selected during checkout
 
-View all orders with live status updates (e.g. Processing, Shipped, Delivered)
+- **Order Overview**
+  - Track total orders placed, delivered, and reviews submitted
 
-Download invoices for each order as PDF
+- **My Reviews**
+  - View and manage your submitted product reviews
+  - Click product from review to see full product details
 
-⭐ Product Review System
-Submit and manage product reviews from your dashboard
+- **Order History**
+  - Track all orders with live status (e.g., Pending, Shipped, Delivered)
+  - Download invoices as PDFs for each order
 
-See your personal reviews under the “My Reviews” section
+### 🧾 Invoice System
 
-Each review links back to the associated product
+- Auto-generated invoices available per order
+- Downloadable PDF format
+
+### ⭐ Product Review System
+
+- Submit, view, and delete personal reviews
+- All reviews linked back to their product
+
+---
+
+## 📦 Installation
+
+### 1. Clone the Repositories
+
+```bash
+git clone https://github.com/zahidhasan9/Alucard-Shop.git
+git clone https://github.com/zahidhasan9/Alucard-Shop-Backend.git
+
+2. Install Dependencies
+Frontend
+
+cd Alucard-Shop
+npm install
+
+cd Alucard-Shop-Backend
+npm install
+
+
+PORT=5000
+MONGODB_URI=mongodb+srv://<your-db-url>
+SESSION_SECRET=your_secret_key
+BASE_URL=http://localhost:5000
