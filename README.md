@@ -1,12 +1,51 @@
-# React + Vite
+ Features
+👤 User Authentication & Session Management
+Secure Registration & Login
+New users can register and log in using email and password.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Forgot Password Support
+Users can reset forgotten passwords via email-based recovery system.
 
-Currently, two official plugins are available:
+Persistent Login with Session
+API-based session handling keeps users logged in without repeated logins (even after reloads or long inactivity).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🛒 Cart System with Database Sync
+Persistent Cart
+Cart data is stored in the database. If a user logs out or returns after days, the previous cart items remain intact.
 
-## Expanding the ESLint configuration
+Server-Side Cart Management
+All cart operations (add, update, remove) are synced with the backend.
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+🏠 User Dashboard
+Address Book
+
+Add, edit, delete, and set default delivery addresses
+
+Automatically selected during checkout if marked as default
+
+Order Overview
+
+See total number of orders placed
+
+Track which orders are delivered
+
+Count of reviews submitted
+
+My Reviews
+
+View all submitted reviews
+
+Click any reviewed product to view its details
+
+Order History
+
+View all orders with live status updates (e.g. Processing, Shipped, Delivered)
+
+Download invoices for each order as PDF
+
+⭐ Product Review System
+Submit and manage product reviews from your dashboard
+
+See your personal reviews under the “My Reviews” section
+
+Each review links back to the associated product
