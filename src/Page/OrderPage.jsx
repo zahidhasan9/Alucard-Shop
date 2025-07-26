@@ -124,69 +124,68 @@ const OrderPage = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left: Customer Info */}
-          {addresses && addresses.length > 0 && (
-            <div className="w-full lg:w-2/3 bg-white p-8 rounded-2xl shadow-md space-y-6 border border-yellow-300">
-              <h2 className="text-2xl font-semibold text-yellow-700"> Customer Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <input
-                  className="w-full  md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  placeholder="First Name"
-                  value={address.fullName}
-                  name="fullName"
-                  onChange={handleAddressChange}
-                />
-                <input
-                  className="w-full md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  placeholder="Address"
-                  name="street"
-                  value={address.street || ''}
-                  onChange={handleAddressChange}
-                />
-                <input
-                  className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  placeholder="Mobile"
-                  value={address.phone}
-                  onChange={handleAddressChange}
-                />
-                <input
-                  className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  type="email"
-                  placeholder="Email"
-                  onChange={handleAddressChange}
-                  value={address.email}
-                  name="email"
-                />
-                <input
-                  className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  placeholder="City"
-                  name="city"
-                  onChange={handleAddressChange}
-                  value={address.city}
-                />
-                <select
-                  className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  value={address.division}
-                  name="division"
-                  onChange={handleAddressChange}
-                >
-                  <option value="">Select Division</option>
-                  <option value="Dhaka">Dhaka</option>
-                  <option value="Chattogram">Chattogram</option>
-                  <option value="Rajshahi">Rajshahi</option>
-                  <option value="Khulna">Khulna</option>
-                  <option value="Barisal">Barisal</option>
-                  <option value="Sylhet">Sylhet</option>
-                  <option value="Rangpur">Rangpur</option>
-                  <option value="Mymensingh">Mymensingh</option>
-                </select>
-                <textarea
-                  className="w-full md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  placeholder="Comment"
-                  rows="3"
-                />
-              </div>
+
+          <div className="w-full lg:w-2/3 bg-white p-8 rounded-2xl shadow-md space-y-6 border border-yellow-300">
+            <h2 className="text-2xl font-semibold text-yellow-700"> Customer Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <input
+                className="w-full  md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="First Name"
+                value={address.fullName}
+                name="fullName"
+                onChange={handleAddressChange}
+              />
+              <input
+                className="w-full md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Address"
+                name="street"
+                value={address.street || ''}
+                onChange={handleAddressChange}
+              />
+              <input
+                className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Mobile"
+                value={address.phone}
+                onChange={handleAddressChange}
+              />
+              <input
+                className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                type="email"
+                placeholder="Email"
+                onChange={handleAddressChange}
+                value={address.email}
+                name="email"
+              />
+              <input
+                className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="City"
+                name="city"
+                onChange={handleAddressChange}
+                value={address.city}
+              />
+              <select
+                className="w-full px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                value={address.division}
+                name="division"
+                onChange={handleAddressChange}
+              >
+                <option value="">Select Division</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chattogram">Chattogram</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Barisal">Barisal</option>
+                <option value="Sylhet">Sylhet</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+              </select>
+              <textarea
+                className="w-full md:col-span-2 px-4 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                placeholder="Comment"
+                rows="3"
+              />
             </div>
-          )}
+          </div>
 
           {/* Right: Payment & Delivery */}
           <div className="w-full lg:w-1/3 flex flex-col gap-6">
