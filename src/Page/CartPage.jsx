@@ -25,14 +25,14 @@ const CartTable = () => {
     dispatch(updateCartItem({ productId: id, quantity: newQuantity }));
     setTimeout(() => {
       dispatch(fetchCart());
-    }, 100);
+    }, 500);
   };
 
   const deleteItem = (id) => {
     dispatch(removeFromCart(id));
     setTimeout(() => {
       dispatch(fetchCart());
-    }, 100);
+    }, 500);
   };
 
   const subtotal = cartItems?.items?.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0) || 0;

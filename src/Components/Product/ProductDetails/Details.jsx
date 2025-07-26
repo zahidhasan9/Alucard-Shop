@@ -9,7 +9,7 @@ const reviewsData = [
   { id: 2, name: 'Sarah Smith', rating: 4, comment: 'Great quality!', date: 'April 5, 2025' },
   { id: 3, name: 'Mike Johnson', rating: 5, comment: 'Highly recommend!', date: 'March 28, 2025' }
 ];
-const size = ['S', 'M', 'L', 'XL', 'XXL'];
+// const size = ['S', 'M', 'L', 'XL', 'XXL'];
 
 const Details = ({ product }) => {
   const { user } = useSelector((state) => state.user);
@@ -77,11 +77,11 @@ const Details = ({ product }) => {
           <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">{product.discount}% OFF</span>
         </div>
         <div className="text-yellow-500 text-sm">
-          ★ {avgRating} ({reviewsData.length} reviews)
+          ★ {product.rating} ({product.numReviews} reviews)
         </div>
 
         {/* Size Selector */}
-        <div>
+        {/* <div>
           <h3 className="font-semibold mb-2">Select Size</h3>
           <div className="flex gap-3">
             {size?.map((size) => (
@@ -98,7 +98,7 @@ const Details = ({ product }) => {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
         {/* Quantity & Add to Cart */}
         <div>
           <h3 className="font-semibold mb-2">Quantity</h3>
