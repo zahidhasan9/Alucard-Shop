@@ -82,6 +82,130 @@ cd Alucard-Shop-Backend
 npm install
 
 
+
+
+## 📡 API Reference
+
+See all available endpoints here:
+
+<details>
+<summary><strong>Click to expand full API reference</strong></summary>
+
+### 👤 User APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/auth/register` | Register a new user |
+| `POST` | `/auth/login` | Log in user |
+| `POST` | `/auth/logout` | Log out user |
+| `GET`  | `/auth/me` | Get currently logged-in user |
+| `PUT`  | `/auth/user` | Update profile |
+| `PUT`  | `/auth/changepassword` | Change password |
+| `POST` | `/auth/resetPasswordRequest` | Send password reset email |
+| `POST` | `/auth/reset-password/:id/:token` | Reset password with token |
+| `GET`  | `/user` | Get all users (admin only) |
+| `GET`  | `/user/:id` | Get user by ID (admin only) |
+
+---
+
+### 🏠 Address APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/address/add` | Add address |
+| `GET`  | `/address` | Get all addresses |
+| `GET`  | `/address/type/:type` | Get address by type |
+| `PUT`  | `/address/:id` | Update address |
+| `DELETE` | `/address/:id` | Delete address |
+
+---
+
+### 🛍️ Product APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/product` | Get all products |
+| `GET`  | `/product/:slug` | Get single product |
+| `GET`  | `/product/featured` | Featured products |
+| `GET`  | `/product/flashsell` | Flash sell products |
+| `GET`  | `/product/top` | Top-rated products |
+| `POST` | `/product` | Create product (admin) |
+| `PUT`  | `/product/:id` | Update product |
+| `DELETE` | `/product/:id` | Delete product |
+| `POST` | `/product/:id/reviews` | Add review |
+
+---
+
+### 📂 Category APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/category` | Get categories |
+| `POST` | `/api/categories` | Create category |
+| `GET`  | `/api/categories/:id` | Get category by ID |
+| `PUT`  | `/api/categories/:id` | Update category |
+| `DELETE` | `/api/categories/:id` | Delete category |
+
+---
+
+### ✍️ Review APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/review` | Create review |
+| `GET`  | `/review/:productId` | Get product reviews |
+| `GET`  | `/review/user` | Get all user reviews |
+| `DELETE` | `/review/me/:productId` | Delete own review |
+| `DELETE` | `/review/:reviewId` | Delete any review (admin) |
+
+---
+
+### 🛒 Cart APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/cart` | Get cart |
+| `POST` | `/cart/add` | Add item |
+| `PUT`  | `/cart/update` | Update quantity |
+| `DELETE` | `/cart/remove/:productId` | Remove item |
+
+---
+
+### 📦 Order APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/order` | Create order |
+| `GET`  | `/order/my-orders` | User orders |
+| `GET`  | `/order/last-orders` | Last order |
+| `GET`  | `/order/:orderId` | Get order by ID |
+| `PUT`  | `/order/:orderId/pay` | Pay for order |
+| `PUT`  | `/order/:orderId/deliver` | Mark delivered (admin) |
+| `GET`  | `/orders` | All orders (admin) |
+
+</details>
+
+---
+
+## 🛠️ Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change or improve.
+
+---
+
+## 📧 Contact
+
+**Developer:** Jahid Hasan Rimel  
+📩 zmzahidhasan181@gmail.com  
+🔗 [LinkedIn](https://www.linkedin.com/in/jahid-hasan-rimel)
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License — feel free to use and adapt for your own eCommerce needs.
+
+
 PORT=5000
 MONGODB_URI=mongodb+srv://<your-db-url>
 SESSION_SECRET=your_secret_key
