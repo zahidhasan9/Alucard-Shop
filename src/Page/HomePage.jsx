@@ -30,8 +30,11 @@
 import { lazy, Suspense } from 'react';
 
 import Carousel from '../Components/Carousel';
-import Headline from '../Components/Headline';
 import usePageTitle from '../hooks/usePageTitle';
+import CategoryIconSection from '../Components/Home/CategoryIconSection';
+import TrustBadges from '../Components/Home/TrustBadges';
+import BrandStrip from '../Components/Home/BrandStrip';
+import Testimonials from '../Components/Home/Testimonials';
 
 const Banner = lazy(() => import('../Components/Banner'));
 const FlashSell = lazy(() => import('../Components/FlashSell'));
@@ -50,13 +53,16 @@ const HomePage = () => {
   return (
     <>
       <Carousel />
+      <TrustBadges />
+      <CategoryIconSection />
 
       <Suspense fallback={null}>
         <Banner />
-        <Headline />
         <FlashSell />
         <ProductCardSet />
         <RecentlyViewedProducts />
+        <BrandStrip />
+        <Testimonials />
         <Newsletter />
       </Suspense>
     </>

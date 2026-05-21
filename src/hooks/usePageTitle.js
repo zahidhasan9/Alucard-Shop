@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const usePageTitle = (
   title = 'Alucard Shop',
-  description = 'A fast and modern eCommerce shopping experience.'
+  description = 'A fast and modern online shopping experience.'
 ) => {
   useEffect(() => {
     document.title = title;
