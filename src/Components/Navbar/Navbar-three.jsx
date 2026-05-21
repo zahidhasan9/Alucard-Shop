@@ -184,7 +184,7 @@ function Navbar() {
           <div className="hidden sm:flex flex-col text-xs font-medium">
             {isAuthenticated ? (
               <>
-                {user.firstName} {user.lastName}{' '}
+                {user?.firstName} {user?.lastName}{' '}
               </>
             ) : (
               <>
