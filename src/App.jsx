@@ -108,6 +108,80 @@
 
 
 
+// import { lazy, Suspense, useEffect } from 'react';
+// import { Routes, Route } from 'react-router-dom';
+// import { Toaster } from 'react-hot-toast';
+// import { useDispatch, useSelector } from 'react-redux';
+
+// import Navbar3 from './Components/Navbar/Navbar-three';
+// import Footer from './Components/Footer';
+// import Loader from './Components/Loader';
+// import PrivateRoute from './HOC/PrivateRoute';
+// import { fetchLoggedInUser } from './features/userSlice';
+
+// import './App.css';
+
+// const HomePage = lazy(() => import('./Page/HomePage'));
+// const ProductsAll = lazy(() => import('./Page/ProductsAll'));
+// const ProductDetails = lazy(() => import('./Page/ProductDetails'));
+// const CartPage = lazy(() => import('./Page/CartPage'));
+// const LoginPage = lazy(() => import('./Page/Login'));
+// const RegisterPage = lazy(() => import('./Page/Register'));
+// const ForgotPasswordPage = lazy(() => import('./Page/ForgotPassword'));
+// const ResetPassword = lazy(() => import('./Page/ResetPassword'));
+
+// const UserDashboard = lazy(() => import('./Page/UserDashboard'));
+// const OrderPage = lazy(() => import('./Page/OrderPage'));
+// const OrderSuccessPage = lazy(() => import('./Page/OderSuccessPage'));
+// const OrderDetails = lazy(() => import('./Page/OrderDetails'));
+// const InvoicePage = lazy(() => import('./Page/Invoice'));
+
+// function App() {
+//   const dispatch = useDispatch();
+//   const { token, authChecked } = useSelector((state) => state.user);
+
+//   useEffect(() => {
+//     if (token && !authChecked) {
+//       dispatch(fetchLoggedInUser());
+//     }
+//   }, [token, authChecked, dispatch]);
+
+//   return (
+//     <>
+//       <Navbar3 />
+
+//       <Suspense fallback={<Loader />}>
+//         <Routes>
+//           <Route path="/" element={<HomePage />} />
+//           <Route path="/product/:slug" element={<ProductDetails />} />
+//           <Route path="/products" element={<ProductsAll />} />
+//           <Route path="/cart" element={<CartPage />} />
+
+//           <Route path="/login" element={<LoginPage />} />
+//           <Route path="/register" element={<RegisterPage />} />
+//           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+//           <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
+
+//           <Route element={<PrivateRoute />}>
+//             <Route path="/dashboard" element={<UserDashboard />} />
+//             <Route path="/order" element={<OrderPage />} />
+//             <Route path="/ordersucess" element={<OrderSuccessPage />} />
+//             <Route path="/view-order/:id" element={<OrderDetails />} />
+//             <Route path="/invoice/:id" element={<InvoicePage />} />
+//           </Route>
+//         </Routes>
+//       </Suspense>
+
+//       <Toaster position="top-right" reverseOrder={false} />
+//       <Footer />
+//     </>
+//   );
+// }
+
+// export default App;
+
+
+
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -129,12 +203,12 @@ const LoginPage = lazy(() => import('./Page/Login'));
 const RegisterPage = lazy(() => import('./Page/Register'));
 const ForgotPasswordPage = lazy(() => import('./Page/ForgotPassword'));
 const ResetPassword = lazy(() => import('./Page/ResetPassword'));
-
 const UserDashboard = lazy(() => import('./Page/UserDashboard'));
 const OrderPage = lazy(() => import('./Page/OrderPage'));
 const OrderSuccessPage = lazy(() => import('./Page/OderSuccessPage'));
 const OrderDetails = lazy(() => import('./Page/OrderDetails'));
 const InvoicePage = lazy(() => import('./Page/Invoice'));
+const NotFound = lazy(() => import('./Page/NotFound'));
 
 function App() {
   const dispatch = useDispatch();
@@ -149,12 +223,12 @@ function App() {
   return (
     <>
       <Navbar3 />
-
+      <main className="pb-16 lg:pb-0">
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/product/:slug" element={<ProductDetails />} />
           <Route path="/products" element={<ProductsAll />} />
+          <Route path="/product/:slug" element={<ProductDetails />} />
           <Route path="/cart" element={<CartPage />} />
 
           <Route path="/login" element={<LoginPage />} />
@@ -169,11 +243,14 @@ function App() {
             <Route path="/view-order/:id" element={<OrderDetails />} />
             <Route path="/invoice/:id" element={<InvoicePage />} />
           </Route>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
 
       <Toaster position="top-right" reverseOrder={false} />
       <Footer />
+      </main>
     </>
   );
 }

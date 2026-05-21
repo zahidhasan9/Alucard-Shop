@@ -74,10 +74,8 @@
 // export default HeroSlider;
 
 
-import Slider from 'react-slick';
-
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import SliderImg from '../assets/images/Carousel/slider-1.jpg';
 import SliderImg2 from '../assets/images/Carousel/slider-2.jpg';
@@ -87,80 +85,91 @@ const slides = [
   {
     image: SliderImg,
     title: 'Smartphones & Tablets',
-    subtitle: 'Latest & Best Deals',
-    button: 'Shop Now',
+    subtitle: 'Latest gadgets with best deals',
   },
   {
     image: SliderImg2,
-    title: 'Electronics & Gadgets',
-    subtitle: 'Top Brands Available',
-    button: 'Discover',
+    title: 'Electronics & Accessories',
+    subtitle: 'Explore premium tech products',
   },
   {
     image: SliderImg3,
     title: 'New Arrivals',
-    subtitle: 'Check What’s Trending',
-    button: 'Explore',
+    subtitle: 'Fresh products for smart shoppers',
   },
 ];
 
-const HeroSlider = () => {
-  const settings = {
-    dots: true,
-    infinite: slides.length > 1,
-    autoplay: slides.length > 1,
-    autoplaySpeed: 4000,
-    speed: 800,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    fade: true,
-    pauseOnHover: true,
-  };
+const Carousel = () => {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % slides.length);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className="relative w-full overflow-hidden">
-      <Slider {...settings}>
+    <section className="relative h-[300px] overflow-hidden bg-gray-900 sm:h-[420px] lg:h-[560px]">
+      {slides.map((slide, index) => (
+        <div
+          key={slide.title}
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            active === index ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <img
+            src={slide.image}
+            alt={slide.title}
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchPriority={index === 0 ? 'high' : 'auto'}
+            decoding={index === 0 ? 'sync' : 'async'}
+            className="h-full w-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-black/45" />
+        </div>
+      ))}
+
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-4 lg:px-8">
+        <div className="max-w-xl text-white">
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.35em] text-yellow-300">
+            Alucard Shop
+          </p>
+
+          <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
+            {slides[active].title}
+          </h1>
+
+          <p className="mt-4 text-base text-gray-100 sm:text-lg">
+            {slides[active].subtitle}
+          </p>
+
+          <Link
+            to="/products"
+            className="mt-7 inline-flex rounded-full bg-yellow-400 px-7 py-3 text-sm font-black text-black transition hover:bg-white"
+          >
+            Shop Now
+          </Link>
+        </div>
+      </div>
+
+      <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
         {slides.map((slide, index) => (
-          <div key={slide.title} className="relative">
-            <div className="relative h-[280px] w-full overflow-hidden sm:h-[380px] lg:h-[520px]">
-              <img
-                src={slide.image}
-                alt={slide.title}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                fetchPriority={index === 0 ? 'high' : 'auto'}
-                decoding={index === 0 ? 'sync' : 'async'}
-                className="h-full w-full object-cover"
-              />
-
-              <div className="absolute inset-0 bg-black/35" />
-
-              <div className="absolute inset-0 flex items-center">
-                <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-                  <div className="max-w-xl text-white">
-                    <h2 className="text-3xl font-bold sm:text-5xl">
-                      {slide.title}
-                    </h2>
-
-                    <p className="mt-3 text-base sm:text-xl">
-                      {slide.subtitle}
-                    </p>
-
-                    <button
-                      type="button"
-                      className="mt-6 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100"
-                    >
-                      {slide.button}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button
+            key={slide.title}
+            type="button"
+            onClick={() => setActive(index)}
+            className={`h-2.5 rounded-full transition-all ${
+              active === index ? 'w-8 bg-yellow-400' : 'w-2.5 bg-white/70'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
         ))}
-      </Slider>
+      </div>
     </section>
   );
 };
 
-export default HeroSlider;
+export default Carousel;
