@@ -1,0 +1,10 @@
+{
+  "name": "Alucard Shop",
+  "short_name": "Alucard",
+  "description": "Modern online shopping experience",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FACC15",
+  "theme_color": "#FACC15",
+  "icons": []
+}
