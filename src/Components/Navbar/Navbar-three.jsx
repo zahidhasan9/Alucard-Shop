@@ -342,6 +342,7 @@ import {
 } from 'lucide-react';
 
 import { setSearchQuery } from '../../features/SearchSlice';
+import { fetchWishlist } from '../../features/wishlistSlice';
 import SearchSuggestions from '../SearchSuggestions';
 
 const Navbar = () => {
@@ -353,7 +354,9 @@ const Navbar = () => {
 
   const [search, setSearch] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
+  
+  const wishlistState = useSelector((state) => state.wishlist || {});
+  const { count: wishlistCount = 0 } = useSelector((state) => state.wishlist);
 
   const cartItems =
     cartState.cartItems || cartState.items || cartState.cart?.items || [];
@@ -365,19 +368,11 @@ const Navbar = () => {
       )
     : 0;
 
-  const loadWishlistCount = () => {
-    const items = JSON.parse(localStorage.getItem('wishlistProducts') || '[]');
-    setWishlistCount(items.length);
-  };
-
   useEffect(() => {
-    loadWishlistCount();
-    window.addEventListener('wishlistUpdated', loadWishlistCount);
-
-    return () => {
-      window.removeEventListener('wishlistUpdated', loadWishlistCount);
-    };
-  }, []);
+  if (isAuthenticated) {
+    dispatch(fetchWishlist());
+  }
+}, [dispatch, isAuthenticated]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

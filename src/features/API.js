@@ -178,8 +178,12 @@ export const updateCoupon = (id, data) => axios.put(`/coupon/${id}`, data);
 export const deleteCoupon = id => axios.delete(`/coupon/${id}`);
 
 // Wishlist
+
+
 export const getWishlist = () => axios.get('/wishlist');
-export const toggleWishlist = productId => axios.post('/wishlist/toggle', { productId });
+export const getWishlistIds = () => axios.get('/wishlist/ids');
+export const toggleWishlist = (productId) => axios.post('/wishlist/toggle', { productId });
+export const removeWishlistItem = (productId) => axios.delete(`/wishlist/${productId}`);
 export const clearWishlist = () => axios.delete('/wishlist/clear');
 
 // Questions / Q&A
