@@ -1,150 +1,460 @@
+
+
 // import { useEffect } from 'react';
 // import { useParams } from 'react-router-dom';
+// import { useDispatch, useSelector } from 'react-redux';
+
 // import Loader from '../Components/Loader';
 // import Breadcrumb from '../Components/Breadcrumb';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { getProduct } from '../features/productSlice';
-// import { getProductReviews } from '../features/reviewSlice';
 // import Details from '../Components/Product/ProductDetails/Details';
 // import Reviews from '../Components/Product/ProductDetails/Reviews';
 // import RelatedProducts from '../Components/Product/ProductDetails/RelatedProducts';
+// import EmptyState from '../Components/UI/EmptyState';
+// import { getProduct } from '../features/productSlice';
+// import usePageTitle from '../hooks/usePageTitle';
 
-// const productData = {
-//   id: 73240,
-//   title: 'Premium Elegant Polo - Ripple',
-//   price: 1140.0,
-//   originalPrice: 1490.0,
-//   images: [
-//     'https://fabrilife.com/products/67b730e7d4749-square.jpg?v=20',
-//     'https://fabrilife.com/products/67b730e7ddca4-square.jpg',
-//     'https://fabrilife.com/products/67b730e7cf913-square.jpg',
-//     'https://fabrilife.com/products/67b730e7d77ec-square.jpg'
-//   ],
-//   sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-//   description: 'Elevate your wardrobe with the Premium Elegant Polo - Ripple, designed for both comfort and style.',
-//   details: {
-//     fabric: 'Double PK (80% Cotton, 20% Polyester)',
-//     yarnCount: '26/1',
-//     gsm: '210-220',
-//     fit: 'Regular',
-//     collar: 'Shirt Collar',
-//     dye: 'Reactive Dye, Enzyme & Silicon Washed'
-//   },
-//   stock: 'In Stock'
-// };
-
-// const ProductView = () => {
+// const ProductDetails = () => {
 //   const { product, loading, error } = useSelector((state) => state.product);
 //   const dispatch = useDispatch();
-
-//   // const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-
 //   const { slug } = useParams();
+
 //   useEffect(() => {
 //     if (slug) {
 //       dispatch(getProduct(slug));
 //     }
-//     // dispatch(getProductReviews(slug));
 //   }, [dispatch, slug]);
 
-//   // if (loading || !product?._id) {
-//   //   // Show loader until product is loaded
-//   //   return <Loader />;
-//   // }
+//   usePageTitle(
+//     product?.name ? `${product.name} | Alucard Shop` : 'Product Details | Alucard Shop',
+//     product?.description || 'View product details, price, reviews and related products.'
+//   );
 
 //   if (loading) return <Loader />;
-//   if (error) return <p className="text-center text-red-600">{error}</p>;
-//   if (!product?._id) return <p className="text-center text-gray-500">Product not found</p>;
+
+//   if (error) {
+//     return (
+//       <main className="bg-gray-100 px-4 py-12">
+//         <EmptyState
+//           title="Product could not be loaded"
+//           message={error}
+//           buttonText="Back to Products"
+//           buttonLink="/products"
+//         />
+//       </main>
+//     );
+//   }
+
+//   if (!product?._id) {
+//     return (
+//       <main className="bg-gray-100 px-4 py-12">
+//         <EmptyState
+//           title="Product not found"
+//           message="This product may have been removed or the link is incorrect."
+//           buttonText="Browse Products"
+//           buttonLink="/products"
+//         />
+//       </main>
+//     );
+//   }
 
 //   return (
-//     <div className="bg-gray-50 min-h-screen">
+//     <main className="bg-gray-100 pb-20 lg:pb-0">
 //       <Breadcrumb />
-//       <div className="container mx-auto px-4 py-8">
-//         <main className="max-w-7xl mx-auto">
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-xl shadow-lg p-6">
-//             {/* Image Section */}
 
-//             <Details product={product} />
-//           </div>
-
-//           {/* Reviews */}
-//           <Reviews productID={product._id} />
-
-//           {/* Related Products */}
-//           <RelatedProducts />
-//         </main>
+//       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+//         <Details product={product} />
+//         <Reviews productID={product._id} />
+//         <RelatedProducts product={product} />
 //       </div>
-//     </div>
+//     </main>
 //   );
 // };
 
-// export default ProductView;
+// export default ProductDetails;
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { ShoppingCart, ShieldCheck, Truck, RotateCcw, Star } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import toast from 'react-hot-toast';
 import Loader from '../Components/Loader';
 import Breadcrumb from '../Components/Breadcrumb';
-import Details from '../Components/Product/ProductDetails/Details';
 import Reviews from '../Components/Product/ProductDetails/Reviews';
-import RelatedProducts from '../Components/Product/ProductDetails/RelatedProducts';
-import EmptyState from '../Components/UI/EmptyState';
 import { getProduct } from '../features/productSlice';
-import usePageTitle from '../hooks/usePageTitle';
+import { getProductReviews } from '../features/reviewSlice';
+import { addToCart, fetchCart } from '../features/cartSlice';
+import { fetchWishlist } from '../features/wishlistSlice';
+import ProductGalleryZoom from '../Components/Product/Upgrade/ProductGalleryZoom';
+import VariantSelector from '../Components/Product/Upgrade/VariantSelector';
+import WishlistButton from '../Components/Product/Upgrade/WishlistButton';
+import RelatedProductsModern from '../Components/Product/Upgrade/RelatedProductsModern';
+import RecentlyViewedProducts from '../Components/Product/Upgrade/RecentlyViewedProducts';
+import ProductQuestions from '../Components/Product/Upgrade/ProductQuestions';
+import ProductSEO from '../Components/Product/Upgrade/ProductSEO';
+import { saveRecentlyViewed } from '../utils/recentlyViewed';
+
+const formatPrice = (value) => {
+  const amount = Number(value || 0);
+  return `৳${amount.toLocaleString('en-BD')}`;
+};
+
+const cleanValue = (value) => {
+  if (value === undefined || value === null || value === '') return 'N/A';
+  return value;
+};
+
+const InfoRow = ({ label, value }) => (
+  <div className="flex items-start justify-between gap-4 border-b border-gray-100 py-3 last:border-b-0">
+    <span className="text-sm font-semibold text-gray-500">{label}</span>
+    <span className="text-right text-sm font-bold text-gray-900">{cleanValue(value)}</span>
+  </div>
+);
+
+const SpecGroup = ({ title, children }) => (
+  <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <h3 className="mb-2 text-base font-black text-gray-950">{title}</h3>
+    <div>{children}</div>
+  </div>
+);
 
 const ProductDetails = () => {
-  const { product, loading, error } = useSelector((state) => state.product);
-  const dispatch = useDispatch();
   const { slug } = useParams();
+  const dispatch = useDispatch();
+
+  const { product, loading, error } = useSelector((state) => state.product);
+
+  const [qty, setQty] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState(null);
 
   useEffect(() => {
     if (slug) {
       dispatch(getProduct(slug));
+      setQty(1);
+      setSelectedVariant(null);
     }
   }, [dispatch, slug]);
 
-  usePageTitle(
-    product?.name ? `${product.name} | Alucard Shop` : 'Product Details | Alucard Shop',
-    product?.description || 'View product details, price, reviews and related products.'
-  );
+  useEffect(() => {
+    if (product?._id) {
+      dispatch(getProductReviews(product._id));
+      dispatch(fetchWishlist());
+      saveRecentlyViewed(product);
+
+      if (product.variants?.length) {
+        const availableVariant =
+          product.variants.find((variant) => Number(variant.stock || 0) > 0) ||
+          product.variants[0];
+
+        setSelectedVariant(availableVariant);
+      }
+    }
+  }, [dispatch, product?._id]);
+
+  const activePrice = Number(selectedVariant?.price || product?.price || 0);
+  const activeOldPrice = Number(selectedVariant?.oldPrice || product?.oldPrice || 0);
+  const activeStock = selectedVariant
+    ? Number(selectedVariant.stock || 0)
+    : Number(product?.countInStock || 0);
+
+  const discount =
+    activeOldPrice > activePrice
+      ? Math.round(((activeOldPrice - activePrice) / activeOldPrice) * 100)
+      : Number(product?.discount || 0);
+
+  const stockText = useMemo(() => {
+    if (activeStock <= 0) return 'Out of stock';
+    if (activeStock <= 3) return `Only ${activeStock} left`;
+    return 'In stock';
+  }, [activeStock]);
+
+  const stockClass = activeStock > 0 ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+
+  const handleAddToCart = async () => {
+    if (product?.variants?.length && !selectedVariant) {
+      toast.error('Please select a variant');
+      return;
+    }
+
+    if (activeStock <= 0) {
+      toast.error('This item is out of stock');
+      return;
+    }
+
+    if (qty > activeStock) {
+      toast.error(`Only ${activeStock} item available`);
+      return;
+    }
+
+    await dispatch(
+      addToCart({
+        productId: product._id,
+        name: product.name,
+        price: activePrice,
+        image: selectedVariant?.image || product.thumbnail || product.images?.[0],
+        quantity: qty,
+        slug: product.slug,
+        variantId: selectedVariant?._id,
+        variantLabel:
+          selectedVariant?.label ||
+          [selectedVariant?.color, selectedVariant?.size, selectedVariant?.storage]
+            .filter(Boolean)
+            .join(' / '),
+      })
+    );
+
+    dispatch(fetchCart());
+  };
+
+  const productSpecs = useMemo(() => {
+    if (!Array.isArray(product?.details)) return [];
+
+    return product.details
+      .filter((item) => item?.key || item?.name || item?.label)
+      .map((item) => ({
+        label: item.key || item.name || item.label,
+        value: item.value || item.description || 'N/A',
+      }));
+  }, [product?.details]);
 
   if (loading) return <Loader />;
 
   if (error) {
     return (
-      <main className="bg-gray-100 px-4 py-12">
-        <EmptyState
-          title="Product could not be loaded"
-          message={error}
-          buttonText="Back to Products"
-          buttonLink="/products"
-        />
-      </main>
+      <div className="mx-auto max-w-7xl px-4 py-20 text-red-600">
+        {error}
+      </div>
     );
   }
 
   if (!product?._id) {
     return (
-      <main className="bg-gray-100 px-4 py-12">
-        <EmptyState
-          title="Product not found"
-          message="This product may have been removed or the link is incorrect."
-          buttonText="Browse Products"
-          buttonLink="/products"
-        />
-      </main>
+      <div className="mx-auto max-w-7xl px-4 py-20 text-gray-700">
+        Product not found
+      </div>
     );
   }
 
   return (
-    <main className="bg-gray-100 pb-20 lg:pb-0">
-      <Breadcrumb />
+    <main className="bg-gray-50 pb-16">
+      <ProductSEO product={product} />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-        <Details product={product} />
-        <Reviews productID={product._id} />
-        <RelatedProducts product={product} />
+      <div className="mx-auto max-w-7xl px-4 py-6">
+        <Breadcrumb />
+
+        {/* Main Product Area */}
+        <section className="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="grid gap-8 p-4 md:p-6 lg:grid-cols-2 lg:p-8">
+            {/* Left Gallery */}
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <ProductGalleryZoom product={product} selectedVariant={selectedVariant} />
+            </div>
+
+            {/* Right Info */}
+            <div className="flex flex-col">
+              <div className="border-b border-gray-100 pb-5">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gray-700">
+                    {product.category?.name || 'Product'}
+                  </span>
+
+                  {discount > 0 && (
+                    <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-600">
+                      {discount}% OFF
+                    </span>
+                  )}
+
+                  <span className={`rounded-full px-3 py-1 text-xs font-black ${stockClass}`}>
+                    {stockText}
+                  </span>
+                </div>
+
+                <h1 className="text-2xl font-black leading-tight text-gray-950 md:text-3xl">
+                  {product.name}
+                </h1>
+
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-1 rounded-full bg-yellow-50 px-3 py-1 text-sm font-bold text-yellow-700">
+                    <Star size={15} fill="currentColor" />
+                    {Number(product.rating || 0).toFixed(1)}
+                  </div>
+                  <span className="text-sm font-medium text-gray-500">
+                    {product.numReviews || 0} reviews
+                  </span>
+                </div>
+              </div>
+
+              <div className="border-b border-gray-100 py-5">
+                <div className="flex flex-wrap items-end gap-3">
+                  <span className="text-4xl font-black text-gray-950">
+                    {formatPrice(activePrice)}
+                  </span>
+
+                  {activeOldPrice > activePrice && (
+                    <span className="pb-1 text-lg font-semibold text-gray-400 line-through">
+                      {formatPrice(activeOldPrice)}
+                    </span>
+                  )}
+                </div>
+
+                {product.shortDescription && (
+                  <p className="mt-4 text-sm leading-7 text-gray-600">
+                    {product.shortDescription}
+                  </p>
+                )}
+              </div>
+
+              {/* Variant */}
+              <div className="border-b border-gray-100 py-5">
+                <VariantSelector
+                  product={product}
+                  selectedVariant={selectedVariant}
+                  onChange={setSelectedVariant}
+                />
+              </div>
+
+              {/* Quantity + Cart */}
+              <div className="py-5">
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <div className="flex h-14 w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-4 sm:w-36">
+                    <button
+                      type="button"
+                      onClick={() => setQty(Math.max(1, qty - 1))}
+                      className="text-2xl font-black text-gray-700 hover:text-black"
+                    >
+                      −
+                    </button>
+
+                    <span className="text-base font-black text-gray-950">{qty}</span>
+
+                    <button
+                      type="button"
+                      onClick={() => setQty(Math.min(activeStock || 1, qty + 1))}
+                      className="text-2xl font-black text-gray-700 hover:text-black"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    disabled={activeStock <= 0}
+                    className="flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-black px-6 text-sm font-black uppercase tracking-wide text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                  >
+                    <ShoppingCart size={19} />
+                    Add to Cart
+                  </button>
+
+                  <WishlistButton productId={product._id} />
+                </div>
+              </div>
+
+              {/* Trust Items */}
+              <div className="grid gap-3 border-t border-gray-100 pt-5 sm:grid-cols-3">
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <Truck className="mb-2 text-gray-900" size={22} />
+                  <p className="text-sm font-black text-gray-950">Fast Delivery</p>
+                  <p className="mt-1 text-xs text-gray-500">Dhaka 1-2 days</p>
+                </div>
+
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <RotateCcw className="mb-2 text-gray-900" size={22} />
+                  <p className="text-sm font-black text-gray-950">Easy Return</p>
+                  <p className="mt-1 text-xs text-gray-500">7 days return</p>
+                </div>
+
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <ShieldCheck className="mb-2 text-gray-900" size={22} />
+                  <p className="text-sm font-black text-gray-950">Secure Order</p>
+                  <p className="mt-1 text-xs text-gray-500">COD & manual pay</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Description + Organized Specifications */}
+        <section className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm lg:col-span-2">
+            <h2 className="text-xl font-black text-gray-950">Product Description</h2>
+
+            <div className="mt-4 text-sm leading-7 text-gray-700">
+              {product.description ? (
+                <p>{product.description}</p>
+              ) : (
+                <p>No description available for this product.</p>
+              )}
+            </div>
+          </div>
+
+          <SpecGroup title="Basic Information">
+            <InfoRow label="Brand" value={product.brand?.name || product.brand} />
+            <InfoRow label="Category" value={product.category?.name || product.category} />
+            <InfoRow label="Product Code" value={product.sku || product._id?.slice(-8)?.toUpperCase()} />
+            <InfoRow label="Rating" value={`${Number(product.rating || 0).toFixed(1)} / 5`} />
+          </SpecGroup>
+        </section>
+
+        <section className="mt-6 grid gap-6 lg:grid-cols-3">
+          <SpecGroup title="Price & Stock">
+            <InfoRow label="Price" value={formatPrice(activePrice)} />
+            {activeOldPrice > activePrice && (
+              <InfoRow label="Regular Price" value={formatPrice(activeOldPrice)} />
+            )}
+            <InfoRow label="Discount" value={discount > 0 ? `${discount}%` : 'No discount'} />
+            <InfoRow label="Availability" value={stockText} />
+          </SpecGroup>
+
+          <SpecGroup title="Selected Option">
+            <InfoRow
+              label="Variant"
+              value={
+                selectedVariant?.label ||
+                [selectedVariant?.color, selectedVariant?.size, selectedVariant?.storage]
+                  .filter(Boolean)
+                  .join(' / ') ||
+                'Default'
+              }
+            />
+            <InfoRow label="Color" value={selectedVariant?.color || 'N/A'} />
+            <InfoRow label="Size" value={selectedVariant?.size || 'N/A'} />
+            <InfoRow label="Storage" value={selectedVariant?.storage || 'N/A'} />
+            <InfoRow label="Variant Stock" value={selectedVariant ? activeStock : 'N/A'} />
+          </SpecGroup>
+
+          <SpecGroup title="Service">
+            <InfoRow label="Delivery" value="Dhaka 1-2 days" />
+            <InfoRow label="Return" value="7 days return" />
+            <InfoRow label="Payment" value="COD / Manual payment" />
+            <InfoRow label="Support" value="Available" />
+          </SpecGroup>
+        </section>
+
+        {productSpecs.length > 0 && (
+          <section className="mt-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-black text-gray-950">Specifications</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  Organized product specification details.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-x-8 md:grid-cols-2">
+              {productSpecs.map((spec, index) => (
+                <InfoRow key={`${spec.label}-${index}`} label={spec.label} value={spec.value} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <ProductQuestions productId={product._id} />
+        <Reviews product={product} />
+
+        <RelatedProductsModern product={product} />
+
+        <RecentlyViewedProducts currentId={product._id} />
       </div>
     </main>
   );

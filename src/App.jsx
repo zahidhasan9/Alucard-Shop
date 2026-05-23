@@ -214,6 +214,7 @@ const OrderSuccessPage = lazy(() => import('./Page/OderSuccessPage'));
 const OrderDetails = lazy(() => import('./Page/OrderDetails'));
 const InvoicePage = lazy(() => import('./Page/Invoice'));
 const NotFound = lazy(() => import('./Page/NotFound'));
+const ReturnRequestPage = lazy(() => import('./Page/ReturnRequestPage'));
 
 function App() {
   const dispatch = useDispatch();
@@ -254,6 +255,7 @@ function App() {
               <Route path="/ordersucess" element={<OrderSuccessPage />} />
               <Route path="/view-order/:id" element={<OrderDetails />} />
               <Route path="/invoice/:id" element={<InvoicePage />} />
+              <Route path="/return-request" element={<ReturnRequestPage />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

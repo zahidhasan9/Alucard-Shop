@@ -1,0 +1,100 @@
+import { useEffect, useState } from 'react';
+import { HelpCircle, MessageCircle, Send } from 'lucide-react';
+import { getQAs, saveQAs } from '../../../utils/shopHelpers';
+
+const ProductQA = ({ productId }) => {
+  const [items, setItems] = useState([]);
+  const [question, setQuestion] = useState('');
+
+  useEffect(() => {
+    if (productId) {
+      setItems(getQAs(productId));
+    }
+  }, [productId]);
+
+  const handleSubmit = () => {
+    if (!question.trim()) return;
+
+    const updated = [
+      {
+        id: Date.now(),
+        question: question.trim(),
+        answer: '',
+        createdAt: new Date().toISOString(),
+      },
+      ...items,
+    ];
+
+    setItems(updated);
+    saveQAs(productId, updated);
+    setQuestion('');
+  };
+
+  return (
+    <section className="mt-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+      <div className="mb-5 flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-400 text-black">
+          <HelpCircle size={24} />
+        </div>
+
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-600">
+            Product Q&A
+          </p>
+
+          <h2 className="text-2xl font-black text-gray-950">
+            Ask about this product
+          </h2>
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-gray-50 p-4">
+        <textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask your question..."
+          className="min-h-24 w-full rounded-2xl border border-gray-200 bg-white p-4 text-sm font-semibold outline-none focus:border-yellow-400"
+        />
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="mt-3 inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-black text-yellow-400 transition hover:bg-yellow-400 hover:text-black"
+        >
+          <Send size={17} />
+          Submit Question
+        </button>
+      </div>
+
+      <div className="mt-6 space-y-4">
+        {items.length ? (
+          items.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-3xl border border-gray-100 p-4"
+            >
+              <div className="flex gap-3">
+                <MessageCircle className="mt-1 text-yellow-600" size={20} />
+
+                <div>
+                  <p className="font-black text-gray-950">{item.question}</p>
+
+                  <p className="mt-2 text-sm font-semibold text-gray-500">
+                    {item.answer ||
+                      'Answer pending. Support team will answer soon.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-3xl bg-yellow-50 p-5 text-sm font-bold text-gray-700">
+            No questions yet. Be the first to ask.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export default ProductQA;
