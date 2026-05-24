@@ -55,7 +55,7 @@ const reviewSlice = createSlice({
   initialState: {
     reviews: [],
     userallreviews: [],
-    loading: true,
+    loading: false,
     success: false,
     error: null
   },

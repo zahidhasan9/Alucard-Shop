@@ -195,6 +195,7 @@ import ErrorBoundary from './Components/ErrorBoundary';
 import { fetchLoggedInUser } from './features/userSlice';
 
 import './App.css';
+import ScrollToTop from './Components/ScrollToTop';
 
 const HomePage = lazy(() => import('./Page/HomePage'));
 const ProductsAll = lazy(() => import('./Page/ProductsAll'));
@@ -229,9 +230,11 @@ function App() {
   return (
     <ErrorBoundary>
       <Navbar3 />
+      
 
       <main className="pb-16 lg:pb-0">
         <Suspense fallback={<Loader />}>
+        <ScrollToTop />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/products" element={<ProductsAll />} />

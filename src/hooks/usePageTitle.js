@@ -2,20 +2,20 @@ import { useEffect } from 'react';
 
 const usePageTitle = (
   title = 'Alucard Shop',
-  description = 'A fast and modern online shopping experience.'
+  description = 'Modern online shopping experience.'
 ) => {
   useEffect(() => {
     document.title = title;
 
-    let meta = document.querySelector('meta[name="description"]');
+    let metaDescription = document.querySelector('meta[name="description"]');
 
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.name = 'description';
-      document.head.appendChild(meta);
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      document.head.appendChild(metaDescription);
     }
 
-    meta.content = description;
+    metaDescription.content = description;
   }, [title, description]);
 };
 

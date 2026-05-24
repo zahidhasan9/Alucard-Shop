@@ -164,9 +164,205 @@
 
 // export default UserDashboard;
 
+// import { useEffect, useState } from 'react';
+// import { Link, useParams } from 'react-router-dom';
+// import { ArrowLeft, CreditCard, MapPin, Package } from 'lucide-react';
+
+// import * as API from '../features/API';
+// import Loader from '../Components/Loader';
+// import EmptyState from '../Components/UI/EmptyState';
+// import OrderTimeline from '../Components/OrderTimeline';
+// import usePageTitle from '../hooks/usePageTitle';
+
+// const OrderDetails = () => {
+//   const { id } = useParams();
+
+//   const [order, setOrder] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState('');
+
+//   usePageTitle(
+//     'Order Details | Alucard Shop',
+//     'Track your order status and view order details.'
+//   );
+
+//   useEffect(() => {
+//     let mounted = true;
+
+//     const loadOrder = async () => {
+//       try {
+//         setLoading(true);
+//         const res = await API.getOrderById(id);
+
+//         if (mounted) {
+//           setOrder(res.data?.order || res.data);
+//           setError('');
+//         }
+//       } catch (err) {
+//         if (mounted) {
+//           setError(err.response?.data?.message || 'Order could not be loaded');
+//         }
+//       } finally {
+//         if (mounted) {
+//           setLoading(false);
+//         }
+//       }
+//     };
+
+//     if (id) loadOrder();
+
+//     return () => {
+//       mounted = false;
+//     };
+//   }, [id]);
+
+//   if (loading) return <Loader />;
+
+//   if (error || !order) {
+//     return (
+//       <main className="bg-gray-100 px-4 py-14">
+//         <EmptyState
+//           title="Order not found"
+//           message={error || 'This order could not be found.'}
+//           buttonText="Back to Orders"
+//           buttonLink="/order"
+//         />
+//       </main>
+//     );
+//   }
+
+//   const items = order?.orderItems || order?.items || [];
+//   const address = order?.shippingAddress || {};
+
+//   return (
+//     <main className="min-h-screen bg-gray-100 px-4 py-8 lg:px-8">
+//       <div className="mx-auto max-w-7xl">
+//         <Link
+//           to="/order"
+//           className="mb-6 inline-flex items-center gap-2 text-sm font-black text-gray-700 hover:text-yellow-700"
+//         >
+//           <ArrowLeft size={18} />
+//           Back to Orders
+//         </Link>
+
+//         <div className="mb-6 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+//           <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-600">
+//             Order
+//           </p>
+
+//           <h1 className="mt-2 break-all text-2xl font-black text-gray-950">
+//             #{order?._id || id}
+//           </h1>
+
+//           <p className="mt-2 text-sm font-semibold text-gray-500">
+//             Placed on:{' '}
+//             {order?.createdAt
+//               ? new Date(order.createdAt).toLocaleString()
+//               : 'N/A'}
+//           </p>
+//         </div>
+
+//         <OrderTimeline order={order} />
+
+//         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
+//           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+//             <h2 className="mb-5 flex items-center gap-2 text-xl font-black text-gray-950">
+//               <Package size={22} />
+//               Ordered Items
+//             </h2>
+
+//             <div className="divide-y divide-gray-100">
+//               {items.map((item, index) => (
+//                 <div key={item?._id || index} className="flex gap-4 py-4">
+//                   <img
+//                     src={item?.image || item?.thumbnail}
+//                     alt={item?.name || 'Order item'}
+//                     loading="lazy"
+//                     decoding="async"
+//                     className="h-20 w-20 rounded-2xl bg-gray-100 object-cover"
+//                   />
+
+//                   <div className="min-w-0 flex-1">
+//                     <h3 className="font-black text-gray-950">
+//                       {item?.name || item?.title}
+//                     </h3>
+
+//                     <p className="mt-1 text-sm font-semibold text-gray-500">
+//                       Qty: {item?.qty || item?.quantity || 1}
+//                     </p>
+
+//                     <p className="mt-1 text-sm font-black text-green-600">
+//                       ৳{item?.price || 0}
+//                     </p>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </section>
+
+//           <aside className="space-y-6">
+//             <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+//               <h2 className="mb-4 flex items-center gap-2 text-xl font-black text-gray-950">
+//                 <MapPin size={22} />
+//                 Shipping Address
+//               </h2>
+
+//               <p className="text-sm font-semibold leading-6 text-gray-600">
+//                 {address?.address || 'N/A'}
+//                 <br />
+//                 {address?.city || ''} {address?.postalCode || ''}
+//                 <br />
+//                 {address?.division || ''}
+//               </p>
+//             </div>
+
+//             <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+//               <h2 className="mb-4 flex items-center gap-2 text-xl font-black text-gray-950">
+//                 <CreditCard size={22} />
+//                 Payment Summary
+//               </h2>
+
+//               <div className="space-y-3 text-sm font-bold text-gray-600">
+//                 <div className="flex justify-between">
+//                   <span>Items Price</span>
+//                   <span>৳{order?.itemsPrice || 0}</span>
+//                 </div>
+
+//                 <div className="flex justify-between">
+//                   <span>Shipping</span>
+//                   <span>৳{order?.shippingPrice || 0}</span>
+//                 </div>
+
+//                 <div className="flex justify-between border-t border-gray-100 pt-3 text-lg font-black text-gray-950">
+//                   <span>Total</span>
+//                   <span>৳{order?.totalPrice || 0}</span>
+//                 </div>
+//               </div>
+//             </div>
+//           </aside>
+//         </div>
+//       </div>
+//     </main>
+//   );
+// };
+
+// export default OrderDetails;
+
+
+
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CreditCard, MapPin, Package } from 'lucide-react';
+import {
+  ArrowLeft,
+  CreditCard,
+  Download,
+  MapPin,
+  Package,
+  Phone,
+  ReceiptText,
+  Truck,
+  User,
+} from 'lucide-react';
 
 import * as API from '../features/API';
 import Loader from '../Components/Loader';
@@ -176,174 +372,264 @@ import usePageTitle from '../hooks/usePageTitle';
 
 const OrderDetails = () => {
   const { id } = useParams();
-
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  usePageTitle(
-    'Order Details | Alucard Shop',
-    'Track your order status and view order details.'
-  );
+  usePageTitle('Order Details | Alucard Shop', 'View order details.');
 
   useEffect(() => {
-    let mounted = true;
-
     const loadOrder = async () => {
       try {
         setLoading(true);
         const res = await API.getOrderById(id);
-
-        if (mounted) {
-          setOrder(res.data?.order || res.data);
-          setError('');
-        }
+        setOrder(res.data?.order || res.data);
       } catch (err) {
-        if (mounted) {
-          setError(err.response?.data?.message || 'Order could not be loaded');
-        }
+        setError(err.response?.data?.message || 'Order could not be loaded');
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
     if (id) loadOrder();
-
-    return () => {
-      mounted = false;
-    };
   }, [id]);
 
   if (loading) return <Loader />;
 
   if (error || !order) {
     return (
-      <main className="bg-gray-100 px-4 py-14">
-        <EmptyState
-          title="Order not found"
-          message={error || 'This order could not be found.'}
-          buttonText="Back to Orders"
-          buttonLink="/order"
-        />
-      </main>
+      <EmptyState
+        icon={Package}
+        title="Order not found"
+        message={error || 'We could not find this order.'}
+        actionLabel="Back to Orders"
+        actionTo="/dashboard"
+      />
     );
   }
 
   const items = order?.orderItems || order?.items || [];
   const address = order?.shippingAddress || {};
+  const user = order?.user || {};
+  const status =
+    order?.orderStatus || order?.Delivery || order?.deliveryStatus || 'Processing';
+
+  const formatPrice = (amount) =>
+    Number(amount || 0).toLocaleString('en-BD', {
+      style: 'currency',
+      currency: 'BDT',
+      minimumFractionDigits: 0,
+    });
+
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-BD', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const paymentMethod =
+    order?.paymentMethod?.method === 'cod'
+      ? 'Cash on Delivery'
+      : order?.paymentMethod?.method === 'online'
+      ? 'Online Payment'
+      : order?.paymentMethod?.method === 'pos'
+      ? 'POS on Delivery'
+      : 'N/A';
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-8 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <Link
-          to="/order"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-black text-gray-700 hover:text-yellow-700"
-        >
-          <ArrowLeft size={18} />
-          Back to Orders
-        </Link>
+    <main className="min-h-screen bg-gray-100 px-4 py-6 font-Work_sans">
+      <div className="container mx-auto max-w-6xl">
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-yellow-700"
+          >
+            <ArrowLeft size={17} />
+            Back to Account
+          </Link>
 
-        <div className="mb-6 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-          <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-600">
-            Order
-          </p>
-
-          <h1 className="mt-2 break-all text-2xl font-black text-gray-950">
-            #{order?._id || id}
-          </h1>
-
-          <p className="mt-2 text-sm font-semibold text-gray-500">
-            Placed on:{' '}
-            {order?.createdAt
-              ? new Date(order.createdAt).toLocaleString()
-              : 'N/A'}
-          </p>
+          <Link
+            to={`/invoice/${order?.orderId || order?._id || id}`}
+            className="inline-flex items-center gap-2 rounded-full bg-gray-950 px-4 py-2 text-xs font-bold text-yellow-400 hover:bg-yellow-400 hover:text-gray-950"
+          >
+            <Download size={15} />
+            Invoice
+          </Link>
         </div>
 
-        <OrderTimeline order={order} />
+        <div className="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-yellow-700">
+                Order Details
+              </p>
+              <h1 className="mt-1 text-xl font-black text-gray-950">
+                #{order?.orderId || order?._id || id}
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Placed on {formatDate(order?.createdAt)}
+              </p>
+            </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-            <h2 className="mb-5 flex items-center gap-2 text-xl font-black text-gray-950">
-              <Package size={22} />
-              Ordered Items
-            </h2>
+            <span className="inline-flex w-max items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-xs font-black text-yellow-800">
+              <Truck size={15} />
+              {status}
+            </span>
+          </div>
 
-            <div className="divide-y divide-gray-100">
-              {items.map((item, index) => (
-                <div key={item?._id || index} className="flex gap-4 py-4">
-                  <img
-                    src={item?.image || item?.thumbnail}
-                    alt={item?.name || 'Order item'}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-20 w-20 rounded-2xl bg-gray-100 object-cover"
-                  />
+          <div className="mt-4 border-t border-gray-100 pt-4">
+            <OrderTimeline status={status} />
+          </div>
+        </div>
 
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-black text-gray-950">
-                      {item?.name || item?.title}
-                    </h3>
+        <div className="grid gap-4 lg:grid-cols-[1fr_330px]">
+          <section className="space-y-4">
+            <Card title="Items" icon={<Package size={18} />}>
+              <div className="divide-y divide-gray-100">
+                {items.map((item, index) => (
+                  <div
+                    key={item?._id || index}
+                    className="grid grid-cols-[70px_1fr_auto] gap-3 py-3"
+                  >
+                    <img
+                      src={
+                        item?.image ||
+                        item?.images?.[0]?.url ||
+                        item?.product?.images?.[0]?.url ||
+                        '/placeholder.png'
+                      }
+                      alt={item?.name || item?.title || 'Product'}
+                      className="h-16 w-16 rounded-lg object-cover"
+                    />
 
-                    <p className="mt-1 text-sm font-semibold text-gray-500">
-                      Qty: {item?.qty || item?.quantity || 1}
-                    </p>
+                    <div>
+                      <h3 className="line-clamp-1 text-sm font-bold text-gray-950">
+                        {item?.name || item?.title || 'Product'}
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Qty: {item?.qty || item?.quantity || 1}
+                      </p>
+                    </div>
 
-                    <p className="mt-1 text-sm font-black text-green-600">
-                      ৳{item?.price || 0}
+                    <p className="text-sm font-black text-gray-950">
+                      {formatPrice(item?.price)}
                     </p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </Card>
 
-          <aside className="space-y-6">
-            <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-              <h2 className="mb-4 flex items-center gap-2 text-xl font-black text-gray-950">
-                <MapPin size={22} />
-                Shipping Address
-              </h2>
+            <Card title="Shipping Address" icon={<MapPin size={18} />}>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <SmallInfo
+                  icon={<User size={16} />}
+                  label="Customer"
+                  value={
+                    `${user?.firstName || ''} ${user?.lastName || ''}`.trim() ||
+                    'N/A'
+                  }
+                />
+                <SmallInfo
+                  icon={<Phone size={16} />}
+                  label="Phone"
+                  value={address?.phone || user?.phone || 'N/A'}
+                />
+              </div>
 
-              <p className="text-sm font-semibold leading-6 text-gray-600">
+              <p className="mt-3 rounded-lg bg-gray-50 p-3 text-sm leading-6 text-gray-700">
                 {address?.address || 'N/A'}
                 <br />
                 {address?.city || ''} {address?.postalCode || ''}
                 <br />
                 {address?.division || ''}
               </p>
-            </div>
+            </Card>
+          </section>
 
-            <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-              <h2 className="mb-4 flex items-center gap-2 text-xl font-black text-gray-950">
-                <CreditCard size={22} />
-                Payment Summary
-              </h2>
-
-              <div className="space-y-3 text-sm font-bold text-gray-600">
-                <div className="flex justify-between">
-                  <span>Items Price</span>
-                  <span>৳{order?.itemsPrice || 0}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span>৳{order?.shippingPrice || 0}</span>
-                </div>
-
-                <div className="flex justify-between border-t border-gray-100 pt-3 text-lg font-black text-gray-950">
-                  <span>Total</span>
-                  <span>৳{order?.totalPrice || 0}</span>
+          <aside className="space-y-4">
+            <Card title="Summary" icon={<ReceiptText size={18} />}>
+              <div className="space-y-2">
+                <SummaryRow label="Items" value={formatPrice(order?.itemsPrice)} />
+                <SummaryRow
+                  label="Shipping"
+                  value={formatPrice(order?.shippingPrice)}
+                />
+                <SummaryRow label="Tax" value={formatPrice(order?.taxPrice)} />
+                <div className="border-t border-gray-200 pt-2">
+                  <SummaryRow
+                    label="Total"
+                    value={formatPrice(order?.totalPrice)}
+                    strong
+                  />
                 </div>
               </div>
-            </div>
+            </Card>
+
+            <Card title="Payment" icon={<CreditCard size={18} />}>
+              <div className="space-y-2">
+                <SummaryRow label="Method" value={paymentMethod} />
+                <SummaryRow
+                  label="Status"
+                  value={
+                    order?.isPaid
+                      ? 'Paid'
+                      : order?.paymentMethod?.status || 'Unpaid'
+                  }
+                />
+              </div>
+            </Card>
+
+            <Link
+              to="/contact"
+              className="block rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 hover:bg-yellow-100"
+            >
+              Need help with this order?
+            </Link>
           </aside>
         </div>
       </div>
     </main>
   );
 };
+
+const Card = ({ title, icon, children }) => (
+  <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="mb-3 flex items-center gap-2">
+      <span className="grid h-9 w-9 place-items-center rounded-full bg-yellow-100 text-yellow-700">
+        {icon}
+      </span>
+      <h2 className="text-base font-black text-gray-950">{title}</h2>
+    </div>
+    {children}
+  </div>
+);
+
+const SummaryRow = ({ label, value, strong }) => (
+  <div className="flex items-center justify-between gap-3 text-sm">
+    <span className="text-gray-500">{label}</span>
+    <span
+      className={
+        strong
+          ? 'text-lg font-black text-gray-950'
+          : 'font-bold text-gray-900'
+      }
+    >
+      {value}
+    </span>
+  </div>
+);
+
+const SmallInfo = ({ icon, label, value }) => (
+  <div className="rounded-lg bg-gray-50 p-3">
+    <div className="flex items-center gap-2 text-xs text-gray-500">
+      {icon}
+      {label}
+    </div>
+    <p className="mt-1 text-sm font-bold text-gray-950">{value}</p>
+  </div>
+);
 
 export default OrderDetails;
