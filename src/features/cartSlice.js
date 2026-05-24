@@ -55,6 +55,7 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     clearCartState: (state) => {
+      state.cartItems = [];
       state.loading = false;
       state.error = null;
       state.success = false;

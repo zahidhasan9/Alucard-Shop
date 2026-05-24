@@ -106,6 +106,15 @@ const wishlistSlice = createSlice({
       state.clearing = false;
       state.error = null;
     },
+     clearWishlistState: state => {
+     state.products = [];
+      state.productIds = [];
+      state.count = 0;
+      state.loading = false;
+      state.toggling = false;
+      state.clearing = false;
+      state.error = null;
+  },
   },
 
   extraReducers: (builder) => {
@@ -177,5 +186,80 @@ const wishlistSlice = createSlice({
   },
 });
 
-export const { resetWishlist } = wishlistSlice.actions;
+export const { resetWishlist,clearWishlistState } = wishlistSlice.actions;
 export default wishlistSlice.reducer;
+
+
+// import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+// import toast from 'react-hot-toast';
+// import * as API from './API';
+
+// const initialState = {
+//   products: [],
+//   loading: false,
+//   error: null,
+// };
+
+// export const fetchWishlist = createAsyncThunk(
+//   'wishlist/fetch',
+//   async (_, thunkAPI) => {
+//     try {
+//       const res = await API.getWishlist();
+//       return res.data.products || [];
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data?.message || 'Failed to load wishlist'
+//       );
+//     }
+//   }
+// );
+
+// export const toggleWishlistItem = createAsyncThunk(
+//   'wishlist/toggle',
+//   async (productId, thunkAPI) => {
+//     try {
+//       const res = await API.toggleWishlist(productId);
+//       return res.data;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data?.message || 'Failed to update wishlist'
+//       );
+//     }
+//   }
+// );
+
+// const wishlistSlice = createSlice({
+//   name: 'wishlist',
+//   initialState,
+//   reducers: {
+//     clearWishlistState: () => initialState,
+//   },
+//   extraReducers: builder => {
+//     builder
+//       .addCase(fetchWishlist.pending, state => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchWishlist.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.products = action.payload || [];
+//       })
+//       .addCase(fetchWishlist.rejected, (state, action) => {
+//         state.loading = false;
+//         state.products = [];
+//         state.error = action.payload;
+//       })
+//       .addCase(toggleWishlistItem.fulfilled, (state, action) => {
+//         state.products = action.payload.products || [];
+//         toast.success(
+//           action.payload.added ? 'Added to wishlist' : 'Removed from wishlist'
+//         );
+//       })
+//       .addCase(toggleWishlistItem.rejected, (state, action) => {
+//         toast.error(action.payload);
+//       });
+//   },
+// });
+
+// export const { clearWishlistState } = wishlistSlice.actions;
+// export default wishlistSlice.reducer;
