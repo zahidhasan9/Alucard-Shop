@@ -1,10 +1,8 @@
-
-
-
 // import { useEffect, useMemo, useState } from 'react';
 // import { Link, NavLink, useNavigate } from 'react-router-dom';
 // import { useDispatch, useSelector } from 'react-redux';
 // import {
+//   GitCompare,
 //   Grid3X3,
 //   Heart,
 //   Home,
@@ -40,7 +38,10 @@
 //     [];
 
 //   const cartCount = Array.isArray(cartItems)
-//     ? cartItems.reduce((total, item) => total + Number(item.quantity || item.qty || 1), 0)
+//     ? cartItems.reduce(
+//         (total, item) => total + Number(item.quantity || item.qty || 1),
+//         0
+//       )
 //     : 0;
 
 //   const wishlistCount = useMemo(() => {
@@ -98,10 +99,16 @@
 //               <Link to="/products" className="hover:underline">
 //                 Shop
 //               </Link>
+//               <Link to="/compare" className="hover:underline">
+//                 Compare
+//               </Link>
 //               <Link to="/wishlist" className="hover:underline">
 //                 Wishlist
 //               </Link>
-//               <Link to={isAuthenticated ? '/dashboard' : '/login'} className="hover:underline">
+//               <Link
+//                 to={isAuthenticated ? '/dashboard' : '/login'}
+//                 className="hover:underline"
+//               >
 //                 {isAuthenticated ? 'My Account' : 'Login'}
 //               </Link>
 //             </div>
@@ -157,13 +164,26 @@
 //                 Search
 //               </button>
 
-//               {search && <SearchSuggestions query={search} onClose={closeSearch} />}
+//               {search && (
+//                 <SearchSuggestions query={search} onClose={closeSearch} />
+//               )}
 //             </form>
 
 //             <div className="ml-auto hidden items-center gap-3 lg:flex">
-//               <NavLink to="/products" className="flex items-center gap-2 rounded-full bg-black/10 px-4 py-2 text-sm font-black text-black hover:bg-black hover:text-yellow-400">
+//               <NavLink
+//                 to="/products"
+//                 className="flex items-center gap-2 rounded-full bg-black/10 px-4 py-2 text-sm font-black text-black hover:bg-black hover:text-yellow-400"
+//               >
 //                 <Package size={18} />
 //                 Products
+//               </NavLink>
+
+//               <NavLink
+//                 to="/compare"
+//                 className="flex items-center gap-2 rounded-full bg-black/10 px-4 py-2 text-sm font-black text-black hover:bg-black hover:text-yellow-400"
+//               >
+//                 <GitCompare size={18} />
+//                 Compare
 //               </NavLink>
 
 //               <IconLink to="/wishlist" count={wishlistCount} icon={<Heart size={20} />} />
@@ -208,7 +228,9 @@
 //               <Search size={18} />
 //             </button>
 
-//             {search && <SearchSuggestions query={search} onClose={closeSearch} />}
+//             {search && (
+//               <SearchSuggestions query={search} onClose={closeSearch} />
+//             )}
 //           </form>
 //         </div>
 
@@ -224,13 +246,19 @@
 //             <NavLink to="/products" className={navLinkClass}>
 //               Products
 //             </NavLink>
+//             <NavLink to="/compare" className={navLinkClass}>
+//               Compare
+//             </NavLink>
 //             <NavLink to="/wishlist" className={navLinkClass}>
 //               Wishlist
 //             </NavLink>
 //             <NavLink to="/cart" className={navLinkClass}>
 //               Cart
 //             </NavLink>
-//             <NavLink to={isAuthenticated ? '/dashboard' : '/login'} className={navLinkClass}>
+//             <NavLink
+//               to={isAuthenticated ? '/dashboard' : '/login'}
+//               className={navLinkClass}
+//             >
 //               Account
 //             </NavLink>
 //           </div>
@@ -242,6 +270,7 @@
 //               {[
 //                 ['Home', '/'],
 //                 ['Products', '/products'],
+//                 ['Compare', '/compare'],
 //                 ['Wishlist', '/wishlist'],
 //                 ['Cart', '/cart'],
 //                 [
@@ -275,21 +304,27 @@
 //             Shop
 //           </NavLink>
 
-//           <NavLink to="/wishlist" className={(props) => `${mobileNavClass(props)} relative`}>
+//           <NavLink to="/compare" className={mobileNavClass}>
+//             <GitCompare size={21} />
+//             Compare
+//           </NavLink>
+
+//           <NavLink
+//             to="/wishlist"
+//             className={(props) => `${mobileNavClass(props)} relative`}
+//           >
 //             <Heart size={21} />
 //             Wish
 //             {wishlistCount > 0 && <Badge>{wishlistCount}</Badge>}
 //           </NavLink>
 
-//           <NavLink to="/cart" className={(props) => `${mobileNavClass(props)} relative`}>
+//           <NavLink
+//             to="/cart"
+//             className={(props) => `${mobileNavClass(props)} relative`}
+//           >
 //             <ShoppingBag size={21} />
 //             Cart
 //             {cartCount > 0 && <Badge>{cartCount}</Badge>}
-//           </NavLink>
-
-//           <NavLink to={isAuthenticated ? '/dashboard' : '/login'} className={mobileNavClass}>
-//             <UserRound size={21} />
-//             Account
 //           </NavLink>
 //         </div>
 //       </nav>
@@ -320,7 +355,6 @@
 
 
 
-
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -335,6 +369,7 @@ import {
   Package,
   ShieldCheck,
   Heart,
+  GitCompare,
 } from 'lucide-react';
 
 import { setSearchQuery } from '../../features/SearchSlice';

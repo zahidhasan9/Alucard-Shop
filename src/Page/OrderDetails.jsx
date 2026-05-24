@@ -350,6 +350,302 @@
 
 
 
+
+
+
+
+
+
+
+
+// import { useEffect, useState } from 'react';
+// import { Link, useParams } from 'react-router-dom';
+// import {
+//   ArrowLeft,
+//   CreditCard,
+//   Download,
+//   MapPin,
+//   Package,
+//   Phone,
+//   ReceiptText,
+//   Truck,
+//   User,
+// } from 'lucide-react';
+
+// import * as API from '../features/API';
+// import Loader from '../Components/Loader';
+// import EmptyState from '../Components/UI/EmptyState';
+// import OrderTimeline from '../Components/OrderTimeline';
+// import usePageTitle from '../hooks/usePageTitle';
+
+// const OrderDetails = () => {
+//   const { id } = useParams();
+//   const [order, setOrder] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState('');
+
+//   usePageTitle('Order Details | Alucard Shop', 'View order details.');
+
+//   useEffect(() => {
+//     const loadOrder = async () => {
+//       try {
+//         setLoading(true);
+//         const res = await API.getOrderById(id);
+//         setOrder(res.data?.order || res.data);
+//       } catch (err) {
+//         setError(err.response?.data?.message || 'Order could not be loaded');
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (id) loadOrder();
+//   }, [id]);
+
+//   if (loading) return <Loader />;
+
+//   if (error || !order) {
+//     return (
+//       <EmptyState
+//         icon={Package}
+//         title="Order not found"
+//         message={error || 'We could not find this order.'}
+//         actionLabel="Back to Orders"
+//         actionTo="/dashboard"
+//       />
+//     );
+//   }
+
+//   const items = order?.orderItems || order?.items || [];
+//   const address = order?.shippingAddress || {};
+//   const user = order?.user || {};
+//   const status =
+//     order?.orderStatus || order?.Delivery || order?.deliveryStatus || 'Processing';
+
+//   const formatPrice = (amount) =>
+//     Number(amount || 0).toLocaleString('en-BD', {
+//       style: 'currency',
+//       currency: 'BDT',
+//       minimumFractionDigits: 0,
+//     });
+
+//   const formatDate = (date) => {
+//     if (!date) return 'N/A';
+//     return new Date(date).toLocaleDateString('en-BD', {
+//       day: '2-digit',
+//       month: 'short',
+//       year: 'numeric',
+//     });
+//   };
+
+//   const paymentMethod =
+//     order?.paymentMethod?.method === 'cod'
+//       ? 'Cash on Delivery'
+//       : order?.paymentMethod?.method === 'online'
+//       ? 'Online Payment'
+//       : order?.paymentMethod?.method === 'pos'
+//       ? 'POS on Delivery'
+//       : 'N/A';
+
+//   return (
+//     <main className="min-h-screen bg-gray-100 px-4 py-6 font-Work_sans">
+//       <div className="container mx-auto max-w-6xl">
+//         <div className="mb-4 flex items-center justify-between">
+//           <Link
+//             to="/dashboard"
+//             className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-yellow-700"
+//           >
+//             <ArrowLeft size={17} />
+//             Back to Account
+//           </Link>
+
+//           <Link
+//             to={`/invoice/${order?.orderId || order?._id || id}`}
+//             className="inline-flex items-center gap-2 rounded-full bg-gray-950 px-4 py-2 text-xs font-bold text-yellow-400 hover:bg-yellow-400 hover:text-gray-950"
+//           >
+//             <Download size={15} />
+//             Invoice
+//           </Link>
+//         </div>
+
+//         <div className="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+//           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+//             <div>
+//               <p className="text-xs font-bold uppercase tracking-wider text-yellow-700">
+//                 Order Details
+//               </p>
+//               <h1 className="mt-1 text-xl font-black text-gray-950">
+//                 #{order?.orderId || order?._id || id}
+//               </h1>
+//               <p className="mt-1 text-sm text-gray-500">
+//                 Placed on {formatDate(order?.createdAt)}
+//               </p>
+//             </div>
+
+//             <span className="inline-flex w-max items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-xs font-black text-yellow-800">
+//               <Truck size={15} />
+//               {status}
+//             </span>
+//           </div>
+
+//           <div className="mt-4 border-t border-gray-100 pt-4">
+//             <OrderTimeline status={status} />
+//           </div>
+//         </div>
+
+//         <div className="grid gap-4 lg:grid-cols-[1fr_330px]">
+//           <section className="space-y-4">
+//             <Card title="Items" icon={<Package size={18} />}>
+//               <div className="divide-y divide-gray-100">
+//                 {items.map((item, index) => (
+//                   <div
+//                     key={item?._id || index}
+//                     className="grid grid-cols-[70px_1fr_auto] gap-3 py-3"
+//                   >
+//                     <img
+//                       src={
+//                         item?.image ||
+//                         item?.images?.[0]?.url ||
+//                         item?.product?.images?.[0]?.url ||
+//                         '/placeholder.png'
+//                       }
+//                       alt={item?.name || item?.title || 'Product'}
+//                       className="h-16 w-16 rounded-lg object-cover"
+//                     />
+
+//                     <div>
+//                       <h3 className="line-clamp-1 text-sm font-bold text-gray-950">
+//                         {item?.name || item?.title || 'Product'}
+//                       </h3>
+//                       <p className="mt-1 text-xs text-gray-500">
+//                         Qty: {item?.qty || item?.quantity || 1}
+//                       </p>
+//                     </div>
+
+//                     <p className="text-sm font-black text-gray-950">
+//                       {formatPrice(item?.price)}
+//                     </p>
+//                   </div>
+//                 ))}
+//               </div>
+//             </Card>
+
+//             <Card title="Shipping Address" icon={<MapPin size={18} />}>
+//               <div className="grid gap-3 sm:grid-cols-2">
+//                 <SmallInfo
+//                   icon={<User size={16} />}
+//                   label="Customer"
+//                   value={
+//                     `${user?.firstName || ''} ${user?.lastName || ''}`.trim() ||
+//                     'N/A'
+//                   }
+//                 />
+//                 <SmallInfo
+//                   icon={<Phone size={16} />}
+//                   label="Phone"
+//                   value={address?.phone || user?.phone || 'N/A'}
+//                 />
+//               </div>
+
+//               <p className="mt-3 rounded-lg bg-gray-50 p-3 text-sm leading-6 text-gray-700">
+//                 {address?.address || 'N/A'}
+//                 <br />
+//                 {address?.city || ''} {address?.postalCode || ''}
+//                 <br />
+//                 {address?.division || ''}
+//               </p>
+//             </Card>
+//           </section>
+
+//           <aside className="space-y-4">
+//             <Card title="Summary" icon={<ReceiptText size={18} />}>
+//               <div className="space-y-2">
+//                 <SummaryRow label="Items" value={formatPrice(order?.itemsPrice)} />
+//                 <SummaryRow
+//                   label="Shipping"
+//                   value={formatPrice(order?.shippingPrice)}
+//                 />
+//                 <SummaryRow label="Tax" value={formatPrice(order?.taxPrice)} />
+//                 <div className="border-t border-gray-200 pt-2">
+//                   <SummaryRow
+//                     label="Total"
+//                     value={formatPrice(order?.totalPrice)}
+//                     strong
+//                   />
+//                 </div>
+//               </div>
+//             </Card>
+
+//             <Card title="Payment" icon={<CreditCard size={18} />}>
+//               <div className="space-y-2">
+//                 <SummaryRow label="Method" value={paymentMethod} />
+//                 <SummaryRow
+//                   label="Status"
+//                   value={
+//                     order?.isPaid
+//                       ? 'Paid'
+//                       : order?.paymentMethod?.status || 'Unpaid'
+//                   }
+//                 />
+//               </div>
+//             </Card>
+
+//             <Link
+//               to="/contact"
+//               className="block rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 hover:bg-yellow-100"
+//             >
+//               Need help with this order?
+//             </Link>
+//           </aside>
+//         </div>
+//       </div>
+//     </main>
+//   );
+// };
+
+// const Card = ({ title, icon, children }) => (
+//   <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+//     <div className="mb-3 flex items-center gap-2">
+//       <span className="grid h-9 w-9 place-items-center rounded-full bg-yellow-100 text-yellow-700">
+//         {icon}
+//       </span>
+//       <h2 className="text-base font-black text-gray-950">{title}</h2>
+//     </div>
+//     {children}
+//   </div>
+// );
+
+// const SummaryRow = ({ label, value, strong }) => (
+//   <div className="flex items-center justify-between gap-3 text-sm">
+//     <span className="text-gray-500">{label}</span>
+//     <span
+//       className={
+//         strong
+//           ? 'text-lg font-black text-gray-950'
+//           : 'font-bold text-gray-900'
+//       }
+//     >
+//       {value}
+//     </span>
+//   </div>
+// );
+
+// const SmallInfo = ({ icon, label, value }) => (
+//   <div className="rounded-lg bg-gray-50 p-3">
+//     <div className="flex items-center gap-2 text-xs text-gray-500">
+//       {icon}
+//       {label}
+//     </div>
+//     <p className="mt-1 text-sm font-bold text-gray-950">{value}</p>
+//   </div>
+// );
+
+// export default OrderDetails;
+
+
+
+
+
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -360,7 +656,8 @@ import {
   Package,
   Phone,
   ReceiptText,
-  Truck,
+  Smartphone,
+  Tag,
   User,
 } from 'lucide-react';
 
@@ -372,6 +669,7 @@ import usePageTitle from '../hooks/usePageTitle';
 
 const OrderDetails = () => {
   const { id } = useParams();
+
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -412,7 +710,16 @@ const OrderDetails = () => {
   const address = order?.shippingAddress || {};
   const user = order?.user || {};
   const status =
-    order?.orderStatus || order?.Delivery || order?.deliveryStatus || 'Processing';
+    order?.orderStatus ||
+    order?.Delivery ||
+    order?.deliveryStatus ||
+    'Processing';
+
+  const paymentLabel =
+    order?.manualPayment?.provider?.toUpperCase() ||
+    (order?.paymentMethod?.method === 'cod'
+      ? 'Cash on Delivery'
+      : order?.paymentMethod?.method || 'Payment');
 
   const formatPrice = (amount) =>
     Number(amount || 0).toLocaleString('en-BD', {
@@ -429,15 +736,6 @@ const OrderDetails = () => {
       year: 'numeric',
     });
   };
-
-  const paymentMethod =
-    order?.paymentMethod?.method === 'cod'
-      ? 'Cash on Delivery'
-      : order?.paymentMethod?.method === 'online'
-      ? 'Online Payment'
-      : order?.paymentMethod?.method === 'pos'
-      ? 'POS on Delivery'
-      : 'N/A';
 
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-6 font-Work_sans">
@@ -475,7 +773,6 @@ const OrderDetails = () => {
             </div>
 
             <span className="inline-flex w-max items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-xs font-black text-yellow-800">
-              <Truck size={15} />
               {status}
             </span>
           </div>
@@ -502,7 +799,7 @@ const OrderDetails = () => {
                         '/placeholder.png'
                       }
                       alt={item?.name || item?.title || 'Product'}
-                      className="h-16 w-16 rounded-lg object-cover"
+                      className="h-16 w-16 rounded-lg bg-gray-100 object-contain p-1"
                     />
 
                     <div>
@@ -528,6 +825,7 @@ const OrderDetails = () => {
                   icon={<User size={16} />}
                   label="Customer"
                   value={
+                    address?.fullName ||
                     `${user?.firstName || ''} ${user?.lastName || ''}`.trim() ||
                     'N/A'
                   }
@@ -547,15 +845,91 @@ const OrderDetails = () => {
                 {address?.division || ''}
               </p>
             </Card>
+
+            {order?.manualPayment && (
+              <Card title="Manual Payment Details" icon={<Smartphone size={18} />}>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <SmallInfo
+                    label="Provider"
+                    value={order.manualPayment.provider?.toUpperCase() || 'N/A'}
+                  />
+                  <SmallInfo
+                    label="Status"
+                    value={order.manualPayment.status || 'Submitted'}
+                  />
+                  <SmallInfo
+                    label="Sender Number"
+                    value={order.manualPayment.senderNumber || 'N/A'}
+                  />
+                  <SmallInfo
+                    label="Transaction ID"
+                    value={order.manualPayment.transactionId || 'N/A'}
+                  />
+                </div>
+              </Card>
+            )}
+
+            {order?.coupon && (
+              <Card title="Coupon Applied" icon={<Tag size={18} />}>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <SmallInfo label="Code" value={order.coupon.code || 'N/A'} />
+                  <SmallInfo
+                    label="Discount"
+                    value={formatPrice(
+                      order.discountPrice || order.coupon.discountPrice || 0
+                    )}
+                  />
+                  <SmallInfo
+                    label="Shipping Discount"
+                    value={formatPrice(order.coupon.shippingDiscount || 0)}
+                  />
+                  <SmallInfo
+                    label="Type"
+                    value={order.coupon.type || 'N/A'}
+                  />
+                </div>
+              </Card>
+            )}
           </section>
 
           <aside className="space-y-4">
+            <Card title="Payment" icon={<CreditCard size={18} />}>
+              <div className="space-y-2">
+                <SummaryRow label="Method" value={paymentLabel} />
+                <SummaryRow
+                  label="Status"
+                  value={
+                    order?.isPaid
+                      ? 'Paid'
+                      : order?.paymentMethod?.status ||
+                        order?.manualPayment?.status ||
+                        'Unpaid'
+                  }
+                />
+                <SummaryRow
+                  label="Transaction"
+                  value={
+                    order?.paymentMethod?.transactionId ||
+                    order?.manualPayment?.transactionId ||
+                    'N/A'
+                  }
+                />
+              </div>
+            </Card>
+
             <Card title="Summary" icon={<ReceiptText size={18} />}>
               <div className="space-y-2">
-                <SummaryRow label="Items" value={formatPrice(order?.itemsPrice)} />
+                <SummaryRow
+                  label="Items"
+                  value={formatPrice(order?.itemsPrice)}
+                />
                 <SummaryRow
                   label="Shipping"
                   value={formatPrice(order?.shippingPrice)}
+                />
+                <SummaryRow
+                  label="Discount"
+                  value={`- ${formatPrice(order?.discountPrice || 0)}`}
                 />
                 <SummaryRow label="Tax" value={formatPrice(order?.taxPrice)} />
                 <div className="border-t border-gray-200 pt-2">
@@ -565,20 +939,6 @@ const OrderDetails = () => {
                     strong
                   />
                 </div>
-              </div>
-            </Card>
-
-            <Card title="Payment" icon={<CreditCard size={18} />}>
-              <div className="space-y-2">
-                <SummaryRow label="Method" value={paymentMethod} />
-                <SummaryRow
-                  label="Status"
-                  value={
-                    order?.isPaid
-                      ? 'Paid'
-                      : order?.paymentMethod?.status || 'Unpaid'
-                  }
-                />
               </div>
             </Card>
 
@@ -614,7 +974,7 @@ const SummaryRow = ({ label, value, strong }) => (
       className={
         strong
           ? 'text-lg font-black text-gray-950'
-          : 'font-bold text-gray-900'
+          : 'break-all text-right font-bold text-gray-900'
       }
     >
       {value}
@@ -628,7 +988,7 @@ const SmallInfo = ({ icon, label, value }) => (
       {icon}
       {label}
     </div>
-    <p className="mt-1 text-sm font-bold text-gray-950">{value}</p>
+    <p className="mt-1 break-all text-sm font-bold text-gray-950">{value}</p>
   </div>
 );
 

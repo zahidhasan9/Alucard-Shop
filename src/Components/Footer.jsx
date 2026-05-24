@@ -256,8 +256,10 @@ const Footer = () => {
     { name: 'Home', href: '/' },
     { name: 'Shop', href: '/products' },
     { name: 'Cart', href: '/cart' },
+    { name: 'Compare', href: '/compare' },
     { name: 'Wishlist', href: '/wishlist' },
     { name: 'Account', href: '/dashboard' },
+    
   ];
 
   const supportLinks = [

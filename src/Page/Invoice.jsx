@@ -280,241 +280,517 @@
 
 
 
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+// import { useEffect, useRef, useState } from 'react';
+// import { useParams } from 'react-router-dom';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchOrderById } from '../features/OrderSlice';
+// import Loader from '../Components/Loader';
+
+// const InvoicePage = () => {
+//   const invoiceRef = useRef(null);
+//   const dispatch = useDispatch();
+//   const { id } = useParams();
+
+//   const { order, loading } = useSelector((state) => state.Order);
+//   const [downloading, setDownloading] = useState(false);
+
+//   useEffect(() => {
+//     if (id) {
+//       dispatch(fetchOrderById(id));
+//     }
+//   }, [dispatch, id]);
+
+//   const handleDownloadInvoice = async () => {
+//     if (!invoiceRef.current || downloading) return;
+
+//     try {
+//       setDownloading(true);
+
+//       const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+//         import('jspdf'),
+//         import('html2canvas'),
+//       ]);
+
+//       const canvas = await html2canvas(invoiceRef.current, {
+//         scale: 2,
+//         useCORS: true,
+//         backgroundColor: '#ffffff',
+//       });
+
+//       const imgData = canvas.toDataURL('image/png');
+//       const pdf = new jsPDF('p', 'mm', 'a4');
+
+//       const pdfWidth = pdf.internal.pageSize.getWidth();
+//       const imgProps = pdf.getImageProperties(imgData);
+//       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+//       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+//       pdf.save(`invoice-${order?._id || id}.pdf`);
+//     } catch (error) {
+//       console.error('Invoice download failed:', error);
+//     } finally {
+//       setDownloading(false);
+//     }
+//   };
+
+//   if (loading && !order) {
+//     return <Loader />;
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-gray-100 px-4 py-8">
+//       <div className="mx-auto mb-4 flex max-w-4xl justify-end">
+//         <button
+//           type="button"
+//           onClick={handleDownloadInvoice}
+//           disabled={downloading}
+//           className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+//         >
+//           {downloading ? 'Preparing PDF...' : 'Download Invoice'}
+//         </button>
+//       </div>
+
+//       <div
+//         ref={invoiceRef}
+//         id="invoice"
+//         className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow"
+//       >
+//         <div className="mb-8 flex items-start justify-between border-b pb-6">
+//           <div>
+//             <h1 className="text-3xl font-bold text-gray-900">Invoice</h1>
+//             <p className="mt-1 text-sm text-gray-500">
+//               Thank you for your purchase!
+//             </p>
+//           </div>
+
+//           <div className="text-right text-sm text-gray-600">
+//             <p>
+//               <span className="font-semibold">Order ID:</span>{' '}
+//               {order?._id || id}
+//             </p>
+//             <p>
+//               <span className="font-semibold">Status:</span>{' '}
+//               {order?.isDelivered ? 'Delivered' : 'Processing'}
+//             </p>
+//           </div>
+//         </div>
+
+//         <div className="mb-8 grid gap-6 md:grid-cols-2">
+//           <div>
+//             <h2 className="mb-3 text-lg font-semibold text-gray-900">
+//               Customer Info
+//             </h2>
+//             <p className="text-sm text-gray-700">
+//               Name:{' '}
+//               {`${order?.user?.firstName || ''} ${
+//                 order?.user?.lastName || ''
+//               }`.trim() || 'N/A'}
+//             </p>
+//             <p className="text-sm text-gray-700">
+//               Email: {order?.user?.email || 'N/A'}
+//             </p>
+//             <p className="text-sm text-gray-700">
+//               Phone: {order?.user?.phone || 'N/A'}
+//             </p>
+//           </div>
+
+//           <div>
+//             <h2 className="mb-3 text-lg font-semibold text-gray-900">
+//               Shipping Address
+//             </h2>
+//             <p className="text-sm text-gray-700">
+//               {order?.shippingAddress?.address || 'N/A'}
+//             </p>
+//             <p className="text-sm text-gray-700">
+//               City: {order?.shippingAddress?.city || 'N/A'}
+//             </p>
+//             <p className="text-sm text-gray-700">
+//               Division: {order?.shippingAddress?.division || 'N/A'}
+//             </p>
+//             <p className="text-sm text-gray-700">
+//               Postal Code: {order?.shippingAddress?.postalCode || 'N/A'}
+//             </p>
+//           </div>
+//         </div>
+
+//         <div className="mb-8">
+//           <h2 className="mb-4 text-lg font-semibold text-gray-900">
+//             Ordered Items
+//           </h2>
+
+//           <div className="overflow-hidden rounded-lg border">
+//             <table className="w-full border-collapse text-left text-sm">
+//               <thead className="bg-gray-100 text-gray-700">
+//                 <tr>
+//                   <th className="px-4 py-3">Product</th>
+//                   <th className="px-4 py-3 text-center">Qty</th>
+//                   <th className="px-4 py-3 text-right">Price</th>
+//                 </tr>
+//               </thead>
+
+//               <tbody>
+//                 {order?.orderItems?.length ? (
+//                   order.orderItems.map((item, index) => (
+//                     <tr key={item?._id || index} className="border-t">
+//                       <td className="px-4 py-3">{item?.name || 'N/A'}</td>
+//                       <td className="px-4 py-3 text-center">
+//                         {item?.qty || 0}
+//                       </td>
+//                       <td className="px-4 py-3 text-right">
+//                         ৳{item?.price || 0}
+//                       </td>
+//                     </tr>
+//                   ))
+//                 ) : (
+//                   <tr>
+//                     <td
+//                       colSpan="3"
+//                       className="px-4 py-6 text-center text-gray-500"
+//                     >
+//                       No items found.
+//                     </td>
+//                   </tr>
+//                 )}
+//               </tbody>
+//             </table>
+//           </div>
+//         </div>
+
+//         <div className="grid gap-6 md:grid-cols-2">
+//           <div>
+//             <h3 className="mb-3 text-lg font-semibold text-gray-900">
+//               Payment Info
+//             </h3>
+
+//             <p className="text-sm text-gray-700">
+//               Method:{' '}
+//               {order?.paymentMethod?.method === 'cod'
+//                 ? 'Cash On Delivery'
+//                 : order?.paymentMethod?.method === 'online'
+//                   ? 'Online'
+//                   : order?.paymentMethod?.method || 'N/A'}
+//             </p>
+
+//             <p className="text-sm text-gray-700">
+//               Status:{' '}
+//               <span
+//                 className={
+//                   order?.isPaid
+//                     ? 'font-semibold text-green-600'
+//                     : 'font-semibold text-red-600'
+//                 }
+//               >
+//                 {order?.isPaid ? 'Paid' : 'Unpaid'}
+//               </span>
+//             </p>
+//           </div>
+
+//           <div className="rounded-lg bg-gray-50 p-4">
+//             <h3 className="mb-3 text-lg font-semibold text-gray-900">
+//               Summary
+//             </h3>
+
+//             <div className="space-y-2 text-sm">
+//               <div className="flex justify-between">
+//                 <span>Subtotal</span>
+//                 <span>৳{order?.itemsPrice || 0}</span>
+//               </div>
+
+//               <div className="flex justify-between">
+//                 <span>Shipping</span>
+//                 <span>৳{order?.shippingPrice || 0}</span>
+//               </div>
+
+//               <div className="flex justify-between border-t pt-2 text-base font-bold">
+//                 <span>Total</span>
+//                 <span>৳{order?.totalPrice || 0}</span>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="mt-8 border-t pt-4 text-center text-xs text-gray-500">
+//           © 2026 Alucard Shop. All rights reserved.
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default InvoicePage;
+
+
+
+
+import { useEffect, useRef } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { useParams } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Download, ArrowLeft } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrderById } from '../features/OrderSlice';
-import Loader from '../Components/Loader';
 
 const InvoicePage = () => {
-  const invoiceRef = useRef(null);
+  const { order } = useSelector((state) => state.Order);
   const dispatch = useDispatch();
   const { id } = useParams();
-
-  const { order, loading } = useSelector((state) => state.Order);
-  const [downloading, setDownloading] = useState(false);
+  const invoiceRef = useRef();
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchOrderById(id));
-    }
+    dispatch(fetchOrderById(id));
   }, [dispatch, id]);
 
-  const handleDownloadInvoice = async () => {
-    if (!invoiceRef.current || downloading) return;
+  const formatPrice = (amount) =>
+    Number(amount || 0).toLocaleString('en-BD', {
+      style: 'currency',
+      currency: 'BDT',
+      minimumFractionDigits: 0,
+    });
 
-    try {
-      setDownloading(true);
-
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import('jspdf'),
-        import('html2canvas'),
-      ]);
-
-      const canvas = await html2canvas(invoiceRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`invoice-${order?._id || id}.pdf`);
-    } catch (error) {
-      console.error('Invoice download failed:', error);
-    } finally {
-      setDownloading(false);
-    }
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-BD', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   };
 
-  if (loading && !order) {
-    return <Loader />;
-  }
+  const downloadPDF = async () => {
+    const input = invoiceRef.current;
+    if (!input) return;
+
+    const canvas = await html2canvas(input, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`invoice-${order?.orderId || id}.pdf`);
+  };
+
+  const paymentLabel =
+    order?.manualPayment?.provider?.toUpperCase() ||
+    (order?.paymentMethod?.method === 'cod'
+      ? 'Cash on Delivery'
+      : order?.paymentMethod?.method || 'Payment');
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-8">
-      <div className="mx-auto mb-4 flex max-w-4xl justify-end">
-        <button
-          type="button"
-          onClick={handleDownloadInvoice}
-          disabled={downloading}
-          className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+    <main className="min-h-screen bg-gray-100 px-4 py-8 font-Work_sans">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-5 flex items-center justify-between">
+          <Link
+            to={`/view-order/${order?.orderId || id}`}
+            className="inline-flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-yellow-700"
+          >
+            <ArrowLeft size={17} />
+            Back to Order
+          </Link>
+
+          <button
+            onClick={downloadPDF}
+            className="inline-flex items-center gap-2 rounded-full bg-gray-950 px-5 py-2.5 text-sm font-black text-yellow-400 hover:bg-yellow-400 hover:text-gray-950"
+          >
+            <Download size={17} />
+            Download PDF
+          </button>
+        </div>
+
+        <div
+          ref={invoiceRef}
+          className="overflow-hidden rounded-2xl bg-white shadow-sm"
         >
-          {downloading ? 'Preparing PDF...' : 'Download Invoice'}
-        </button>
-      </div>
-
-      <div
-        ref={invoiceRef}
-        id="invoice"
-        className="mx-auto max-w-4xl rounded-xl bg-white p-8 shadow"
-      >
-        <div className="mb-8 flex items-start justify-between border-b pb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Invoice</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Thank you for your purchase!
-            </p>
-          </div>
-
-          <div className="text-right text-sm text-gray-600">
-            <p>
-              <span className="font-semibold">Order ID:</span>{' '}
-              {order?._id || id}
-            </p>
-            <p>
-              <span className="font-semibold">Status:</span>{' '}
-              {order?.isDelivered ? 'Delivered' : 'Processing'}
-            </p>
-          </div>
-        </div>
-
-        <div className="mb-8 grid gap-6 md:grid-cols-2">
-          <div>
-            <h2 className="mb-3 text-lg font-semibold text-gray-900">
-              Customer Info
-            </h2>
-            <p className="text-sm text-gray-700">
-              Name:{' '}
-              {`${order?.user?.firstName || ''} ${
-                order?.user?.lastName || ''
-              }`.trim() || 'N/A'}
-            </p>
-            <p className="text-sm text-gray-700">
-              Email: {order?.user?.email || 'N/A'}
-            </p>
-            <p className="text-sm text-gray-700">
-              Phone: {order?.user?.phone || 'N/A'}
-            </p>
-          </div>
-
-          <div>
-            <h2 className="mb-3 text-lg font-semibold text-gray-900">
-              Shipping Address
-            </h2>
-            <p className="text-sm text-gray-700">
-              {order?.shippingAddress?.address || 'N/A'}
-            </p>
-            <p className="text-sm text-gray-700">
-              City: {order?.shippingAddress?.city || 'N/A'}
-            </p>
-            <p className="text-sm text-gray-700">
-              Division: {order?.shippingAddress?.division || 'N/A'}
-            </p>
-            <p className="text-sm text-gray-700">
-              Postal Code: {order?.shippingAddress?.postalCode || 'N/A'}
-            </p>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">
-            Ordered Items
-          </h2>
-
-          <div className="overflow-hidden rounded-lg border">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-gray-100 text-gray-700">
-                <tr>
-                  <th className="px-4 py-3">Product</th>
-                  <th className="px-4 py-3 text-center">Qty</th>
-                  <th className="px-4 py-3 text-right">Price</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {order?.orderItems?.length ? (
-                  order.orderItems.map((item, index) => (
-                    <tr key={item?._id || index} className="border-t">
-                      <td className="px-4 py-3">{item?.name || 'N/A'}</td>
-                      <td className="px-4 py-3 text-center">
-                        {item?.qty || 0}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        ৳{item?.price || 0}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="3"
-                      className="px-4 py-6 text-center text-gray-500"
-                    >
-                      No items found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <h3 className="mb-3 text-lg font-semibold text-gray-900">
-              Payment Info
-            </h3>
-
-            <p className="text-sm text-gray-700">
-              Method:{' '}
-              {order?.paymentMethod?.method === 'cod'
-                ? 'Cash On Delivery'
-                : order?.paymentMethod?.method === 'online'
-                  ? 'Online'
-                  : order?.paymentMethod?.method || 'N/A'}
-            </p>
-
-            <p className="text-sm text-gray-700">
-              Status:{' '}
-              <span
-                className={
-                  order?.isPaid
-                    ? 'font-semibold text-green-600'
-                    : 'font-semibold text-red-600'
-                }
-              >
-                {order?.isPaid ? 'Paid' : 'Unpaid'}
-              </span>
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-gray-50 p-4">
-            <h3 className="mb-3 text-lg font-semibold text-gray-900">
-              Summary
-            </h3>
-
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>৳{order?.itemsPrice || 0}</span>
+          <div className="bg-gray-950 p-8 text-white">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h1 className="text-3xl font-black text-yellow-400">
+                  ALUCARD SHOP
+                </h1>
+                <p className="mt-1 text-sm text-gray-300">
+                  Professional eCommerce Invoice
+                </p>
               </div>
 
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span>৳{order?.shippingPrice || 0}</span>
-              </div>
-
-              <div className="flex justify-between border-t pt-2 text-base font-bold">
-                <span>Total</span>
-                <span>৳{order?.totalPrice || 0}</span>
+              <div className="text-left sm:text-right">
+                <h2 className="text-2xl font-black">Invoice</h2>
+                <p className="mt-1 text-sm text-gray-300">
+                  #{order?.orderId || id}
+                </p>
+                <p className="text-sm text-gray-300">
+                  {formatDate(order?.createdAt)}
+                </p>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-8 border-t pt-4 text-center text-xs text-gray-500">
-          © 2026 Alucard Shop. All rights reserved.
+          <div className="grid gap-5 border-b border-gray-200 p-6 md:grid-cols-2">
+            <InfoBox title="Customer Info">
+              <p>
+                <strong>Name:</strong>{' '}
+                {order?.shippingAddress?.fullName ||
+                  `${order?.user?.firstName || ''} ${
+                    order?.user?.lastName || ''
+                  }`}
+              </p>
+              <p>
+                <strong>Email:</strong>{' '}
+                {order?.shippingAddress?.email || order?.user?.email || 'N/A'}
+              </p>
+              <p>
+                <strong>Phone:</strong>{' '}
+                {order?.shippingAddress?.phone || order?.user?.phone || 'N/A'}
+              </p>
+            </InfoBox>
+
+            <InfoBox title="Shipping Address">
+              <p>{order?.shippingAddress?.address || 'N/A'}</p>
+              <p>
+                {order?.shippingAddress?.city || ''},{' '}
+                {order?.shippingAddress?.division || ''}
+              </p>
+              <p>Postal Code: {order?.shippingAddress?.postalCode || 'N/A'}</p>
+            </InfoBox>
+          </div>
+
+          <div className="p-6">
+            <h3 className="mb-3 text-lg font-black text-gray-950">
+              Ordered Items
+            </h3>
+
+            <div className="overflow-hidden rounded-xl border border-gray-200">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="p-3">Product</th>
+                    <th className="p-3 text-center">Qty</th>
+                    <th className="p-3 text-right">Price</th>
+                    <th className="p-3 text-right">Total</th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-gray-100">
+                  {order?.orderItems?.map((item) => (
+                    <tr key={item._id}>
+                      <td className="p-3 font-bold text-gray-900">
+                        {item.name}
+                      </td>
+                      <td className="p-3 text-center">{item.qty}</td>
+                      <td className="p-3 text-right">
+                        {formatPrice(item.price)}
+                      </td>
+                      <td className="p-3 text-right font-bold">
+                        {formatPrice(item.price * item.qty)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              <InfoBox title="Payment Information">
+                <p>
+                  <strong>Method:</strong> {paymentLabel}
+                </p>
+                <p>
+                  <strong>Status:</strong>{' '}
+                  {order?.isPaid
+                    ? 'Paid'
+                    : order?.paymentMethod?.status ||
+                      order?.manualPayment?.status ||
+                      'Pending'}
+                </p>
+
+                {order?.manualPayment?.senderNumber && (
+                  <p>
+                    <strong>Sender Number:</strong>{' '}
+                    {order.manualPayment.senderNumber}
+                  </p>
+                )}
+
+                {(order?.manualPayment?.transactionId ||
+                  order?.paymentMethod?.transactionId) && (
+                  <p>
+                    <strong>Transaction ID:</strong>{' '}
+                    {order?.manualPayment?.transactionId ||
+                      order?.paymentMethod?.transactionId}
+                  </p>
+                )}
+              </InfoBox>
+
+              <InfoBox title="Coupon Information">
+                <p>
+                  <strong>Coupon:</strong> {order?.coupon?.code || 'Not used'}
+                </p>
+                <p>
+                  <strong>Discount:</strong>{' '}
+                  {formatPrice(order?.discountPrice || 0)}
+                </p>
+                <p>
+                  <strong>Shipping Discount:</strong>{' '}
+                  {formatPrice(order?.coupon?.shippingDiscount || 0)}
+                </p>
+              </InfoBox>
+            </div>
+
+            <div className="mt-6 ml-auto max-w-sm rounded-xl bg-gray-50 p-5">
+              <Summary label="Subtotal" value={formatPrice(order?.itemsPrice)} />
+              <Summary
+                label="Shipping"
+                value={formatPrice(order?.shippingPrice)}
+              />
+              <Summary
+                label="Discount"
+                value={`- ${formatPrice(order?.discountPrice || 0)}`}
+              />
+              <Summary label="Tax" value={formatPrice(order?.taxPrice)} />
+
+              <div className="mt-3 border-t border-gray-200 pt-3">
+                <Summary
+                  label="Grand Total"
+                  value={formatPrice(order?.totalPrice)}
+                  strong
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 bg-gray-50 p-5 text-center text-xs font-semibold text-gray-500">
+            © 2026 Alucard Shop. Thank you for your purchase.
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
+
+const InfoBox = ({ title, children }) => (
+  <div className="rounded-xl bg-gray-50 p-4 text-sm leading-7 text-gray-700">
+    <h3 className="mb-2 font-black text-gray-950">{title}</h3>
+    {children}
+  </div>
+);
+
+const Summary = ({ label, value, strong }) => (
+  <div className="mb-2 flex items-center justify-between gap-4 text-sm">
+    <span className="text-gray-500">{label}</span>
+    <span
+      className={
+        strong ? 'text-xl font-black text-gray-950' : 'font-bold text-gray-900'
+      }
+    >
+      {value}
+    </span>
+  </div>
+);
 
 export default InvoicePage;
