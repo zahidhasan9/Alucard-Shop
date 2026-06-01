@@ -162,6 +162,7 @@ export const getProductReviews = productId => axios.get(`/review/${productId}`);
 export const getUserAllReviews = () => axios.get('/review/user');
 export const deleteMyReview = productId => axios.delete(`/review/me/${productId}`);
 export const deleteReview = reviewId => axios.delete(`/review/${reviewId}`);
+export const getFeaturedReviews = (limit = 6) =>axios.get('/review/featured', {params: { limit },});
 
 // Cart
 export const fetchCart = () => axios.get('/cart');

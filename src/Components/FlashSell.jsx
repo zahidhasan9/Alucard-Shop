@@ -150,122 +150,17 @@
 
 // export default DealOfTheDay;
 
-// import React, { useEffect } from 'react';
-// import Slider from 'react-slick';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { getFlashsellProducts } from '../features/productSlice';
-// import { Star } from 'lucide-react';
-// import TimerCount from './utility/TimerCount';
-// import 'slick-carousel/slick/slick.css';
-// import 'slick-carousel/slick/slick-theme.css';
-// import { Link } from 'react-router-dom';
-
-// const DealOfTheDay = () => {
-//   const dispatch = useDispatch();
-//   const { flashPro } = useSelector((state) => state.product);
-
-//   useEffect(() => {
-//     dispatch(getFlashsellProducts());
-//   }, [dispatch]);
-
-//   const settings = {
-//     infinite: flashPro?.length > 1,
-//     speed: 500,
-//     slidesToShow: Math.min(flashPro?.length, 4),
-//     slidesToScroll: 1,
-//     autoplay: flashPro?.length > 1,
-//     autoplaySpeed: 3000,
-//     responsive: [
-//       {
-//         breakpoint: 1024,
-//         settings: {
-//           slidesToShow: Math.min(flashPro?.length, 3),
-//           slidesToScroll: 1
-//         }
-//       },
-//       {
-//         breakpoint: 768,
-//         settings: {
-//           slidesToShow: Math.min(flashPro?.length, 2),
-//           slidesToScroll: 1
-//         }
-//       },
-//       {
-//         breakpoint: 640,
-//         settings: {
-//           slidesToShow: 1,
-//           slidesToScroll: 1
-//         }
-//       }
-//     ]
-//   };
-
-//   return (
-//     <div className="container bg-white overflow-hidden font-Work_sans">
-//       <div className="mx-auto py-12 px-4">
-//         <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-200 pb-4 mb-8">
-//           <div className="flex gap-x-6 items-center justify-between md:justify-start w-full md:w-2/3">
-//             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">Deals of the Day</h2>
-//             <TimerCount />
-//           </div>
-//           <Link
-//             to="/products"
-//             className="text-blue-600 text-sm font-medium hover:text-blue-800 transition mt-4 md:mt-0"
-//           >
-//             View All
-//           </Link>
-//         </div>
-
-//         {flashPro.length > 0 ? (
-//           <Slider {...settings}>
-//             {flashPro.map((deal, idx) => (
-//               <div key={idx} className="px-3">
-//                 <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden h-full">
-//                   <div className="relative h-48 flex items-center justify-center bg-transparent">
-//                     <img src={deal?.thumbnail} alt={deal?.name} className="max-h-full max-w-full object-contain p-4" />
-//                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded">
-//                       {deal.discount}% Off
-//                     </span>
-//                   </div>
-//                   <div className="p-5">
-//                     <div className="flex items-center space-x-2 mb-2">
-//                       <p className="text-xl font-bold text-green-600">{deal?.price?.toFixed(2)} tk</p>
-//                       <p className="text-sm text-gray-400 line-through">{deal?.oldPrice?.toFixed(2)} tk</p>
-//                     </div>
-//                     <h3 className="text-base font-medium text-blue-600 hover:text-blue-800 cursor-pointer line-clamp-2 mb-2">
-//                       {deal?.name}
-//                     </h3>
-//                     <p className="text-xs text-gray-500 mb-3">Brand: {deal?.brand?.name}</p>
-//                     <div className="flex items-center mb-4">
-//                       {[...Array(deal?.rating)].map((_, i) => (
-//                         <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-//                       ))}
-//                       <span className="text-xs text-gray-500 ml-2">({deal?.numReviews})</span>
-//                     </div>
-//                     <Link to={`/product/${deal?.slug}`}>
-//                       <button className="w-full bg-blue-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-blue-700 transition-colors">
-//                         View
-//                       </button>
-//                     </Link>
-//                   </div>
-//                 </div>
-//               </div>
-//             ))}
-//           </Slider>
-//         ) : (
-//           <div className="text-center text-gray-500 py-8">No flash deals available right now.</div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DealOfTheDay;
 
 
-import { useEffect, useMemo } from 'react';
+
+
+
+
+
+
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Timer } from 'lucide-react';
+import { ArrowUpRight, Clock3, Sparkles, Timer } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getFlashsellProducts } from '../features/productSlice';
@@ -273,11 +168,56 @@ import ProductCard from './Product/ProductCard';
 import ProductCardSkeleton from './UI/ProductCardSkeleton';
 import EmptyState from './UI/EmptyState';
 
+const FLASH_THEME = {
+  colors: {
+    sectionBg: '#F7F7F5',
+
+    black: '#0A0A0A',
+    yellow: '#F7C600',
+
+    wrapperBg: 'rgba(255,255,255,0.86)',
+    cardBg: 'rgba(255,255,255,0.72)',
+    cardBorder: 'rgba(10,10,10,0.07)',
+
+    text: '#0A0A0A',
+    mutedText: 'rgba(10,10,10,0.56)',
+
+    shadow: '0 14px 40px rgba(0,0,0,0.055)',
+    hoverShadow: '0 18px 50px rgba(0,0,0,0.10)',
+  },
+};
+
+const getCountdown = () => {
+  const now = new Date();
+  const end = new Date();
+
+  end.setHours(23, 59, 59, 999);
+
+  const diff = Math.max(0, end - now);
+
+  return {
+    hours: Math.floor(diff / (1000 * 60 * 60)),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  };
+};
+
 const CountdownBox = ({ label, value }) => {
   return (
-    <div className="rounded-2xl bg-black px-4 py-3 text-center text-yellow-400">
-      <p className="text-xl font-black">{String(value).padStart(2, '0')}</p>
-      <p className="text-[10px] font-bold uppercase tracking-wider">{label}</p>
+    <div
+      className="min-w-[64px] rounded-2xl px-3 py-2.5 text-center"
+      style={{
+        backgroundColor: FLASH_THEME.colors.yellow,
+        color: FLASH_THEME.colors.black,
+      }}
+    >
+      <p className="text-xl font-semibold leading-none tracking-[-0.04em]">
+        {String(value).padStart(2, '0')}
+      </p>
+
+      <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.16em] opacity-70">
+        {label}
+      </p>
     </div>
   );
 };
@@ -286,8 +226,10 @@ const FlashSell = () => {
   const dispatch = useDispatch();
 
   const { flashPro = [], flashLoading, loading } = useSelector(
-    (state) => state.product
+    state => state.product
   );
+
+  const [countdown, setCountdown] = useState(getCountdown);
 
   useEffect(() => {
     if (!flashPro?.length) {
@@ -295,86 +237,175 @@ const FlashSell = () => {
     }
   }, [dispatch, flashPro?.length]);
 
-  const countdown = useMemo(() => {
-    const now = new Date();
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(getCountdown());
+    }, 1000);
 
-    const diff = Math.max(0, end - now);
-
-    return {
-      hours: Math.floor(diff / (1000 * 60 * 60)),
-      minutes: Math.floor((diff / (1000 * 60)) % 60),
-      seconds: Math.floor((diff / 1000) % 60),
-    };
+    return () => clearInterval(timer);
   }, []);
 
   const isLoading = flashLoading || (loading && !flashPro?.length);
 
   return (
-    <section className="bg-white py-14">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="mb-7 rounded-3xl bg-yellow-400 p-5 shadow-sm">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <Timer size={22} />
-                <p className="text-sm font-black uppercase tracking-[0.25em] text-black/70">
-                  Limited Time
-                </p>
+    <section
+      className="font-Work_sans"
+      style={{ backgroundColor: FLASH_THEME.colors.sectionBg }}
+    >
+      <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8 lg:py-12">
+        {/* Slim Header */}
+        <div
+          className="rounded-[28px] border p-2.5 backdrop-blur-xl"
+          style={{
+            backgroundColor: FLASH_THEME.colors.wrapperBg,
+            borderColor: FLASH_THEME.colors.cardBorder,
+            boxShadow: FLASH_THEME.colors.shadow,
+          }}
+        >
+          <div
+            className="flex flex-col gap-5 rounded-[22px] border px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
+            style={{
+              backgroundColor: FLASH_THEME.colors.cardBg,
+              borderColor: FLASH_THEME.colors.cardBorder,
+            }}
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+                style={{
+                  backgroundColor: FLASH_THEME.colors.yellow,
+                  color: FLASH_THEME.colors.black,
+                }}
+              >
+                <Sparkles size={21} strokeWidth={1.85} />
               </div>
 
-              <h2 className="mt-2 text-3xl font-black text-black">
-                Flash Sale
-              </h2>
+              <div>
+                <p
+                  className="text-xs font-semibold uppercase tracking-[0.22em]"
+                  style={{ color: FLASH_THEME.colors.yellow }}
+                >
+                  Limited Time
+                </p>
 
-              <p className="mt-2 text-sm font-bold text-black/65">
-                Grab the best deals before the day ends.
-              </p>
+                <h2
+                  className="mt-2 text-2xl font-semibold tracking-[-0.04em] sm:text-3xl"
+                  style={{ color: FLASH_THEME.colors.text }}
+                >
+                  Flash Sale
+                </h2>
+
+                <p
+                  className="mt-2 max-w-xl text-sm font-medium leading-6"
+                  style={{ color: FLASH_THEME.colors.mutedText }}
+                >
+                  Grab premium tech deals before the day ends.
+                </p>
+              </div>
             </div>
 
-            <div className="flex gap-3">
-              <CountdownBox label="Hours" value={countdown.hours} />
-              <CountdownBox label="Mins" value={countdown.minutes} />
-              <CountdownBox label="Secs" value={countdown.seconds} />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
+                style={{
+                  backgroundColor: FLASH_THEME.colors.black,
+                  color: FLASH_THEME.colors.yellow,
+                }}
+              >
+                <Timer size={16} />
+                Deal ends in
+              </div>
+
+              <div className="flex gap-2">
+                <CountdownBox label="Hours" value={countdown.hours} />
+                <CountdownBox label="Mins" value={countdown.minutes} />
+                <CountdownBox label="Secs" value={countdown.seconds} />
+              </div>
             </div>
           </div>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <ProductCardSkeleton key={index} />
-            ))}
-          </div>
-        ) : flashPro?.length ? (
-          <>
+        {/* Product Area */}
+        <div className="mt-8">
+          {isLoading ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {flashPro.slice(0, 8).map((product) => (
-                <ProductCard
-                  key={product?._id || product?.slug}
-                  product={product}
-                />
+              {Array.from({ length: 8 }).map((_, index) => (
+                <ProductCardSkeleton key={index} />
               ))}
             </div>
+          ) : flashPro?.length ? (
+            <>
+              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p
+                    className="text-xs font-semibold uppercase tracking-[0.22em]"
+                    style={{ color: FLASH_THEME.colors.yellow }}
+                  >
+                    Today’s Picks
+                  </p>
 
-            <div className="mt-8 text-center">
-              <Link
-                to="/products"
-                className="inline-flex rounded-full bg-black px-7 py-3 text-sm font-black text-yellow-400 transition hover:bg-yellow-400 hover:text-black"
-              >
-                View All Deals
-              </Link>
+                  <h3
+                    className="mt-2 text-2xl font-semibold tracking-[-0.04em] sm:text-3xl"
+                    style={{ color: FLASH_THEME.colors.text }}
+                  >
+                    Best deals selected for you.
+                  </h3>
+                </div>
+
+                <Link
+                  to="/products"
+                  className="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-300 hover:-translate-y-0.5 sm:inline-flex"
+                  style={{
+                    backgroundColor: FLASH_THEME.colors.black,
+                    color: FLASH_THEME.colors.yellow,
+                  }}
+                >
+                  Browse All
+                  <ArrowUpRight size={15} />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {flashPro.slice(0, 8).map(product => (
+                  <ProductCard
+                    key={product?._id || product?.slug}
+                    product={product}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-7 text-center sm:hidden">
+                <Link
+                  to="/products"
+                  className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5"
+                  style={{
+                    backgroundColor: FLASH_THEME.colors.black,
+                    color: FLASH_THEME.colors.yellow,
+                  }}
+                >
+                  View All Deals
+                  <ArrowUpRight size={15} />
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div
+              className="rounded-[28px] border p-6"
+              style={{
+                backgroundColor: FLASH_THEME.colors.wrapperBg,
+                borderColor: FLASH_THEME.colors.cardBorder,
+                boxShadow: FLASH_THEME.colors.shadow,
+              }}
+            >
+              <EmptyState
+                title="No flash deals"
+                message="Flash sale products are not available right now."
+                buttonText="Browse Products"
+                buttonLink="/products"
+              />
             </div>
-          </>
-        ) : (
-          <EmptyState
-            title="No flash deals"
-            message="Flash sale products are not available right now."
-            buttonText="Browse Products"
-            buttonLink="/products"
-          />
-        )}
+          )}
+        </div>
       </div>
     </section>
   );

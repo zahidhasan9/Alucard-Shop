@@ -135,7 +135,7 @@ const AccountSettings = () => {
       </div>
 
       {isPasswordModalOpen && (
-        <PasswordModal setIsPasswordModalOpen={setIsPasswordModalOpen} />
+        <PasswordModal onClose={() => setIsPasswordModalOpen(false)} />
       )}
 
       {isInfoModalOpen && (
