@@ -84,33 +84,13 @@
 
 // export default Banner;
 
-import React from 'react';
-import { ArrowUpRight, Sparkles, Zap, ShieldCheck } from 'lucide-react';
+import { memo } from 'react';
+import { ArrowUpRight, ShieldCheck, Sparkles, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Import Banner Images
 import Bn1 from '../assets/images/Banner/bn1.webp';
 import Bn2 from '../assets/images/Banner/bn2.webp';
 import Bn3 from '../assets/images/Banner/bn3.webp';
-
-const BANNER_THEME = {
-  colors: {
-    sectionBg: '#F7F7F5',
-
-    black: '#0A0A0A',
-    yellow: '#F7C600',
-
-    cardBorder: 'rgba(10,10,10,0.07)',
-    text: '#0A0A0A',
-    mutedText: 'rgba(10,10,10,0.56)',
-
-    white: '#FFFFFF',
-    whiteMuted: 'rgba(255,255,255,0.72)',
-
-    shadow: '0 18px 55px rgba(0,0,0,0.08)',
-    hoverShadow: '0 24px 70px rgba(0,0,0,0.14)',
-  },
-};
 
 const BANNERS = [
   {
@@ -118,7 +98,7 @@ const BANNERS = [
     icon: Sparkles,
     label: 'Limited Offer',
     title: 'Save up to 10%',
-    desc: 'Premium accessories selected for your daily tech setup.',
+    desc: 'Premium accessories for your daily tech setup.',
     link: '/products',
   },
   {
@@ -126,7 +106,7 @@ const BANNERS = [
     icon: Zap,
     label: 'New Arrival',
     title: 'Fresh Tech Deals',
-    desc: 'Modern gadgets and accessories for a cleaner lifestyle.',
+    desc: 'Modern gadgets with a clean shopping experience.',
     link: '/products',
   },
   {
@@ -134,130 +114,112 @@ const BANNERS = [
     icon: ShieldCheck,
     label: 'Best Choice',
     title: 'Smart Shopping',
-    desc: 'Handpicked products with trusted quality and support.',
+    desc: 'Trusted products with quality support.',
     link: '/products',
   },
 ];
 
 const Banner = () => {
   return (
-    <section
-      className="font-Work_sans"
-      style={{ backgroundColor: BANNER_THEME.colors.sectionBg }}
-    >
-      <div className="container mx-auto px-4 py-10 lg:py-12">
-        {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <p
-            className="text-xs font-semibold uppercase tracking-[0.24em]"
-            style={{ color: BANNER_THEME.colors.yellow }}
-          >
-            Featured Deals
-          </p>
+    <section className="bg-[#f5f5f7] font-Work_sans">
+      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-10">
+        {/* Header */}
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F7C600]">
+              Featured Deals
+            </p>
 
-          <h2
-            className="mt-2 text-2xl font-semibold tracking-[-0.04em] sm:text-3xl"
-            style={{ color: BANNER_THEME.colors.text }}
-          >
-            Premium picks for your setup.
-          </h2>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-black sm:text-3xl">
+              Premium picks for you.
+            </h2>
 
-          <p
-            className="mx-auto mt-3 max-w-xl text-sm font-medium leading-6"
-            style={{ color: BANNER_THEME.colors.mutedText }}
+            <p className="mt-2 max-w-xl text-sm font-medium leading-6 text-black/55">
+              Explore selected gadgets and accessories with a clean, modern
+              shopping experience.
+            </p>
+          </div>
+
+          <Link
+            to="/products"
+            className="hidden items-center gap-2 rounded-full bg-[#F7C600] px-5 py-2.5 text-sm font-black text-black transition-colors hover:bg-yellow-300 sm:inline-flex"
           >
-            Explore curated gadgets and accessories with a clean, premium
-            shopping experience.
-          </p>
+            View All
+            <ArrowUpRight size={15} />
+          </Link>
         </div>
 
-        {/* Banner Cards */}
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {BANNERS.map((banner) => {
+        {/* Cards */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {BANNERS.map((banner, index) => {
             const Icon = banner.icon;
 
             return (
-              <article
+              <Link
                 key={banner.title}
-                className="group relative h-[255px] overflow-hidden rounded-[26px] border transition duration-300 hover:-translate-y-1"
-                style={{
-                  backgroundColor: BANNER_THEME.colors.black,
-                  borderColor: BANNER_THEME.colors.cardBorder,
-                  boxShadow: BANNER_THEME.colors.shadow,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow =
-                    BANNER_THEME.colors.hoverShadow;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = BANNER_THEME.colors.shadow;
-                }}
+                to={banner.link}
+                className="group relative flex min-h-[210px] overflow-hidden rounded-[26px] border border-black/10 bg-white shadow-sm transition-colors duration-200 hover:border-black/15 hover:shadow-md"
+                aria-label={`Shop ${banner.title}`}
               >
-                <img
-                  src={banner.img}
-                  alt={banner.title}
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
+                {/* Image */}
+                <div className="absolute inset-y-0 right-0 w-[58%] overflow-hidden">
+                  <img
+                    src={banner.img}
+                    alt={banner.title}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/5" />
+                {/* Soft overlay for readability */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/20" />
 
-                <div className="absolute inset-x-0 bottom-0 p-5">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span
-                      className="flex h-9 w-9 items-center justify-center rounded-2xl"
-                      style={{
-                        backgroundColor: BANNER_THEME.colors.yellow,
-                        color: BANNER_THEME.colors.black,
-                      }}
-                    >
-                      <Icon size={17} strokeWidth={1.9} />
-                    </span>
+                {/* Content */}
+                <div className="relative z-10 flex w-[72%] flex-col justify-between p-5">
+                  <div>
+                    <div className="mb-4 flex items-center gap-2">
+                      <span className="grid h-9 w-9 place-items-center rounded-2xl bg-[#F7C600] text-black">
+                        <Icon size={17} strokeWidth={1.9} />
+                      </span>
 
-                    <span
-                      className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]"
-                      style={{
-                        backgroundColor: 'rgba(247,198,0,0.14)',
-                        color: BANNER_THEME.colors.yellow,
-                      }}
-                    >
-                      {banner.label}
-                    </span>
+                      <span className="rounded-full bg-black/[0.04] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-black/55">
+                        {banner.label}
+                      </span>
+                    </div>
+
+                    <h3 className="max-w-[230px] text-2xl font-semibold leading-tight tracking-[-0.045em] text-black">
+                      {banner.title}
+                    </h3>
+
+                    <p className="mt-2 max-w-[230px] text-sm font-medium leading-6 text-black/55">
+                      {banner.desc}
+                    </p>
                   </div>
 
-                  <h3
-                    className="text-xl font-semibold tracking-[-0.04em] sm:text-2xl"
-                    style={{ color: BANNER_THEME.colors.white }}
-                  >
-                    {banner.title}
-                  </h3>
-
-                  <p
-                    className="mt-2 max-w-xs text-sm font-medium leading-6"
-                    style={{ color: BANNER_THEME.colors.whiteMuted }}
-                  >
-                    {banner.desc}
-                  </p>
-
-                  <Link
-                    to={banner.link}
-                    className="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition duration-300 hover:-translate-y-0.5"
-                    style={{
-                      backgroundColor: BANNER_THEME.colors.yellow,
-                      color: BANNER_THEME.colors.black,
-                    }}
-                  >
+                  <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-[#F7C600] px-4 py-2.5 text-sm font-black text-black transition-colors group-hover:bg-yellow-300">
                     Shop Now
                     <ArrowUpRight size={15} />
-                  </Link>
+                  </span>
                 </div>
-              </article>
+              </Link>
             );
           })}
+        </div>
+
+        {/* Mobile Button */}
+        <div className="mt-6 text-center sm:hidden">
+          <Link
+            to="/products"
+            className="inline-flex items-center gap-2 rounded-full bg-[#F7C600] px-6 py-3 text-sm font-black text-black transition-colors hover:bg-yellow-300"
+          >
+            View All Deals
+            <ArrowUpRight size={15} />
+          </Link>
         </div>
       </div>
     </section>
   );
 };
 
-export default Banner;
+export default memo(Banner);

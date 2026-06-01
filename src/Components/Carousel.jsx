@@ -195,7 +195,7 @@ const HERO_THEME = {
     white: '#FFFFFF',
     mutedWhite: 'rgba(255,255,255,0.72)',
     glass: 'rgba(255,255,255,0.12)',
-    glassBorder: 'rgba(255,255,255,0.20)',
+    glassBorder: 'rgba(255,255,255,0.18)',
   },
 };
 
@@ -225,56 +225,55 @@ const Carousel = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActive(prev => (prev + 1) % slides.length);
-    }, 5000);
+      setActive((prev) => (prev + 1) % slides.length);
+    }, 6000);
 
     return () => clearInterval(timer);
   }, []);
 
   const goNext = () => {
-    setActive(prev => (prev + 1) % slides.length);
+    setActive((prev) => (prev + 1) % slides.length);
   };
 
   const goPrev = () => {
-    setActive(prev => (prev - 1 + slides.length) % slides.length);
+    setActive((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   return (
     <section
       className="relative overflow-hidden font-Work_sans"
-      style={{
-        backgroundColor: HERO_THEME.colors.black,
-      }}
+      style={{ backgroundColor: HERO_THEME.colors.black }}
     >
-      <div className="relative min-h-[420px] sm:min-h-[520px] lg:min-h-[620px]">
-        {slides.map((slide, index) => (
-          <div
-            key={slide.title}
-            className={`absolute inset-0 transition-all duration-1000 ease-out ${
-              active === index
-                ? 'scale-100 opacity-100'
-                : 'scale-[1.03] opacity-0'
-            }`}
-          >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              fetchPriority={index === 0 ? 'high' : 'auto'}
-              decoding={index === 0 ? 'sync' : 'async'}
-              className="h-full w-full object-cover"
-            />
+      <div className="relative min-h-[420px] sm:min-h-[500px] lg:min-h-[580px]">
+        {slides.map((slide, index) => {
+          const isActive = active === index;
 
-            {/* Premium Apple-like overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-black/10" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-          </div>
-        ))}
+          return (
+            <div
+              key={slide.title}
+              className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+                isActive ? 'z-10 opacity-100' : 'z-0 opacity-0'
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
 
-        <div className="relative z-10 mx-auto flex min-h-[420px] max-w-7xl items-center px-4 py-12 sm:min-h-[520px] lg:min-h-[620px] lg:px-8">
+              <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/15" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/15" />
+            </div>
+          );
+        })}
+
+        <div className="relative z-20 mx-auto flex min-h-[420px] max-w-7xl items-center px-4 py-12 sm:min-h-[500px] lg:min-h-[580px] lg:px-8">
           <div className="max-w-2xl">
             <div
-              className="mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-xl"
+              className="mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.18em]"
               style={{
                 backgroundColor: HERO_THEME.colors.glass,
                 borderColor: HERO_THEME.colors.glassBorder,
@@ -286,14 +285,14 @@ const Carousel = () => {
             </div>
 
             <p
-              className="mb-3 text-sm font-semibold uppercase tracking-[0.34em]"
+              className="mb-3 text-sm font-semibold uppercase tracking-[0.32em]"
               style={{ color: HERO_THEME.colors.mutedWhite }}
             >
               {HERO_THEME.brand}
             </p>
 
             <h1
-              className="max-w-2xl text-[42px] font-semibold leading-[1.04] tracking-[-0.055em] sm:text-6xl lg:text-7xl"
+              className="max-w-2xl text-[40px] font-semibold leading-[1.04] tracking-[-0.055em] sm:text-6xl lg:text-7xl"
               style={{ color: HERO_THEME.colors.white }}
             >
               {slides[active].title}
@@ -309,11 +308,7 @@ const Carousel = () => {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 to="/products"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-300 hover:scale-[1.02]"
-                style={{
-                  backgroundColor: HERO_THEME.colors.yellow,
-                  color: HERO_THEME.colors.black,
-                }}
+                className="inline-flex items-center gap-2 rounded-full bg-[#F7C600] px-6 py-3 text-sm font-black text-black transition-colors hover:bg-yellow-300"
               >
                 Shop Now
                 <ArrowUpRight size={17} />
@@ -321,11 +316,7 @@ const Carousel = () => {
 
               <Link
                 to="/compare"
-                className="inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold text-white backdrop-blur-xl transition duration-300 hover:bg-white hover:text-black"
-                style={{
-                  backgroundColor: HERO_THEME.colors.glass,
-                  borderColor: HERO_THEME.colors.glassBorder,
-                }}
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
               >
                 Compare Products
               </Link>
@@ -333,16 +324,11 @@ const Carousel = () => {
           </div>
         </div>
 
-        {/* Left / Right controls */}
-        <div className="absolute bottom-6 right-4 z-20 flex items-center gap-2 lg:right-8">
+        <div className="absolute bottom-6 right-4 z-30 flex items-center gap-2 lg:right-8">
           <button
             type="button"
             onClick={goPrev}
-            className="grid h-10 w-10 place-items-center rounded-full border text-white backdrop-blur-xl transition hover:bg-white hover:text-black"
-            style={{
-              backgroundColor: HERO_THEME.colors.glass,
-              borderColor: HERO_THEME.colors.glassBorder,
-            }}
+            className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition-colors hover:bg-[#F7C600] hover:text-black"
             aria-label="Previous slide"
           >
             <ChevronLeft size={19} />
@@ -351,25 +337,20 @@ const Carousel = () => {
           <button
             type="button"
             onClick={goNext}
-            className="grid h-10 w-10 place-items-center rounded-full border text-white backdrop-blur-xl transition hover:bg-white hover:text-black"
-            style={{
-              backgroundColor: HERO_THEME.colors.glass,
-              borderColor: HERO_THEME.colors.glassBorder,
-            }}
+            className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition-colors hover:bg-[#F7C600] hover:text-black"
             aria-label="Next slide"
           >
             <ChevronRight size={19} />
           </button>
         </div>
 
-        {/* Bottom indicator */}
-        <div className="absolute bottom-7 left-4 z-20 flex items-center gap-2 lg:left-8">
+        <div className="absolute bottom-7 left-4 z-30 flex items-center gap-2 lg:left-8">
           {slides.map((slide, index) => (
             <button
               key={slide.title}
               type="button"
               onClick={() => setActive(index)}
-              className="h-1.5 rounded-full transition-all duration-300"
+              className="h-1.5 rounded-full transition-[width,background-color] duration-200"
               style={{
                 width: active === index ? '34px' : '8px',
                 backgroundColor:

@@ -474,9 +474,14 @@
 
 
 
-
-
-import { useEffect, useMemo, useState } from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -494,14 +499,11 @@ import {
 } from 'lucide-react';
 
 import { setSearchQuery } from '../../features/SearchSlice';
+import { fetchCart } from '../../features/cartSlice';
 import { fetchWishlist } from '../../features/wishlistSlice';
 import { getCompareProducts } from '../../utils/compareProducts';
 import SearchSuggestions from '../SearchSuggestions';
 
-/**
- * NAVBAR THEME
- * এই object থেকে navbar-এর full color/style control হবে.
- */
 const NAVBAR_THEME = {
   brand: {
     name: 'ALUCARD',
@@ -514,88 +516,91 @@ const NAVBAR_THEME = {
     topBarMessage: 'Secure shopping, fast delivery and trusted support',
     rightTagline: 'Premium Gadgets',
     searchPlaceholder: 'Search products...',
-    categoryText: 'Category',
+    categoryText: 'Browse',
   },
 
   colors: {
-    // Main navbar
     mainBackground: '#F7C600',
-    primaryText: '#0A0A0A',
-    mutedText: 'rgba(10, 10, 10, 0.62)',
+    primaryText: '#111111',
+    mutedText: 'rgba(17, 17, 17, 0.58)',
 
-    // Black/yellow buttons
-    darkButtonBg: '#0A0A0A',
+    yellow: '#F7C600',
+    yellowSoft: 'rgba(247, 198, 0, 0.16)',
+
+    darkButtonBg: '#111111',
     darkButtonText: '#F7C600',
-    darkButtonHoverBg: '#1A1A1A',
+    darkButtonHoverBg: '#000000',
 
-    // Logo
-    logoBg: '#0A0A0A',
+    iconButtonBg: 'rgba(255, 255, 255, 0.72)',
+    iconButtonHoverBg: 'rgba(247, 198, 0, 0.20)',
+    iconButtonText: '#111111',
+
+    logoBg: '#111111',
     logoText: '#F7C600',
 
-    // Top bar
-    topBarBg: '#0A0A0A',
-    topBarText: '#F7C600',
-    topBarHoverText: '#FFFFFF',
+    topBarBg: 'rgba(17, 17, 17, 0.94)',
+    topBarText: 'rgba(255, 255, 255, 0.78)',
+    topBarHoverText: '#F7C600',
 
-    // Search area
-    searchBg: 'rgba(255, 255, 255, 0.96)',
-    searchText: '#0A0A0A',
-    searchPlaceholder: 'rgba(10, 10, 10, 0.42)',
+    searchBg: 'rgba(255, 255, 255, 0.82)',
+    searchText: '#111111',
+    searchPlaceholder: 'rgba(17, 17, 17, 0.38)',
 
-    // Links
-    linkHoverText: '#0A0A0A',
-    activeUnderline: '#0A0A0A',
+    linkHoverText: '#111111',
+    activeUnderline: '#F7C600',
 
-    // Mobile menu dropdown
     mobileMenuBg: 'rgba(255, 255, 255, 0.96)',
-    mobileMenuText: 'rgba(10, 10, 10, 0.70)',
-    mobileMenuHoverBg: '#0A0A0A',
-    mobileMenuHoverText: '#F7C600',
+    mobileMenuText: 'rgba(17, 17, 17, 0.72)',
+    mobileMenuHoverBg: 'rgba(247, 198, 0, 0.15)',
+    mobileMenuHoverText: '#111111',
 
-    // Mobile bottom nav
-    bottomNavBg: '#0A0A0A',
-    bottomNavText: 'rgba(247, 198, 0, 0.62)',
-    bottomNavActiveText: '#F7C600',
+    bottomNavBg: 'rgba(255, 255, 255, 0.96)',
+    bottomNavText: 'rgba(17, 17, 17, 0.46)',
+    bottomNavActiveText: '#111111',
 
-    // Badge
     badgeBg: '#F7C600',
-    badgeText: '#0A0A0A',
-    badgeRing: '#0A0A0A',
+    badgeText: '#111111',
+    badgeRing: '#FFFFFF',
 
-    // Small hover bg
-    clearHoverBg: 'rgba(10, 10, 10, 0.06)',
-    clearHoverText: '#0A0A0A',
+    clearHoverBg: 'rgba(17, 17, 17, 0.06)',
+    clearHoverText: '#111111',
 
-    // Border/shadow
-    border: 'rgba(10, 10, 10, 0.10)',
-    bottomBorder: 'rgba(247, 198, 0, 0.22)',
-    softShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+    border: 'rgba(17, 17, 17, 0.08)',
+    bottomBorder: 'rgba(17, 17, 17, 0.08)',
+    softShadow: '0 8px 24px rgba(0, 0, 0, 0.07)',
   },
 
   size: {
-    topBarHeight: '32px',
-    mainHeight: '66px',
+    topBarHeight: '28px',
+    mainHeight: '64px',
     logoBox: '40px',
     iconButton: '40px',
-    searchHeight: '40px',
-    mobileSearchHeight: '40px',
+    searchHeight: '42px',
+    mobileSearchHeight: '42px',
   },
 
   radius: {
-    logo: '12px',
+    logo: '14px',
     pill: '999px',
-    menu: '18px',
+    menu: '22px',
   },
 };
 
-const getThemeStyle = theme => ({
+const getThemeStyle = (theme) => ({
   '--nav-main-bg': theme.colors.mainBackground,
   '--nav-primary-text': theme.colors.primaryText,
   '--nav-muted-text': theme.colors.mutedText,
 
+  '--nav-yellow': theme.colors.yellow,
+  '--nav-yellow-soft': theme.colors.yellowSoft,
+
   '--nav-dark-btn-bg': theme.colors.darkButtonBg,
   '--nav-dark-btn-text': theme.colors.darkButtonText,
   '--nav-dark-btn-hover-bg': theme.colors.darkButtonHoverBg,
+
+  '--nav-icon-btn-bg': theme.colors.iconButtonBg,
+  '--nav-icon-btn-hover-bg': theme.colors.iconButtonHoverBg,
+  '--nav-icon-btn-text': theme.colors.iconButtonText,
 
   '--nav-logo-bg': theme.colors.logoBg,
   '--nav-logo-text': theme.colors.logoText,
@@ -643,51 +648,68 @@ const getThemeStyle = theme => ({
   '--nav-menu-radius': theme.radius.menu,
 });
 
+const NAVBAR_STYLE = getThemeStyle(NAVBAR_THEME);
+
+const getCartItems = (cartState) => {
+  const cartItems = cartState?.cartItems;
+
+  if (Array.isArray(cartItems?.items)) return cartItems.items;
+  if (Array.isArray(cartItems)) return cartItems;
+  if (Array.isArray(cartState?.items)) return cartState.items;
+  if (Array.isArray(cartState?.cart?.items)) return cartState.cart.items;
+
+  return [];
+};
+
+const getWishlistCount = (wishlistState) => {
+  if (typeof wishlistState?.count === 'number') return wishlistState.count;
+  if (Array.isArray(wishlistState?.products)) return wishlistState.products.length;
+  if (Array.isArray(wishlistState?.items)) return wishlistState.items.length;
+
+  return 0;
+};
+
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const fetchedUserDataRef = useRef(false);
 
-  const { user, isAuthenticated } = useSelector(state => state.user);
-  const cartState = useSelector(state => state.cart || {});
-  const wishlistState = useSelector(state => state.wishlist || {});
+  const { user, isAuthenticated, token } = useSelector((state) => state.user || {});
+  const cartState = useSelector((state) => state.cart || {});
+  const wishlistState = useSelector((state) => state.wishlist || {});
 
   const [search, setSearch] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [compareCount, setCompareCount] = useState(0);
 
-  const themeStyle = useMemo(() => getThemeStyle(NAVBAR_THEME), []);
+  const cartCount = useMemo(() => {
+    const items = getCartItems(cartState);
 
-  const cartItems =
-    cartState.cartItems?.items ||
-    cartState.cartItems ||
-    cartState.items ||
-    cartState.cart?.items ||
-    [];
-
-  const cartCount = Array.isArray(cartItems)
-    ? cartItems.reduce(
-        (total, item) => total + Number(item.quantity || item.qty || 1),
-        0
-      )
-    : 0;
+    return items.reduce((total, item) => {
+      return total + Number(item?.quantity || item?.qty || 1);
+    }, 0);
+  }, [cartState]);
 
   const wishlistCount = useMemo(() => {
-    if (typeof wishlistState.count === 'number') return wishlistState.count;
-    if (Array.isArray(wishlistState.products)) {
-      return wishlistState.products.length;
-    }
-    if (Array.isArray(wishlistState.items)) {
-      return wishlistState.items.length;
-    }
-
-    return 0;
+    return getWishlistCount(wishlistState);
   }, [wishlistState]);
 
+  const showSuggestions = search.trim().length > 1;
+
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchWishlist());
+    const canLoadUserData = isAuthenticated || Boolean(token);
+
+    if (!canLoadUserData) {
+      fetchedUserDataRef.current = false;
+      return;
     }
-  }, [dispatch, isAuthenticated]);
+
+    if (fetchedUserDataRef.current) return;
+
+    fetchedUserDataRef.current = true;
+    dispatch(fetchCart());
+    dispatch(fetchWishlist());
+  }, [dispatch, isAuthenticated, token]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -703,7 +725,6 @@ const Navbar = () => {
     };
 
     updateCompareCount();
-
     window.addEventListener('compare-updated', updateCompareCount);
 
     return () => {
@@ -711,239 +732,124 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleSearchSubmit = e => {
-    e.preventDefault();
+  const handleSearchSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
 
-    dispatch(setSearchQuery(search.trim()));
-    navigate('/products');
-    setMobileMenuOpen(false);
-  };
+      dispatch(setSearchQuery(search.trim()));
+      navigate('/products');
+      setMobileMenuOpen(false);
+    },
+    [dispatch, navigate, search]
+  );
 
-  const closeSearch = () => {
+  const closeSearch = useCallback(() => {
     setSearch('');
     setMobileMenuOpen(false);
-  };
+  }, []);
 
-  const navLinkClass = ({ isActive }) =>
-    isActive
-      ? 'relative font-semibold text-[var(--nav-primary-text)] after:absolute after:-bottom-2 after:left-1/2 after:h-[2px] after:w-5 after:-translate-x-1/2 after:rounded-full after:bg-[var(--nav-active-line)]'
-      : 'font-medium text-[var(--nav-muted-text)] transition hover:text-[var(--nav-link-hover)]';
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen((prev) => !prev);
+  }, []);
 
-  const bottomNavClass = ({ isActive }) =>
-    isActive
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
+  const navLinkClass = useCallback(({ isActive }) => {
+    return isActive
+      ? 'relative rounded-full bg-white/60 px-3 py-2 font-semibold text-[var(--nav-primary-text)] shadow-sm ring-1 ring-black/5 after:absolute after:-bottom-1 after:left-1/2 after:h-[3px] after:w-5 after:-translate-x-1/2 after:rounded-full after:bg-[var(--nav-active-line)]'
+      : 'rounded-full px-3 py-2 font-medium text-[var(--nav-muted-text)] transition-colors duration-200 hover:bg-white/55 hover:text-[var(--nav-link-hover)]';
+  }, []);
+
+  const bottomNavClass = useCallback(({ isActive }) => {
+    return isActive
       ? 'relative flex flex-col items-center gap-1 font-semibold text-[var(--nav-bottom-active-text)]'
-      : 'relative flex flex-col items-center gap-1 font-medium text-[var(--nav-bottom-text)]';
+      : 'relative flex flex-col items-center gap-1 font-medium text-[var(--nav-bottom-text)] transition-colors hover:text-[var(--nav-bottom-active-text)]';
+  }, []);
+
+  const mobileLinks = useMemo(
+    () => [
+      ['Home', '/'],
+      ['Products', '/products'],
+      [`Compare${compareCount > 0 ? ` (${compareCount})` : ''}`, '/compare'],
+      [`Wishlist${wishlistCount > 0 ? ` (${wishlistCount})` : ''}`, '/wishlist'],
+      [`Cart${cartCount > 0 ? ` (${cartCount})` : ''}`, '/cart'],
+      [
+        isAuthenticated ? 'Dashboard' : 'Login / Register',
+        isAuthenticated ? '/dashboard' : '/login',
+      ],
+    ],
+    [cartCount, compareCount, isAuthenticated, wishlistCount]
+  );
 
   return (
-    <div style={themeStyle}>
-      {/* Top bar */}
-      <div
-        className="hidden border-b lg:block"
-        style={{
-          backgroundColor: 'var(--nav-top-bg)',
-          borderColor: 'var(--nav-border)',
-          color: 'var(--nav-top-text)',
-        }}
-      >
-        <div className="container mx-auto flex h-[var(--nav-top-height)] items-center justify-between px-4 text-[12px] font-medium">
-          <p className="flex items-center gap-2 opacity-90">
-            <ShieldCheck size={14} />
-            {NAVBAR_THEME.text.topBarMessage}
-          </p>
-
-          <div className="flex items-center gap-5">
-            <TopLink to="/products">Shop</TopLink>
-            <TopLink to="/compare">Compare</TopLink>
-            <TopLink to="/wishlist">Wishlist</TopLink>
-
-            <TopLink to={isAuthenticated ? '/dashboard' : '/login'}>
-              {isAuthenticated ? 'My Account' : 'Login'}
-            </TopLink>
-          </div>
-        </div>
-      </div>
-
-      {/* Main navbar */}
+    <>
       <header
-        className="sticky top-0 z-40 border-b backdrop-blur-xl"
-        style={{
-          backgroundColor: 'var(--nav-main-bg)',
-          borderColor: 'var(--nav-border)',
-        }}
+        className="sticky top-0 z-50 w-full border-b border-[var(--nav-border)] bg-[var(--nav-main-bg)] shadow-[var(--nav-shadow)]"
+        style={NAVBAR_STYLE}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex min-h-[var(--nav-main-height)] items-center gap-4">
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(prev => !prev)}
-              className="flex h-9 w-9 items-center justify-center rounded-full transition lg:hidden"
-              style={{
-                backgroundColor: 'var(--nav-dark-btn-bg)',
-                color: 'var(--nav-dark-btn-text)',
-              }}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X size={19} /> : <Menu size={19} />}
-            </button>
+        {/* Top bar */}
+        <div className="hidden h-[var(--nav-top-height)] items-center bg-[var(--nav-top-bg)] px-4 text-[11px] font-medium text-[var(--nav-top-text)] md:flex">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={13} className="text-[var(--nav-yellow)]" />
+              <span>{NAVBAR_THEME.text.topBarMessage}</span>
+            </div>
 
-            <Link
-              to={NAVBAR_THEME.brand.homePath}
-              className="flex min-w-fit items-center gap-2.5"
-            >
-              <div
-                className="flex h-[var(--nav-logo-box)] w-[var(--nav-logo-box)] items-center justify-center"
-                style={{
-                  backgroundColor: 'var(--nav-logo-bg)',
-                  color: 'var(--nav-logo-text)',
-                  borderRadius: 'var(--nav-logo-radius)',
-                }}
-              >
-                <span className="text-lg font-semibold tracking-tight">
-                  {NAVBAR_THEME.brand.logoText}
-                </span>
-              </div>
-
-              <div>
-                <h1 className="leading-none text-[18px] font-semibold tracking-[-0.03em] text-[var(--nav-primary-text)]">
-                  {NAVBAR_THEME.brand.name}
-                </h1>
-
-                <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.24em] text-[var(--nav-muted-text)]">
-                  {NAVBAR_THEME.brand.subtitle}
-                </p>
-              </div>
-            </Link>
-
-            {/* Desktop search */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="relative hidden h-[var(--nav-search-height)] flex-1 items-center rounded-full shadow-sm ring-1 lg:flex"
-              style={{
-                backgroundColor: 'var(--nav-search-bg)',
-                borderColor: 'var(--nav-border)',
-                boxShadow: 'var(--nav-shadow)',
-              }}
-            >
-              <Search size={16} className="ml-4 text-[var(--nav-muted-text)]" />
-
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder={NAVBAR_THEME.text.searchPlaceholder}
-                className="h-full flex-1 bg-transparent px-3 text-sm font-medium outline-none"
-                style={{
-                  color: 'var(--nav-search-text)',
-                }}
-                aria-label="Search products"
-              />
-
-              {search && (
-                <button
-                  type="button"
-                  onClick={closeSearch}
-                  className="mr-1 flex h-8 w-8 items-center justify-center rounded-full transition"
-                  style={{
-                    color: 'var(--nav-muted-text)',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.backgroundColor =
-                      'var(--nav-clear-hover-bg)';
-                    e.currentTarget.style.color = 'var(--nav-clear-hover-text)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = 'var(--nav-muted-text)';
-                  }}
-                  aria-label="Clear search"
-                >
-                  <X size={15} />
-                </button>
-              )}
-
-              <button
-                type="submit"
-                className="mr-1 h-8 rounded-full px-4 text-xs font-semibold transition"
-                style={{
-                  backgroundColor: 'var(--nav-dark-btn-bg)',
-                  color: 'var(--nav-dark-btn-text)',
-                }}
-              >
-                Search
-              </button>
-
-              <SearchSuggestions query={search} onSelect={closeSearch} />
-            </form>
-
-            {/* Desktop simple nav */}
-            <nav className="hidden items-center gap-6 text-sm lg:flex">
-              <NavLink to="/products" className={navLinkClass}>
-                Products
-              </NavLink>
-
-              <NavLink to="/compare" className={navLinkClass}>
-                Compare
-              </NavLink>
-            </nav>
-
-            {/* Desktop icons */}
-            <div className="ml-auto hidden items-center gap-2 lg:flex">
-              <IconLink
-                to="/compare"
-                icon={<GitCompare size={18} />}
-                count={compareCount}
-                label="Compare"
-              />
-
-              <IconLink
-                to="/wishlist"
-                icon={<Heart size={18} />}
-                count={wishlistCount}
-                label="Wishlist"
-              />
-
-              <IconLink
-                to="/cart"
-                icon={<ShoppingBag size={18} />}
-                count={cartCount}
-                label="Cart"
-              />
-
-              <NavLink
-                to={isAuthenticated ? '/dashboard' : '/login'}
-                className="flex h-[var(--nav-icon-button)] items-center gap-2 rounded-full px-4 text-sm font-semibold transition"
-                style={{
-                  backgroundColor: 'var(--nav-dark-btn-bg)',
-                  color: 'var(--nav-dark-btn-text)',
-                }}
-              >
-                <UserRound size={17} />
-                {isAuthenticated
-                  ? user?.firstName || user?.name || 'Account'
-                  : 'Login'}
-              </NavLink>
+            <div className="flex items-center gap-5">
+              <TopLink to="/products">Shop</TopLink>
+              <TopLink to="/compare">Compare</TopLink>
+              <TopLink to="/wishlist">Wishlist</TopLink>
+              <TopLink to={isAuthenticated ? '/dashboard' : '/login'}>
+                {isAuthenticated ? 'My Account' : 'Login'}
+              </TopLink>
             </div>
           </div>
+        </div>
 
-          {/* Mobile search */}
+        {/* Main navbar */}
+        <div className="mx-auto flex min-h-[var(--nav-main-height)] w-full max-w-7xl items-center gap-3 px-4 py-3">
+          <button
+            type="button"
+            onClick={toggleMobileMenu}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-[var(--nav-primary-text)] shadow-sm ring-1 ring-black/5 transition-colors duration-200 hover:bg-[var(--nav-yellow-soft)] lg:hidden"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          <Link
+            to={NAVBAR_THEME.brand.homePath}
+            className="group flex shrink-0 items-center gap-2"
+            onClick={closeMobileMenu}
+          >
+            <span className="grid h-[var(--nav-logo-box)] w-[var(--nav-logo-box)] place-items-center rounded-[var(--nav-logo-radius)] bg-[var(--nav-logo-bg)] text-lg font-black text-[var(--nav-logo-text)] shadow-sm ring-1 ring-white/20 transition-colors duration-200">
+              {NAVBAR_THEME.brand.logoText}
+            </span>
+
+            <span className="hidden leading-tight sm:block">
+              <span className="block text-[17px] font-black tracking-[-0.03em] text-[var(--nav-primary-text)]">
+                {NAVBAR_THEME.brand.name}
+              </span>
+              <span className="block text-[11px] font-semibold tracking-wide text-[var(--nav-muted-text)]">
+                {NAVBAR_THEME.brand.subtitle}
+              </span>
+            </span>
+          </Link>
+
+          {/* Desktop search */}
           <form
             onSubmit={handleSearchSubmit}
-            className="relative mb-3 flex h-[var(--nav-mobile-search-height)] items-center rounded-full shadow-sm ring-1 lg:hidden"
-            style={{
-              backgroundColor: 'var(--nav-search-bg)',
-              borderColor: 'var(--nav-border)',
-              boxShadow: 'var(--nav-shadow)',
-            }}
+            className="relative mx-3 hidden h-[var(--nav-search-height)] flex-1 items-center rounded-full bg-[var(--nav-search-bg)] px-2 shadow-sm ring-1 ring-black/5 transition-colors duration-200 focus-within:bg-white focus-within:ring-black/10 lg:flex"
           >
-            <Search size={15} className="ml-4 text-[var(--nav-muted-text)]" />
+            <Search size={18} className="ml-2 text-[var(--nav-muted-text)]" />
 
             <input
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
               placeholder={NAVBAR_THEME.text.searchPlaceholder}
-              className="h-full flex-1 bg-transparent px-3 text-sm font-medium outline-none"
-              style={{
-                color: 'var(--nav-search-text)',
-              }}
+              className="h-full flex-1 bg-transparent px-3 text-sm font-medium text-[var(--nav-search-text)] outline-none placeholder:text-[var(--nav-search-placeholder)]"
               aria-label="Search products"
             />
 
@@ -951,59 +857,122 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={closeSearch}
-                className="flex h-8 w-8 items-center justify-center rounded-full transition"
-                style={{
-                  color: 'var(--nav-muted-text)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor =
-                    'var(--nav-clear-hover-bg)';
-                  e.currentTarget.style.color = 'var(--nav-clear-hover-text)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = 'var(--nav-muted-text)';
-                }}
+                className="grid h-8 w-8 place-items-center rounded-full text-[var(--nav-muted-text)] transition-colors duration-200 hover:bg-[var(--nav-clear-hover-bg)] hover:text-[var(--nav-clear-hover-text)]"
                 aria-label="Clear search"
               >
-                <X size={15} />
+                <X size={16} />
               </button>
             )}
 
             <button
               type="submit"
-              className="mr-1 flex h-8 w-8 items-center justify-center rounded-full"
-              style={{
-                backgroundColor: 'var(--nav-dark-btn-bg)',
-                color: 'var(--nav-dark-btn-text)',
-              }}
-              aria-label="Search"
+              className="rounded-full bg-[var(--nav-dark-btn-bg)] px-5 py-2 text-xs font-black text-[var(--nav-dark-btn-text)] shadow-sm transition-colors duration-200 hover:bg-[var(--nav-dark-btn-hover-bg)]"
             >
-              <Search size={15} />
+              Search
             </button>
 
-            <SearchSuggestions query={search} onSelect={closeSearch} />
+            {showSuggestions && (
+              <SearchSuggestions query={search} onSelect={closeSearch} />
+            )}
           </form>
 
-          {/* Desktop category/menu row */}
-          <div
-            className="hidden border-t py-2.5 lg:flex lg:items-center lg:justify-between"
-            style={{
-              borderColor: 'var(--nav-border)',
-            }}
-          >
-            <div className="flex items-center gap-5 text-[13px]">
-              <span
-                className="inline-flex h-8 items-center gap-2 rounded-full px-3.5 font-semibold"
-                style={{
-                  backgroundColor: 'var(--nav-dark-btn-bg)',
-                  color: 'var(--nav-dark-btn-text)',
-                }}
-              >
-                <Grid3X3 size={15} />
-                {NAVBAR_THEME.text.categoryText}
-              </span>
+          {/* Desktop simple nav */}
+          <nav className="hidden items-center gap-1 text-sm lg:flex">
+            <NavLink to="/products" className={navLinkClass}>
+              Products
+            </NavLink>
 
+            <NavLink to="/compare" className={navLinkClass}>
+              Compare
+            </NavLink>
+          </nav>
+
+          {/* Desktop icons */}
+          <div className="ml-auto hidden items-center gap-2 lg:flex">
+            <IconLink
+              to="/compare"
+              icon={<GitCompare size={18} />}
+              count={compareCount}
+              label="Compare"
+            />
+
+            <IconLink
+              to="/wishlist"
+              icon={<Heart size={18} />}
+              count={wishlistCount}
+              label="Wishlist"
+            />
+
+            <IconLink
+              to="/cart"
+              icon={<ShoppingBag size={18} />}
+              count={cartCount}
+              label="Cart"
+            />
+
+            <Link
+              to={isAuthenticated ? '/dashboard' : '/login'}
+              className="ml-1 inline-flex h-[var(--nav-icon-button)] items-center gap-2 rounded-full bg-[var(--nav-dark-btn-bg)] px-4 text-sm font-black text-[var(--nav-dark-btn-text)] shadow-sm transition-colors duration-200 hover:bg-[var(--nav-dark-btn-hover-bg)]"
+            >
+              <UserRound size={18} />
+              <span className="hidden xl:inline">
+                {isAuthenticated
+                  ? user?.firstName || user?.name || 'Account'
+                  : 'Login'}
+              </span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Mobile search */}
+        <div className="px-4 pb-3 lg:hidden">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="relative flex h-[var(--nav-mobile-search-height)] items-center rounded-full bg-[var(--nav-search-bg)] px-2 shadow-sm ring-1 ring-black/5 focus-within:bg-white focus-within:ring-black/10"
+          >
+            <Search size={17} className="ml-2 text-[var(--nav-muted-text)]" />
+
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder={NAVBAR_THEME.text.searchPlaceholder}
+              className="h-full flex-1 bg-transparent px-3 text-sm font-medium text-[var(--nav-search-text)] outline-none placeholder:text-[var(--nav-search-placeholder)]"
+              aria-label="Search products"
+            />
+
+            {search && (
+              <button
+                type="button"
+                onClick={closeSearch}
+                className="grid h-8 w-8 place-items-center rounded-full text-[var(--nav-muted-text)] transition-colors hover:bg-[var(--nav-clear-hover-bg)]"
+                aria-label="Clear search"
+              >
+                <X size={16} />
+              </button>
+            )}
+
+            <button
+              type="submit"
+              className="rounded-full bg-[var(--nav-dark-btn-bg)] px-4 py-2 text-xs font-black text-[var(--nav-dark-btn-text)]"
+            >
+              Search
+            </button>
+
+            {showSuggestions && (
+              <SearchSuggestions query={search} onSelect={closeSearch} />
+            )}
+          </form>
+        </div>
+
+        {/* Desktop category/menu row */}
+        <div className="hidden border-t border-[var(--nav-border)] bg-white/35 lg:block">
+          <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4">
+            <div className="flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-xs font-black text-[var(--nav-primary-text)] shadow-sm ring-1 ring-black/5">
+              <Grid3X3 size={15} className="text-[var(--nav-yellow)]" />
+              <span>{NAVBAR_THEME.text.categoryText}</span>
+            </div>
+
+            <nav className="flex items-center gap-1 text-sm">
               <NavLink to="/" className={navLinkClass}>
                 Home
               </NavLink>
@@ -1030,164 +999,116 @@ const Navbar = () => {
               >
                 Account
               </NavLink>
-            </div>
+            </nav>
 
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--nav-muted-text)]">
-              <Package size={14} />
-              {NAVBAR_THEME.text.rightTagline}
-            </p>
+            <div className="flex items-center gap-2 rounded-full bg-[var(--nav-yellow-soft)] px-4 py-2 text-xs font-black text-[var(--nav-primary-text)]">
+              <Package size={15} />
+              <span>{NAVBAR_THEME.text.rightTagline}</span>
+            </div>
           </div>
-
-          {/* Mobile menu dropdown */}
-          {mobileMenuOpen && (
-            <div
-              className="border-t pb-3 pt-2 lg:hidden"
-              style={{
-                borderColor: 'var(--nav-border)',
-              }}
-            >
-              <div
-                className="grid gap-1.5 p-2 text-sm font-medium shadow-sm ring-1"
-                style={{
-                  backgroundColor: 'var(--nav-mobile-menu-bg)',
-                  borderRadius: 'var(--nav-menu-radius)',
-                  borderColor: 'var(--nav-border)',
-                }}
-              >
-                {[
-                  ['Home', '/'],
-                  ['Products', '/products'],
-                  [
-                    `Compare${compareCount > 0 ? ` (${compareCount})` : ''}`,
-                    '/compare',
-                  ],
-                  ['Wishlist', '/wishlist'],
-                  ['Cart', '/cart'],
-                  [
-                    isAuthenticated ? 'Dashboard' : 'Login / Register',
-                    isAuthenticated ? '/dashboard' : '/login',
-                  ],
-                ].map(([label, link]) => (
-                  <NavLink
-                    key={link}
-                    to={link}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-xl px-4 py-2.5 transition"
-                    style={{
-                      color: 'var(--nav-mobile-menu-text)',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.backgroundColor =
-                        'var(--nav-mobile-hover-bg)';
-                      e.currentTarget.style.color =
-                        'var(--nav-mobile-hover-text)';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color =
-                        'var(--nav-mobile-menu-text)';
-                    }}
-                  >
-                    {label}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div className="border-t border-[var(--nav-border)] bg-[var(--nav-mobile-menu-bg)] px-4 py-3 shadow-lg lg:hidden">
+            <div className="mx-auto flex max-w-7xl flex-col gap-1">
+              {mobileLinks.map(([label, link]) => (
+                <Link
+                  key={`${label}-${link}`}
+                  to={link}
+                  onClick={closeMobileMenu}
+                  className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--nav-mobile-menu-text)] transition-colors duration-200 hover:bg-[var(--nav-mobile-hover-bg)] hover:text-[var(--nav-mobile-hover-text)]"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Mobile bottom nav */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t px-4 py-2 shadow-[var(--nav-shadow)] backdrop-blur-xl lg:hidden"
-        style={{
-          backgroundColor: 'var(--nav-bottom-bg)',
-          borderColor: 'var(--nav-bottom-border)',
-        }}
+        className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t border-[var(--nav-bottom-border)] bg-[var(--nav-bottom-bg)] px-2 text-[11px] font-bold shadow-sm lg:hidden"
+        style={NAVBAR_STYLE}
       >
-        <div className="mx-auto grid max-w-md grid-cols-5 items-center gap-1 text-[11px]">
-          <NavLink to="/" className={bottomNavClass}>
-            <Home size={19} />
-            Home
-          </NavLink>
+        <NavLink to="/" className={bottomNavClass}>
+          <Home size={20} />
+          <span>Home</span>
+        </NavLink>
 
-          <NavLink to="/products" className={bottomNavClass}>
-            <Grid3X3 size={19} />
-            Shop
-          </NavLink>
+        <NavLink to="/products" className={bottomNavClass}>
+          <Package size={20} />
+          <span>Shop</span>
+        </NavLink>
 
-          <NavLink
-            to="/compare"
-            className={props => `${bottomNavClass(props)} relative`}
-          >
-            <GitCompare size={19} />
-            Compare
-            {compareCount > 0 && <Badge>{compareCount}</Badge>}
-          </NavLink>
+        <NavLink
+          to="/compare"
+          className={(props) => `${bottomNavClass(props)} relative`}
+        >
+          <GitCompare size={20} />
+          <span>Compare</span>
+          {compareCount > 0 && <Badge>{compareCount}</Badge>}
+        </NavLink>
 
-          <NavLink
-            to="/cart"
-            className={props => `${bottomNavClass(props)} relative`}
-          >
-            <ShoppingBag size={19} />
-            Cart
-            {cartCount > 0 && <Badge>{cartCount}</Badge>}
-          </NavLink>
+        <NavLink
+          to="/cart"
+          className={(props) => `${bottomNavClass(props)} relative`}
+        >
+          <ShoppingBag size={20} />
+          <span>Cart</span>
+          {cartCount > 0 && <Badge>{cartCount}</Badge>}
+        </NavLink>
 
-          <NavLink
-            to={isAuthenticated ? '/dashboard' : '/login'}
-            className={bottomNavClass}
-          >
-            <UserRound size={19} />
-            Account
-          </NavLink>
-        </div>
+        <NavLink
+          to={isAuthenticated ? '/dashboard' : '/login'}
+          className={bottomNavClass}
+        >
+          <UserRound size={20} />
+          <span>Account</span>
+        </NavLink>
       </nav>
-    </div>
+    </>
   );
 };
 
-const TopLink = ({ to, children }) => {
+const TopLink = memo(({ to, children }) => {
   return (
     <Link
       to={to}
-      className="transition hover:text-[var(--nav-top-hover)]"
+      className="transition-colors duration-200 hover:text-[var(--nav-top-hover)]"
     >
       {children}
     </Link>
   );
-};
+});
 
-const IconLink = ({ to, icon, count, label }) => {
+TopLink.displayName = 'TopLink';
+
+const IconLink = memo(({ to, icon, count, label }) => {
   return (
-    <NavLink
+    <Link
       to={to}
-      className="relative flex h-[var(--nav-icon-button)] w-[var(--nav-icon-button)] items-center justify-center rounded-full text-[var(--nav-primary-text)] shadow-sm ring-1 transition hover:bg-[var(--nav-dark-btn-bg)] hover:text-[var(--nav-dark-btn-text)]"
-      style={{
-        backgroundColor: 'var(--nav-search-bg)',
-        borderColor: 'var(--nav-border)',
-      }}
+      className="relative grid h-[var(--nav-icon-button)] w-[var(--nav-icon-button)] place-items-center rounded-full bg-[var(--nav-icon-btn-bg)] text-[var(--nav-icon-btn-text)] shadow-sm ring-1 ring-black/5 transition-colors duration-200 hover:bg-[var(--nav-icon-btn-hover-bg)]"
+      aria-label={label}
       title={label}
     >
       {icon}
       {count > 0 && <Badge>{count}</Badge>}
-    </NavLink>
+    </Link>
   );
-};
+});
 
-const Badge = ({ children }) => {
+IconLink.displayName = 'IconLink';
+
+const Badge = memo(({ children }) => {
   return (
-    <span
-      className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-semibold ring-1"
-      style={{
-        backgroundColor: 'var(--nav-badge-bg)',
-        color: 'var(--nav-badge-text)',
-        borderColor: 'var(--nav-badge-ring)',
-      }}
-    >
+    <span className="absolute -right-1 -top-1 grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-[var(--nav-badge-bg)] px-1 text-[10px] font-black leading-none text-[var(--nav-badge-text)] shadow-sm ring-2 ring-[var(--nav-badge-ring)]">
       {children}
     </span>
   );
-};
+});
+
+Badge.displayName = 'Badge';
 
 export default Navbar;
