@@ -200,6 +200,7 @@ import ScrollToTop from './Components/ScrollToTop';
 const HomePage = lazy(() => import('./Page/HomePage'));
 const ProductsAll = lazy(() => import('./Page/ProductsAll'));
 const ProductDetails = lazy(() => import('./Page/ProductDetails'));
+const CategoryProducts = lazy(() => import('./Page/CategoryProducts'));
 const CartPage = lazy(() => import('./Page/CartPage'));
 const WishlistPage = lazy(() => import('./Page/WishlistPage'));
 const InfoPage = lazy(() => import('./Page/InfoPage'));
@@ -240,6 +241,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/products" element={<ProductsAll />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
+            <Route path="/category/:slug" element={<CategoryProducts />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/compare" element={<CompareProducts />} />

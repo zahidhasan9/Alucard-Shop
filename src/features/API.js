@@ -138,7 +138,7 @@ export const fetchFlashsellProducts = () => axios.get('/product/flashsell');
 export const getTopProducts = () => axios.get('/product/top');
 export const getProduct = slug => axios.get(`/product/${slug}`);
 export const getRelatedProducts = (slug, limit = 8) => axios.get(`/product/${slug}/related`, { params: { limit } });
-export const getProductsByCategory = slug => axios.get(`/product/category/${slug}`);
+export const getProductsByCategory = (slug, params = {}) =>axios.get(`/product/category/${slug}`, { params });
 export const updateProduct = (slug, data) => axios.put(`/product/${slug}`, data);
 export const deleteProduct = id => axios.delete(`/product/${id}`);
 
