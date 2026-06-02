@@ -205,6 +205,7 @@ const CartPage = lazy(() => import('./Page/CartPage'));
 const WishlistPage = lazy(() => import('./Page/WishlistPage'));
 const InfoPage = lazy(() => import('./Page/InfoPage'));
 const CompareProducts = lazy(() => import('./Page/CompareProducts'));
+const BrandProducts = lazy(() => import('./Page/BrandProducts'));
 
 const LoginPage = lazy(() => import('./Page/Login'));
 const RegisterPage = lazy(() => import('./Page/Register'));
@@ -242,6 +243,7 @@ function App() {
             <Route path="/products" element={<ProductsAll />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
             <Route path="/category/:slug" element={<CategoryProducts />} />
+            <Route path="/brand/:slug" element={<BrandProducts />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/compare" element={<CompareProducts />} />

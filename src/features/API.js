@@ -171,6 +171,10 @@ export const updateCartItem = (productId, quantity) => axios.put('/cart/update',
 export const removeFromCart = productId => axios.delete(`/cart/remove/${productId}`);
 export const clearCart = () => axios.delete('/cart/clear');
 
+// Banner
+export const getActiveBanners = (limit = 3) =>
+  axios.get('/banner', { params: { limit } });
+
 // Coupon
 export const applyCoupon = data => axios.post('/coupon/apply', data);
 export const getCoupons = () => axios.get('/coupon');
