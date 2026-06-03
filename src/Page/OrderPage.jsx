@@ -1,6 +1,3 @@
-
-
-
 // import { useEffect, useMemo, useState } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
 // import { useDispatch, useSelector } from 'react-redux';
@@ -48,6 +45,10 @@
 //   if (Array.isArray(cartItems?.items)) return cartItems.items;
 //   if (Array.isArray(cartItems)) return cartItems;
 //   return [];
+// };
+
+// const getProductId = item => {
+//   return item.productId || item.product?._id || item.product || item._id;
 // };
 
 // const OrderPage = () => {
@@ -137,29 +138,51 @@
 //   }, [items]);
 
 //   const couponCartItems = useMemo(() => {
-//     return items.map(item => ({
-//       productId: item.productId || item.product?._id || item.product || item._id,
-//       _id: item.productId || item.product?._id || item.product || item._id,
-//       name: item.name || item.title,
-//       qty: item.quantity || item.qty || 1,
-//       quantity: item.quantity || item.qty || 1,
-//       price: item.price || 0,
-//       image: item.image || item.thumbnail,
-//       slug: item.slug,
-//       variantId: item.variantId,
-//       variantLabel: item.variantLabel,
-//       variantSku: item.variantSku,
-//       selectedVariants: item.selectedVariants || {},
-//     }));
+//     return items.map(item => {
+//       const productId = getProductId(item);
+//       const qty = Number(item.quantity || item.qty || 1);
+
+//       return {
+//         product: productId,
+//         productId,
+//         _id: productId,
+//         name: item.name || item.title || item.product?.name || '',
+//         qty,
+//         quantity: qty,
+//         price: Number(item.price || 0),
+//         image: item.image || item.thumbnail || item.product?.image || '',
+//         slug: item.slug || item.product?.slug || '',
+//         variantId: item.variantId || '',
+//         variantLabel: item.variantLabel || '',
+//         variantSku: item.variantSku || '',
+//         selectedVariants: item.selectedVariants || {},
+//       };
+//     });
 //   }, [items]);
 
-//   const finalShippingPrice = couponData?.shippingPrice ?? shippingFee;
-//   const discountPrice = couponData?.discountPrice || 0;
-//   const totalPrice = couponData?.totalPrice ?? subtotal + shippingFee;
+//   const cartSignature = useMemo(() => {
+//     return couponCartItems
+//       .map(item =>
+//         [
+//           item.productId,
+//           item.variantId || item.variantLabel || '',
+//           item.quantity,
+//           item.price,
+//         ].join(':')
+//       )
+//       .join('|');
+//   }, [couponCartItems]);
+
+//   const couponResetKey = `${shippingMethod}-${shippingFee}-${cartSignature}`;
 
 //   useEffect(() => {
 //     setCouponData(null);
-//   }, [shippingMethod, items.length]);
+//   }, [couponResetKey]);
+
+//   const finalShippingPrice = Number(couponData?.shippingPrice ?? shippingFee);
+//   const discountPrice = Number(couponData?.discountPrice || 0);
+//   const shippingDiscount = Number(couponData?.shippingDiscount || 0);
+//   const totalPrice = Number(couponData?.totalPrice ?? subtotal + shippingFee);
 
 //   const handleAddressChange = event => {
 //     const { name, value } = event.target;
@@ -228,7 +251,7 @@
 //       shippingAddress: {
 //         fullName: address.fullName,
 //         phone: address.phone,
-//         email: address.email,
+//         email: address.email || user?.email || '',
 //         address: address.street,
 //         city: address.city,
 //         postalCode: address.postalCode,
@@ -252,8 +275,12 @@
 //             }
 //           : undefined,
 
-//       couponCode: couponData?.couponCode || null,
+//       couponCode: couponData?.couponCode || '',
 //       taxPrice: 0,
+
+//       // Important:
+//       // Send original selected shipping fee.
+//       // Backend will recalculate final shipping/discount again.
 //       shippingPrice: shippingFee,
 //     };
 
@@ -292,7 +319,8 @@
 //           </h1>
 
 //           <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-gray-500">
-//             Confirm your delivery address, apply coupon, choose payment method and place your order securely.
+//             Confirm your delivery address, apply coupon, choose payment method
+//             and place your order securely.
 //           </p>
 //         </div>
 
@@ -504,7 +532,9 @@
 //                       </div>
 
 //                       <div className="flex-1">
-//                         <p className="font-black text-gray-950">{item.title}</p>
+//                         <p className="font-black text-gray-950">
+//                           {item.title}
+//                         </p>
 
 //                         <p className="mt-1 text-xs font-semibold text-gray-500">
 //                           {item.text}
@@ -530,7 +560,8 @@
 //                   </p>
 
 //                   <p className="mt-2 text-sm leading-6 text-gray-600">
-//                     Send payment to your business bKash/Nagad/Rocket number and enter the transaction ID below.
+//                     Send payment to your business bKash/Nagad/Rocket number and
+//                     enter the transaction ID below.
 //                   </p>
 
 //                   <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -566,6 +597,7 @@
 //               cartItems={couponCartItems}
 //               shippingPrice={shippingFee}
 //               onCouponApplied={setCouponData}
+//               resetKey={couponResetKey}
 //             />
 
 //             <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
@@ -582,7 +614,7 @@
 
 //                     return (
 //                       <div
-//                         key={item._id || index}
+//                         key={item._id || `${getProductId(item)}-${index}`}
 //                         className="flex gap-3 rounded-2xl bg-gray-50 p-3"
 //                       >
 //                         {item.image || item.thumbnail ? (
@@ -635,6 +667,13 @@
 //                   <span>{formatPrice(finalShippingPrice)}</span>
 //                 </div>
 
+//                 {shippingDiscount > 0 && (
+//                   <div className="flex justify-between text-green-600">
+//                     <span>Shipping Discount</span>
+//                     <span>-{formatPrice(shippingDiscount)}</span>
+//                   </div>
+//                 )}
+
 //                 {discountPrice > 0 && (
 //                   <div className="flex justify-between text-green-600">
 //                     <span>Discount</span>
@@ -663,7 +702,8 @@
 //                   />
 
 //                   <p className="text-xs font-bold leading-5 text-gray-700">
-//                     Coupon, variant price, stock and total price will be verified again by backend before order is saved.
+//                     Coupon, variant price, stock and total price will be
+//                     verified again by backend before order is saved.
 //                   </p>
 //                 </div>
 //               </div>
@@ -740,6 +780,11 @@
 
 
 
+
+
+
+
+
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -778,28 +823,35 @@ const manualProviders = [
   { value: 'rocket', label: 'Rocket' },
 ];
 
-const formatPrice = value => {
+const formatPrice = (value) => {
   const amount = Number(value || 0);
+
   return `৳${amount.toLocaleString('en-BD')}`;
 };
 
-const getCartItems = cartItems => {
+const getCartItems = (cartItems) => {
   if (Array.isArray(cartItems?.items)) return cartItems.items;
   if (Array.isArray(cartItems)) return cartItems;
+
   return [];
 };
 
-const getProductId = item => {
-  return item.productId || item.product?._id || item.product || item._id;
+const getProductId = (item) => {
+  if (item?.productId?._id) return item.productId._id;
+  if (item?.product?._id) return item.product._id;
+  if (item?.productId) return item.productId;
+  if (item?.product) return item.product;
+
+  return item?._id;
 };
 
 const OrderPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { cartItems } = useSelector(state => state.cart);
-  const { addresses = [] } = useSelector(state => state.addressReducer || {});
-  const { user } = useSelector(state => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
+  const { addresses = [] } = useSelector((state) => state.addressReducer || {});
+  const { user } = useSelector((state) => state.user);
 
   const [address, setAddress] = useState({
     fullName: '',
@@ -832,7 +884,7 @@ const OrderPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const defaultAddress = addresses.find(item => item.isDefault === true);
+    const defaultAddress = addresses.find((item) => item.isDefault === true);
 
     if (defaultAddress) {
       setAddress({
@@ -855,7 +907,7 @@ const OrderPage = () => {
     }
 
     if (user) {
-      setAddress(prev => ({
+      setAddress((prev) => ({
         ...prev,
         fullName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
         phone: user?.phone || prev.phone,
@@ -867,6 +919,7 @@ const OrderPage = () => {
   const shippingFee = useMemo(() => {
     if (shippingMethod === 'pickup') return 0;
     if (shippingMethod === 'express') return 300;
+
     return 60;
   }, [shippingMethod]);
 
@@ -880,7 +933,7 @@ const OrderPage = () => {
   }, [items]);
 
   const couponCartItems = useMemo(() => {
-    return items.map(item => {
+    return items.map((item) => {
       const productId = getProductId(item);
       const qty = Number(item.quantity || item.qty || 1);
 
@@ -904,7 +957,7 @@ const OrderPage = () => {
 
   const cartSignature = useMemo(() => {
     return couponCartItems
-      .map(item =>
+      .map((item) =>
         [
           item.productId,
           item.variantId || item.variantLabel || '',
@@ -926,10 +979,10 @@ const OrderPage = () => {
   const shippingDiscount = Number(couponData?.shippingDiscount || 0);
   const totalPrice = Number(couponData?.totalPrice ?? subtotal + shippingFee);
 
-  const handleAddressChange = event => {
+  const handleAddressChange = (event) => {
     const { name, value } = event.target;
 
-    setAddress(prev => ({
+    setAddress((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -987,6 +1040,9 @@ const OrderPage = () => {
   const onSubmit = async () => {
     if (!validateOrder()) return;
 
+    const appliedCouponCode =
+      couponData?.couponCode || couponData?.coupon?.code || '';
+
     const orderData = {
       cartItems: couponCartItems,
 
@@ -1017,13 +1073,33 @@ const OrderPage = () => {
             }
           : undefined,
 
-      couponCode: couponData?.couponCode || '',
+      // Backend primarily needs this code.
+      couponCode: appliedCouponCode,
+
+      // Extra coupon object is added as fallback because backend also supports coupon?.code.
+      coupon: appliedCouponCode
+        ? {
+            code: appliedCouponCode,
+            type: couponData?.coupon?.type,
+            value: couponData?.coupon?.value,
+            discountPrice,
+            shippingDiscount,
+          }
+        : undefined,
+
+      itemsPrice: subtotal,
       taxPrice: 0,
 
       // Important:
       // Send original selected shipping fee.
       // Backend will recalculate final shipping/discount again.
       shippingPrice: shippingFee,
+      originalShippingPrice: shippingFee,
+
+      // Frontend calculated values are sent for trace/debug only.
+      // Backend recalculates and saves final trusted values.
+      discountPrice,
+      totalPrice,
     };
 
     try {
@@ -1032,7 +1108,7 @@ const OrderPage = () => {
       const result = await dispatch(createOrder(orderData));
 
       if (result?.error) {
-        toast.error(result.error?.message || 'Order failed');
+        toast.error(result.payload || result.error?.message || 'Order failed');
         return;
       }
 
@@ -1052,15 +1128,15 @@ const OrderPage = () => {
     <main className="bg-gray-100 font-Work_sans">
       <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6">
-          <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-700">
+          <p className="text-sm font-medium uppercase tracking-[0.25em] text-yellow-700">
             Secure Checkout
           </p>
 
-          <h1 className="text-3xl font-black text-gray-950">
+          <h1 className="text-3xl font-medium tracking-tight text-gray-950">
             Complete Your Order
           </h1>
 
-          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-gray-500">
+          <p className="mt-2 max-w-2xl text-sm font-normal leading-6 text-gray-500">
             Confirm your delivery address, apply coupon, choose payment method
             and place your order securely.
           </p>
@@ -1075,11 +1151,11 @@ const OrderPage = () => {
                 </div>
 
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-600">
+                  <p className="text-sm font-medium uppercase tracking-[0.25em] text-yellow-600">
                     Customer
                   </p>
 
-                  <h2 className="text-2xl font-black text-gray-950">
+                  <h2 className="text-2xl font-medium tracking-tight text-gray-950">
                     Customer Information
                   </h2>
                 </div>
@@ -1117,7 +1193,7 @@ const OrderPage = () => {
                   onChange={handleAddressChange}
                 >
                   <option value="">Select Division</option>
-                  {divisions.map(division => (
+                  {divisions.map((division) => (
                     <option key={division} value={division}>
                       {division}
                     </option>
@@ -1159,11 +1235,11 @@ const OrderPage = () => {
                 </div>
 
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-600">
+                  <p className="text-sm font-medium uppercase tracking-[0.25em] text-yellow-600">
                     Delivery
                   </p>
 
-                  <h2 className="text-2xl font-black text-gray-950">
+                  <h2 className="text-2xl font-medium tracking-tight text-gray-950">
                     Delivery Method
                   </h2>
                 </div>
@@ -1189,7 +1265,7 @@ const OrderPage = () => {
                     price: 300,
                     text: 'Fast delivery',
                   },
-                ].map(item => (
+                ].map((item) => (
                   <button
                     key={item.value}
                     type="button"
@@ -1200,13 +1276,13 @@ const OrderPage = () => {
                         : 'border-gray-200 bg-white hover:border-yellow-300'
                     }`}
                   >
-                    <p className="font-black text-gray-950">{item.title}</p>
+                    <p className="font-medium text-gray-950">{item.title}</p>
 
-                    <p className="mt-1 text-xs font-semibold text-gray-500">
+                    <p className="mt-1 text-xs font-normal text-gray-500">
                       {item.text}
                     </p>
 
-                    <p className="mt-3 text-lg font-black text-green-600">
+                    <p className="mt-3 text-lg font-medium text-green-600">
                       {formatPrice(item.price)}
                     </p>
                   </button>
@@ -1221,11 +1297,11 @@ const OrderPage = () => {
                 </div>
 
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.25em] text-yellow-600">
+                  <p className="text-sm font-medium uppercase tracking-[0.25em] text-yellow-600">
                     Payment
                   </p>
 
-                  <h2 className="text-2xl font-black text-gray-950">
+                  <h2 className="text-2xl font-medium tracking-tight text-gray-950">
                     Payment Method
                   </h2>
                 </div>
@@ -1254,7 +1330,7 @@ const OrderPage = () => {
                     icon: CreditCard,
                     active: false,
                   },
-                ].map(item => {
+                ].map((item) => {
                   const Icon = item.icon;
 
                   return (
@@ -1274,11 +1350,11 @@ const OrderPage = () => {
                       </div>
 
                       <div className="flex-1">
-                        <p className="font-black text-gray-950">
+                        <p className="font-medium text-gray-950">
                           {item.title}
                         </p>
 
-                        <p className="mt-1 text-xs font-semibold text-gray-500">
+                        <p className="mt-1 text-xs font-normal text-gray-500">
                           {item.text}
                         </p>
                       </div>
@@ -1297,22 +1373,22 @@ const OrderPage = () => {
 
               {paymentMethod === 'manual' && (
                 <div className="mt-5 rounded-3xl bg-gray-50 p-4">
-                  <p className="font-black text-gray-950">
+                  <p className="font-medium text-gray-950">
                     Manual Payment Instruction
                   </p>
 
-                  <p className="mt-2 text-sm leading-6 text-gray-600">
+                  <p className="mt-2 text-sm font-normal leading-6 text-gray-600">
                     Send payment to your business bKash/Nagad/Rocket number and
                     enter the transaction ID below.
                   </p>
 
-                  <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                    {manualProviders.map(item => (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {manualProviders.map((item) => (
                       <button
                         key={item.value}
                         type="button"
                         onClick={() => setManualProvider(item.value)}
-                        className={`rounded-2xl border px-4 py-3 text-sm font-black transition ${
+                        className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
                           manualProvider === item.value
                             ? 'border-black bg-black text-yellow-400'
                             : 'border-gray-200 bg-white text-gray-700'
@@ -1325,9 +1401,9 @@ const OrderPage = () => {
 
                   <input
                     value={transactionId}
-                    onChange={event => setTransactionId(event.target.value)}
+                    onChange={(event) => setTransactionId(event.target.value)}
                     placeholder="Transaction ID"
-                    className="mt-4 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold outline-none focus:border-yellow-400"
+                    className="mt-4 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:border-yellow-400"
                   />
                 </div>
               )}
@@ -1338,12 +1414,12 @@ const OrderPage = () => {
             <BackendCouponBox
               cartItems={couponCartItems}
               shippingPrice={shippingFee}
-              onCouponApplied={setCouponData}
               resetKey={couponResetKey}
+              onCouponApplied={setCouponData}
             />
 
             <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-              <h2 className="flex items-center gap-2 text-2xl font-black text-gray-950">
+              <h2 className="flex items-center gap-2 text-2xl font-medium tracking-tight text-gray-950">
                 <PackageCheck size={24} />
                 Order Overview
               </h2>
@@ -1356,7 +1432,7 @@ const OrderPage = () => {
 
                     return (
                       <div
-                        key={item._id || `${getProductId(item)}-${index}`}
+                        key={item._id || `${item.slug}-${index}`}
                         className="flex gap-3 rounded-2xl bg-gray-50 p-3"
                       >
                         {item.image || item.thumbnail ? (
@@ -1368,93 +1444,87 @@ const OrderPage = () => {
                             className="h-16 w-16 rounded-2xl object-cover"
                           />
                         ) : (
-                          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-200 text-xs font-bold text-gray-400">
+                          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-200 text-xs font-medium text-gray-400">
                             No Image
                           </div>
                         )}
 
                         <div className="min-w-0 flex-1">
-                          <p className="line-clamp-2 text-sm font-black text-gray-950">
+                          <p className="line-clamp-2 text-sm font-medium text-gray-950">
                             {item.name || item.title}
                           </p>
 
                           {item.variantLabel && (
-                            <p className="mt-1 text-xs font-bold text-gray-500">
+                            <p className="mt-1 text-xs font-normal text-gray-500">
                               Variant: {item.variantLabel}
                             </p>
                           )}
 
-                          <p className="mt-1 text-xs font-semibold text-gray-500">
+                          <p className="mt-1 text-xs font-normal text-gray-500">
                             {formatPrice(price)} × {qty}
                           </p>
                         </div>
+
+                        <p className="text-sm font-medium text-gray-950">
+                          {formatPrice(price * qty)}
+                        </p>
                       </div>
                     );
                   })
                 ) : (
-                  <div className="rounded-2xl bg-gray-50 p-4 text-center text-sm font-bold text-gray-500">
+                  <div className="rounded-2xl bg-gray-50 p-4 text-center text-sm font-medium text-gray-500">
                     Your cart is empty.
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 space-y-3 text-sm font-bold text-gray-600">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>{formatPrice(subtotal)}</span>
-                </div>
+              <div className="mt-6 space-y-3 text-sm font-normal text-gray-600">
+                <Summary label="Subtotal" value={formatPrice(subtotal)} />
 
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span>{formatPrice(finalShippingPrice)}</span>
-                </div>
+                <Summary
+                  label="Shipping"
+                  value={formatPrice(finalShippingPrice)}
+                />
 
                 {shippingDiscount > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Shipping Discount</span>
-                    <span>-{formatPrice(shippingDiscount)}</span>
-                  </div>
+                  <Summary
+                    label="Shipping Discount"
+                    value={`-${formatPrice(shippingDiscount)}`}
+                    highlight
+                  />
                 )}
 
                 {discountPrice > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Discount</span>
-                    <span>-{formatPrice(discountPrice)}</span>
-                  </div>
+                  <Summary
+                    label="Discount"
+                    value={`-${formatPrice(discountPrice)}`}
+                    highlight
+                  />
                 )}
 
                 {couponData?.couponCode && (
-                  <div className="flex justify-between text-yellow-700">
-                    <span>Coupon</span>
-                    <span>{couponData.couponCode}</span>
-                  </div>
+                  <Summary label="Coupon" value={couponData.couponCode} />
                 )}
 
-                <div className="flex justify-between border-t border-gray-100 pt-4 text-xl font-black text-gray-950">
+                <div className="flex justify-between border-t border-gray-100 pt-4 text-xl font-medium text-gray-950">
                   <span>Total</span>
                   <span>{formatPrice(totalPrice)}</span>
                 </div>
               </div>
 
-              <div className="mt-5 rounded-2xl bg-yellow-50 p-4">
-                <div className="flex gap-2">
-                  <ShieldCheck
-                    size={18}
-                    className="mt-0.5 shrink-0 text-yellow-700"
-                  />
-
-                  <p className="text-xs font-bold leading-5 text-gray-700">
-                    Coupon, variant price, stock and total price will be
-                    verified again by backend before order is saved.
-                  </p>
-                </div>
+              <div className="mt-5 flex gap-2 rounded-2xl bg-yellow-50 p-3 text-sm font-normal leading-6 text-yellow-800">
+                <ShieldCheck size={18} className="mt-0.5 shrink-0" />
+                <span>
+                  Coupon, variant price, stock and total price will be verified
+                  again by backend before order is saved.
+                </span>
               </div>
 
-              <label className="mt-5 flex items-start gap-3 text-sm font-bold text-gray-700">
+              <label className="mt-5 flex cursor-pointer items-start gap-2 text-sm font-normal text-gray-700">
                 <input
                   type="checkbox"
                   checked={isTermsAccepted}
-                  onChange={event => setIsTermsAccepted(event.target.checked)}
+                  onChange={(event) => setIsTermsAccepted(event.target.checked)}
                   className="mt-1 accent-yellow-500"
                 />
 
@@ -1475,7 +1545,7 @@ const OrderPage = () => {
                 type="button"
                 onClick={onSubmit}
                 disabled={!isTermsAccepted || submitting || !items.length}
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-6 py-4 text-sm font-black text-yellow-400 transition hover:bg-yellow-400 hover:text-black disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-6 py-4 text-sm font-medium text-yellow-400 transition hover:bg-yellow-400 hover:text-black disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? 'Placing Order...' : 'Confirm Order'}
                 <CheckCircle size={18} />
@@ -1490,30 +1560,41 @@ const OrderPage = () => {
 
 const Input = ({ label, ...props }) => (
   <label className="block">
-    <span className="mb-2 block text-xs font-black uppercase tracking-wide text-gray-500">
+    <span className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">
       {label}
     </span>
 
     <input
       {...props}
-      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-yellow-400"
+      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium outline-none transition focus:border-yellow-400"
     />
   </label>
 );
 
 const Select = ({ label, children, ...props }) => (
   <label className="block">
-    <span className="mb-2 block text-xs font-black uppercase tracking-wide text-gray-500">
+    <span className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-500">
       {label}
     </span>
 
     <select
       {...props}
-      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold outline-none transition focus:border-yellow-400"
+      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium outline-none transition focus:border-yellow-400"
     >
       {children}
     </select>
   </label>
+);
+
+const Summary = ({ label, value, highlight = false }) => (
+  <div
+    className={`flex items-center justify-between ${
+      highlight ? 'text-green-600' : ''
+    }`}
+  >
+    <span>{label}</span>
+    <span className="font-medium">{value}</span>
+  </div>
 );
 
 export default OrderPage;
