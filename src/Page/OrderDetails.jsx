@@ -1,357 +1,3 @@
-
-
-
-// import { useEffect, useState } from 'react';
-// import { Link, useParams } from 'react-router-dom';
-// import {
-//   ArrowLeft,
-//   CreditCard,
-//   Download,
-//   MapPin,
-//   Package,
-//   Phone,
-//   ReceiptText,
-//   Smartphone,
-//   Tag,
-//   User,
-// } from 'lucide-react';
-
-// import * as API from '../features/API';
-// import Loader from '../Components/Loader';
-// import EmptyState from '../Components/UI/EmptyState';
-// import OrderTimeline from '../Components/OrderTimeline';
-// import usePageTitle from '../hooks/usePageTitle';
-
-// const OrderDetails = () => {
-//   const { id } = useParams();
-
-//   const [order, setOrder] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState('');
-
-//   usePageTitle('Order Details | Alucard Shop', 'View order details.');
-
-//   useEffect(() => {
-//     const loadOrder = async () => {
-//       try {
-//         setLoading(true);
-//         const res = await API.getOrderById(id);
-//         setOrder(res.data?.order || res.data);
-//       } catch (err) {
-//         setError(err.response?.data?.message || 'Order could not be loaded');
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     if (id) loadOrder();
-//   }, [id]);
-
-//   if (loading) return <Loader />;
-
-//   if (error || !order) {
-//     return (
-//       <EmptyState
-//         icon={Package}
-//         title="Order not found"
-//         message={error || 'We could not find this order.'}
-//         actionLabel="Back to Orders"
-//         actionTo="/dashboard"
-//       />
-//     );
-//   }
-
-//   const items = order?.orderItems || order?.items || [];
-//   const address = order?.shippingAddress || {};
-//   const user = order?.user || {};
-//   const status =
-//     order?.orderStatus ||
-//     order?.Delivery ||
-//     order?.deliveryStatus ||
-//     'Processing';
-
-//   const paymentLabel =
-//     order?.manualPayment?.provider?.toUpperCase() ||
-//     (order?.paymentMethod?.method === 'cod'
-//       ? 'Cash on Delivery'
-//       : order?.paymentMethod?.method || 'Payment');
-
-//   const formatPrice = (amount) =>
-//     Number(amount || 0).toLocaleString('en-BD', {
-//       style: 'currency',
-//       currency: 'BDT',
-//       minimumFractionDigits: 0,
-//     });
-
-//   const formatDate = (date) => {
-//     if (!date) return 'N/A';
-//     return new Date(date).toLocaleDateString('en-BD', {
-//       day: '2-digit',
-//       month: 'short',
-//       year: 'numeric',
-//     });
-//   };
-
-//   return (
-//     <main className="min-h-screen bg-gray-100 px-4 py-6 font-Work_sans">
-//       <div className="container mx-auto max-w-6xl">
-//         <div className="mb-4 flex items-center justify-between">
-//           <Link
-//             to="/dashboard"
-//             className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-yellow-700"
-//           >
-//             <ArrowLeft size={17} />
-//             Back to Account
-//           </Link>
-
-//           <Link
-//             to={`/invoice/${order?.orderId || order?._id || id}`}
-//             className="inline-flex items-center gap-2 rounded-full bg-gray-950 px-4 py-2 text-xs font-bold text-yellow-400 hover:bg-yellow-400 hover:text-gray-950"
-//           >
-//             <Download size={15} />
-//             Invoice
-//           </Link>
-//         </div>
-
-//         <div className="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-//           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-//             <div>
-//               <p className="text-xs font-bold uppercase tracking-wider text-yellow-700">
-//                 Order Details
-//               </p>
-//               <h1 className="mt-1 text-xl font-black text-gray-950">
-//                 #{order?.orderId || order?._id || id}
-//               </h1>
-//               <p className="mt-1 text-sm text-gray-500">
-//                 Placed on {formatDate(order?.createdAt)}
-//               </p>
-//             </div>
-
-//             <span className="inline-flex w-max items-center gap-2 rounded-full bg-yellow-100 px-4 py-2 text-xs font-black text-yellow-800">
-//               {status}
-//             </span>
-//           </div>
-
-//           <div className="mt-4 border-t border-gray-100 pt-4">
-//             <OrderTimeline status={status} />
-//           </div>
-//         </div>
-
-//         <div className="grid gap-4 lg:grid-cols-[1fr_330px]">
-//           <section className="space-y-4">
-//             <Card title="Items" icon={<Package size={18} />}>
-//               <div className="divide-y divide-gray-100">
-//                 {items.map((item, index) => (
-//                   <div
-//                     key={item?._id || index}
-//                     className="grid grid-cols-[70px_1fr_auto] gap-3 py-3"
-//                   >
-//                     <img
-//                       src={
-//                         item?.image ||
-//                         item?.images?.[0]?.url ||
-//                         item?.product?.images?.[0]?.url ||
-//                         '/placeholder.png'
-//                       }
-//                       alt={item?.name || item?.title || 'Product'}
-//                       className="h-16 w-16 rounded-lg bg-gray-100 object-contain p-1"
-//                     />
-
-//                     <div>
-//                       <h3 className="line-clamp-1 text-sm font-bold text-gray-950">
-//                         {item?.name || item?.title || 'Product'}
-//                       </h3>
-//                       <p className="mt-1 text-xs text-gray-500">
-//                         Qty: {item?.qty || item?.quantity || 1}
-//                       </p>
-//                     </div>
-
-//                     <p className="text-sm font-black text-gray-950">
-//                       {formatPrice(item?.price)}
-//                     </p>
-//                   </div>
-//                 ))}
-//               </div>
-//             </Card>
-
-//             <Card title="Shipping Address" icon={<MapPin size={18} />}>
-//               <div className="grid gap-3 sm:grid-cols-2">
-//                 <SmallInfo
-//                   icon={<User size={16} />}
-//                   label="Customer"
-//                   value={
-//                     address?.fullName ||
-//                     `${user?.firstName || ''} ${user?.lastName || ''}`.trim() ||
-//                     'N/A'
-//                   }
-//                 />
-//                 <SmallInfo
-//                   icon={<Phone size={16} />}
-//                   label="Phone"
-//                   value={address?.phone || user?.phone || 'N/A'}
-//                 />
-//               </div>
-
-//               <p className="mt-3 rounded-lg bg-gray-50 p-3 text-sm leading-6 text-gray-700">
-//                 {address?.address || 'N/A'}
-//                 <br />
-//                 {address?.city || ''} {address?.postalCode || ''}
-//                 <br />
-//                 {address?.division || ''}
-//               </p>
-//             </Card>
-
-//             {order?.manualPayment && (
-//               <Card title="Manual Payment Details" icon={<Smartphone size={18} />}>
-//                 <div className="grid gap-3 sm:grid-cols-2">
-//                   <SmallInfo
-//                     label="Provider"
-//                     value={order.manualPayment.provider?.toUpperCase() || 'N/A'}
-//                   />
-//                   <SmallInfo
-//                     label="Status"
-//                     value={order.manualPayment.status || 'Submitted'}
-//                   />
-//                   <SmallInfo
-//                     label="Sender Number"
-//                     value={order.manualPayment.senderNumber || 'N/A'}
-//                   />
-//                   <SmallInfo
-//                     label="Transaction ID"
-//                     value={order.manualPayment.transactionId || 'N/A'}
-//                   />
-//                 </div>
-//               </Card>
-//             )}
-
-//             {order?.coupon && (
-//               <Card title="Coupon Applied" icon={<Tag size={18} />}>
-//                 <div className="grid gap-3 sm:grid-cols-2">
-//                   <SmallInfo label="Code" value={order.coupon.code || 'N/A'} />
-//                   <SmallInfo
-//                     label="Discount"
-//                     value={formatPrice(
-//                       order.discountPrice || order.coupon.discountPrice || 0
-//                     )}
-//                   />
-//                   <SmallInfo
-//                     label="Shipping Discount"
-//                     value={formatPrice(order.coupon.shippingDiscount || 0)}
-//                   />
-//                   <SmallInfo
-//                     label="Type"
-//                     value={order.coupon.type || 'N/A'}
-//                   />
-//                 </div>
-//               </Card>
-//             )}
-//           </section>
-
-//           <aside className="space-y-4">
-//             <Card title="Payment" icon={<CreditCard size={18} />}>
-//               <div className="space-y-2">
-//                 <SummaryRow label="Method" value={paymentLabel} />
-//                 <SummaryRow
-//                   label="Status"
-//                   value={
-//                     order?.isPaid
-//                       ? 'Paid'
-//                       : order?.paymentMethod?.status ||
-//                         order?.manualPayment?.status ||
-//                         'Unpaid'
-//                   }
-//                 />
-//                 <SummaryRow
-//                   label="Transaction"
-//                   value={
-//                     order?.paymentMethod?.transactionId ||
-//                     order?.manualPayment?.transactionId ||
-//                     'N/A'
-//                   }
-//                 />
-//               </div>
-//             </Card>
-
-//             <Card title="Summary" icon={<ReceiptText size={18} />}>
-//               <div className="space-y-2">
-//                 <SummaryRow
-//                   label="Items"
-//                   value={formatPrice(order?.itemsPrice)}
-//                 />
-//                 <SummaryRow
-//                   label="Shipping"
-//                   value={formatPrice(order?.shippingPrice)}
-//                 />
-//                 <SummaryRow
-//                   label="Discount"
-//                   value={`- ${formatPrice(order?.discountPrice || 0)}`}
-//                 />
-//                 <SummaryRow label="Tax" value={formatPrice(order?.taxPrice)} />
-//                 <div className="border-t border-gray-200 pt-2">
-//                   <SummaryRow
-//                     label="Total"
-//                     value={formatPrice(order?.totalPrice)}
-//                     strong
-//                   />
-//                 </div>
-//               </div>
-//             </Card>
-
-//             <Link
-//               to="/contact"
-//               className="block rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm font-semibold text-yellow-900 hover:bg-yellow-100"
-//             >
-//               Need help with this order?
-//             </Link>
-//           </aside>
-//         </div>
-//       </div>
-//     </main>
-//   );
-// };
-
-// const Card = ({ title, icon, children }) => (
-//   <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-//     <div className="mb-3 flex items-center gap-2">
-//       <span className="grid h-9 w-9 place-items-center rounded-full bg-yellow-100 text-yellow-700">
-//         {icon}
-//       </span>
-//       <h2 className="text-base font-black text-gray-950">{title}</h2>
-//     </div>
-//     {children}
-//   </div>
-// );
-
-// const SummaryRow = ({ label, value, strong }) => (
-//   <div className="flex items-center justify-between gap-3 text-sm">
-//     <span className="text-gray-500">{label}</span>
-//     <span
-//       className={
-//         strong
-//           ? 'text-lg font-black text-gray-950'
-//           : 'break-all text-right font-bold text-gray-900'
-//       }
-//     >
-//       {value}
-//     </span>
-//   </div>
-// );
-
-// const SmallInfo = ({ icon, label, value }) => (
-//   <div className="rounded-lg bg-gray-50 p-3">
-//     <div className="flex items-center gap-2 text-xs text-gray-500">
-//       {icon}
-//       {label}
-//     </div>
-//     <p className="mt-1 break-all text-sm font-bold text-gray-950">{value}</p>
-//   </div>
-// );
-
-// export default OrderDetails;
-
-
-
-
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -416,27 +62,9 @@ const paymentConfig = {
 };
 
 const formatPrice = (amount) => {
-  return Number(amount || 0).toLocaleString('en-BD', {
-    style: 'currency',
-    currency: 'BDT',
-    minimumFractionDigits: 0,
-  });
-};
+  const value = Number(amount || 0);
 
-const formatDate = (date) => {
-  if (!date) return 'N/A';
-
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return 'N/A';
-  }
-
-  return parsedDate.toLocaleDateString('en-BD', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  return `BDT ${value.toLocaleString('en-BD')}`;
 };
 
 const formatDateTime = (date) => {
@@ -458,11 +86,14 @@ const formatDateTime = (date) => {
 };
 
 const getDeliveryStatus = (order) => {
-  return String(order?.Delivery || order?.deliveryStatus || 'pending').toLowerCase();
+  return String(
+    order?.Delivery || order?.deliveryStatus || 'pending'
+  ).toLowerCase();
 };
 
 const getDeliveryIndex = (status) => {
   const index = DELIVERY_STEPS.indexOf(status);
+
   return index >= 0 ? index : 0;
 };
 
@@ -498,6 +129,49 @@ const getPaymentLabel = (order) => {
   return method || 'Payment';
 };
 
+const getCouponSavings = (order) => {
+  const coupon = order?.coupon || {};
+
+  const productDiscount = Number(
+    order?.discountPrice || coupon?.discountPrice || 0
+  );
+
+  const originalShippingPrice = Number(
+    order?.originalShippingPrice ??
+      coupon?.originalShippingPrice ??
+      order?.shippingPrice ??
+      0
+  );
+
+  const finalShippingPrice = Number(order?.shippingPrice || 0);
+
+  const shippingDiscount = Number(
+    coupon?.shippingDiscount ||
+      Math.max(0, originalShippingPrice - finalShippingPrice)
+  );
+
+  const totalSavings = productDiscount + shippingDiscount;
+
+  const couponCode =
+    coupon?.code || order?.couponCode || order?.appliedCouponCode || '';
+
+  const couponType =
+    coupon?.type === 'shipping' || shippingDiscount > 0
+      ? 'Free Shipping'
+      : coupon?.type || 'Discount';
+
+  return {
+    couponCode,
+    couponType,
+    productDiscount,
+    originalShippingPrice,
+    finalShippingPrice,
+    shippingDiscount,
+    totalSavings,
+    hasCoupon: Boolean(couponCode) || productDiscount > 0 || shippingDiscount > 0,
+  };
+};
+
 const getProductSlug = (item) => {
   return item?.slug || item?.product?.slug || item?.productSlug || '';
 };
@@ -505,6 +179,11 @@ const getProductSlug = (item) => {
 const getProductImage = (item) => {
   if (item?.image) return item.image;
   if (item?.product?.image) return item.product.image;
+
+  if (Array.isArray(item?.images) && item.images.length > 0) {
+    return item.images[0]?.url || item.images[0];
+  }
+
   if (Array.isArray(item?.product?.images) && item.product.images.length > 0) {
     return item.product.images[0]?.url || item.product.images[0];
   }
@@ -562,13 +241,11 @@ const buildTrackingSteps = (order) => {
 
     return {
       key: step,
-      label: config.label,
       title: config.title,
       description: trackingEvent?.message || config.description,
       date: trackingEvent?.date || fallbackDate,
       icon: config.icon,
       isActive,
-      isCurrent: step === currentStatus,
     };
   });
 };
@@ -582,7 +259,9 @@ const getLatestTrackingMessage = (order) => {
 
   const status = getDeliveryStatus(order);
 
-  return deliveryConfig[status]?.description || 'Your order status is being updated.';
+  return (
+    deliveryConfig[status]?.description || 'Your order status is being updated.'
+  );
 };
 
 const StatusBadge = ({ type = 'delivery', value }) => {
@@ -656,19 +335,45 @@ const SectionCard = ({ title, icon: Icon, children, right }) => {
   );
 };
 
-const SummaryRow = ({ label, value, strong = false }) => {
+const SummaryRow = ({ label, value, strong = false, success = false }) => {
   return (
     <div
       className={`flex items-center justify-between gap-4 border-b border-gray-100 py-3 last:border-b-0 ${
         strong ? 'text-lg' : 'text-sm'
       }`}
     >
-      <span className={strong ? 'font-medium text-black' : 'font-normal text-gray-500'}>
+      <span
+        className={
+          strong ? 'font-medium text-black' : 'font-normal text-gray-500'
+        }
+      >
         {label}
       </span>
 
-      <span className={strong ? 'font-medium text-black' : 'font-medium text-black'}>
+      <span
+        className={`font-medium ${
+          strong ? 'text-black' : success ? 'text-green-600' : 'text-black'
+        }`}
+      >
         {value}
+      </span>
+    </div>
+  );
+};
+
+const InfoLine = ({ label, value, success = false }) => {
+  return (
+    <div className="flex flex-col gap-1 rounded-2xl bg-yellow-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-[11px] font-normal uppercase tracking-[0.14em] text-gray-500">
+        {label}
+      </span>
+
+      <span
+        className={`break-all text-sm font-medium ${
+          success ? 'text-green-600' : 'text-black'
+        }`}
+      >
+        {value || 'N/A'}
       </span>
     </div>
   );
@@ -752,7 +457,9 @@ const TrackingSection = ({ order }) => {
             >
               <div
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
-                  step.isActive ? 'bg-black text-yellow-300' : 'bg-white text-gray-400'
+                  step.isActive
+                    ? 'bg-black text-yellow-300'
+                    : 'bg-white text-gray-400'
                 }`}
               >
                 <Icon size={18} strokeWidth={1.8} />
@@ -974,6 +681,7 @@ const OrderDetails = () => {
   const deliveryStatus = getDeliveryStatus(order);
   const paymentStatus = getPaymentStatus(order);
   const paymentLabel = getPaymentLabel(order);
+  const couponSavings = getCouponSavings(order);
 
   const customerName =
     address?.fullName ||
@@ -1030,9 +738,17 @@ const OrderDetails = () => {
 
       <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <InfoCard icon={User} label="Customer" value={customerName} />
-        <InfoCard icon={Phone} label="Phone" value={address?.phone || user?.phone || 'N/A'} />
+        <InfoCard
+          icon={Phone}
+          label="Phone"
+          value={address?.phone || user?.phone || 'N/A'}
+        />
         <InfoCard icon={CreditCard} label="Payment" value={paymentLabel} />
-        <InfoCard icon={Package} label="Items" value={`${items.length} product${items.length > 1 ? 's' : ''}`} />
+        <InfoCard
+          icon={Package}
+          label="Items"
+          value={`${items.length} product${items.length > 1 ? 's' : ''}`}
+        />
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_0.9fr]">
@@ -1050,7 +766,11 @@ const OrderDetails = () => {
           >
             {items.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-yellow-300 bg-yellow-50 p-8 text-center">
-                <Package size={28} strokeWidth={1.8} className="mx-auto text-black" />
+                <Package
+                  size={28}
+                  strokeWidth={1.8}
+                  className="mx-auto text-black"
+                />
 
                 <h3 className="mt-3 text-lg font-medium text-black">
                   No product found
@@ -1064,7 +784,13 @@ const OrderDetails = () => {
               <div className="space-y-3">
                 {items.map((item, index) => (
                   <ProductItem
-                    key={item?._id || item?.product || item?.slug || index}
+                    key={
+                      item?._id ||
+                      item?.product?._id ||
+                      item?.product ||
+                      item?.slug ||
+                      index
+                    }
                     item={item}
                   />
                 ))}
@@ -1152,13 +878,36 @@ const OrderDetails = () => {
             </div>
           </SectionCard>
 
-          {order?.coupon && (
+          {couponSavings.hasCoupon && (
             <SectionCard title="Coupon" icon={Tag}>
               <div className="space-y-3">
-                <InfoLine label="Code" value={order.coupon.code || 'N/A'} />
                 <InfoLine
-                  label="Discount"
-                  value={formatPrice(order.discountPrice || order.coupon.discountPrice || 0)}
+                  label="Code"
+                  value={couponSavings.couponCode || 'Applied Coupon'}
+                />
+
+                <InfoLine label="Type" value={couponSavings.couponType} />
+
+                {couponSavings.productDiscount > 0 && (
+                  <InfoLine
+                    label="Product Discount"
+                    value={formatPrice(couponSavings.productDiscount)}
+                    success
+                  />
+                )}
+
+                {couponSavings.shippingDiscount > 0 && (
+                  <InfoLine
+                    label="Shipping Discount"
+                    value={formatPrice(couponSavings.shippingDiscount)}
+                    success
+                  />
+                )}
+
+                <InfoLine
+                  label="Total Savings"
+                  value={formatPrice(couponSavings.totalSavings)}
+                  success
                 />
               </div>
             </SectionCard>
@@ -1166,18 +915,54 @@ const OrderDetails = () => {
 
           <SectionCard title="Order Summary" icon={ReceiptText}>
             <div className="rounded-2xl bg-yellow-50 px-4">
-              <SummaryRow label="Items Price" value={formatPrice(order?.itemsPrice)} />
-              <SummaryRow label="Tax" value={formatPrice(order?.taxPrice)} />
-              <SummaryRow label="Shipping" value={formatPrice(order?.shippingPrice)} />
+              <SummaryRow
+                label="Items Price"
+                value={formatPrice(order?.itemsPrice)}
+              />
 
-              {Number(order?.discountPrice || 0) > 0 && (
+              <SummaryRow label="Tax" value={formatPrice(order?.taxPrice)} />
+
+              <SummaryRow
+                label={
+                  couponSavings.shippingDiscount > 0
+                    ? 'Original Shipping'
+                    : 'Shipping'
+                }
+                value={formatPrice(
+                  couponSavings.shippingDiscount > 0
+                    ? couponSavings.originalShippingPrice
+                    : order?.shippingPrice
+                )}
+              />
+
+              {couponSavings.shippingDiscount > 0 && (
                 <SummaryRow
-                  label="Discount"
-                  value={`-${formatPrice(order?.discountPrice)}`}
+                  label="Shipping Discount"
+                  value={`-${formatPrice(couponSavings.shippingDiscount)}`}
+                  success
                 />
               )}
 
-              <SummaryRow label="Total" value={formatPrice(order?.totalPrice)} strong />
+              {couponSavings.shippingDiscount > 0 && (
+                <SummaryRow
+                  label="Payable Shipping"
+                  value={formatPrice(couponSavings.finalShippingPrice)}
+                />
+              )}
+
+              {couponSavings.productDiscount > 0 && (
+                <SummaryRow
+                  label="Product Discount"
+                  value={`-${formatPrice(couponSavings.productDiscount)}`}
+                  success
+                />
+              )}
+
+              <SummaryRow
+                label="Total"
+                value={formatPrice(order?.totalPrice)}
+                strong
+              />
             </div>
           </SectionCard>
 
@@ -1208,18 +993,6 @@ const OrderDetails = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-const InfoLine = ({ label, value }) => {
-  return (
-    <div className="flex flex-col gap-1 rounded-2xl bg-yellow-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-[11px] font-normal uppercase tracking-[0.14em] text-gray-500">
-        {label}
-      </span>
-
-      <span className="break-all text-sm font-medium text-black">{value || 'N/A'}</span>
     </div>
   );
 };

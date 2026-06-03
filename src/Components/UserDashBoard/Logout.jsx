@@ -1,35 +1,3 @@
-// import { LogOut } from 'lucide-react';
-// import { useDispatch } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import { logoutUser } from '../../features/userSlice';
-// import { clearWishlistState } from '../../features/wishlistSlice';
-// import { clearCartState } from '../../features/cartSlice';
-
-// const LogoutButton = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const HandleLogout =async () => {
-//    await dispatch(logoutUser());
-//     dispatch(clearWishlistState());
-//     dispatch(clearCartState());
-//     navigate('/');
-//   };
-
-//   return (
-//     <button
-//       onClick={HandleLogout}
-//       className="flex items-center gap-2 text-red-600 px-4 py-2 border border-red-200 hover:bg-red-50 rounded-md text-sm font-medium transition duration-200"
-//     >
-//       <LogOut size={16} />
-//       Logout
-//     </button>
-//   );
-// };
-
-// export default LogoutButton;
-
-
 import { LogOut, ShieldCheck } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
