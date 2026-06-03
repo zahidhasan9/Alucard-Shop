@@ -120,3 +120,4 @@ export const deliverOrder = orderId => axios.put(`/order/${orderId}/deliver`);
 export const deleteOrder = orderId => axios.delete(`/order/${orderId}`);
 export const updateDeliveryStatus = (orderId, data) => axios.put(`/order/${orderId}/delivery-status`, data);
 export const resetDeliveryStatus = orderId => axios.put(`/order/${orderId}/reset-status`);
+
